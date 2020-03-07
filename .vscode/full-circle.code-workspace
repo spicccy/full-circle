@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "full-circle",
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "eslint.packageManager": "yarn",
+    "eslint.workingDirectories": ["../packages/backend", "../packages/frontend"]
+  }
+}
