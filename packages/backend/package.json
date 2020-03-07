@@ -2,9 +2,12 @@
   "name": "@full-circle/backend",
   "version": "1.0.0",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node-dev src/index.ts",
     "loadtest": "colyseus-loadtest src/loadtest/example.ts --room my_room --numClients 2",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix src/**/*.{ts,tsx}",
+    "prettier": "prettier --write src/**/*.{ts,tsx}",
+    "prettylint": "yarn prettier && yarn lint"
   },
   "dependencies": {
     "cors": "^2.8.5",

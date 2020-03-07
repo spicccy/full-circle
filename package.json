@@ -4,7 +4,13 @@
   "private": true,
   "scripts": {
     "start": "lerna run start --parallel",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:FE": "lerna run start --scope @full-circle/frontend --stream",
+    "start:BE": "lerna run start --scope @full-circle/backend --stream",
+    "prettylint": "lerna run prettylint --parallel --no-bail",
+    "test": "lerna run test --parallel --no-bail",
+    "ALL": "yarn -W",
+    "BE": "yarn workspace @full-circle/frontend",
+    "FE": "yarn workspace @full-circle/backend"
   },
   "repository": {
     "type": "git",
@@ -13,20 +19,17 @@
   "workspaces": [
     "packages/*"
   ],
-  "author": "",
+  "author": "spicccy",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/unsw-cse-comp3900-9900/capstone-project-spicccy/issues"
-  },
-  "homepage": "https://github.com/unsw-cse-comp3900-9900/capstone-project-spicccy#readme",
   "dependencies": {
-    "@colyseus/monitor": "^0.12.1",
-    "@colyseus/social": "^0.11.6",
-    "colyseus": "^0.12.3"
+    "@colyseus/monitor": "0.12.1",
+    "@colyseus/social": "0.11.6",
+    "colyseus": "0.12.3",
+    "colyseus.js": "0.12.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.19.2",
-    "@typescript-eslint/parser": "^2.19.2",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "lerna": "^3.20.2",

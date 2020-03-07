@@ -1,13 +1,23 @@
-import { Room, Client } from 'colyseus'
+import { Room, Client } from 'colyseus';
 
 export class MyRoom extends Room {
-  onCreate(options: any) {}
+  onCreate(_options: any) {
+    return;
+  }
 
-  onJoin(client: Client, options: any) {}
+  onJoin(_client: Client, _options: any) {
+    return;
+  }
 
-  onMessage(client: Client, message: any) {}
+  onMessage(_client: Client, _message: any) {
+    return;
+  }
 
-  onLeave(client: Client, consented: boolean) {}
+  onLeave(_client: Client, _consented: boolean) {
+    return;
+  }
 
-  onDispose() {}
+  onDispose() {
+    return;
+  }
 }
