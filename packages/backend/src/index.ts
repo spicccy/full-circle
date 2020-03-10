@@ -3,11 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import { Server } from 'colyseus';
 import { monitor } from '@colyseus/monitor';
+import { BACKEND_PORT } from '@full-circle/shared/lib/constants';
 // import socialRoutes from "@colyseus/social/express"
 
 import { MyRoom } from './MyRoom';
 
-const port = Number(process.env.PORT || 2567);
+const port = Number(process.env.PORT || BACKEND_PORT);
 const app = express();
 
 app.use(cors());
