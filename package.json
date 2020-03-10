@@ -10,8 +10,8 @@
     "prettylint": "lerna run prettylint --parallel --no-bail",
     "test": "lerna run test --parallel --no-bail",
     "ALL": "yarn -W",
-    "BE": "yarn workspace @full-circle/frontend",
-    "FE": "yarn workspace @full-circle/backend"
+    "BE": "yarn workspace @full-circle/backend",
+    "FE": "yarn workspace @full-circle/frontend"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,11 @@
     "@colyseus/monitor": "0.12.1",
     "@colyseus/social": "0.11.6",
     "colyseus": "0.12.3",
-    "colyseus.js": "0.12.1"
+    "colyseus.js": "0.12.1",
+    "lodash-es": "^4.17.15"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.3",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "eslint": "^6.8.0",
