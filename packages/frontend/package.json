@@ -18,6 +18,7 @@
     "@testing-library/user-event": "^10.0.0",
     "grommet": "^2.11.1",
     "grommet-icons": "^4.4.0",
+    "normalize.css": "^8.0.1",
     "polished": "^3.4.4",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",

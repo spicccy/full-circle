@@ -3,6 +3,8 @@ import { Canvas } from './components/Canvas/Canvas';
 import { Grommet, Box, Heading, Button } from 'grommet';
 import { theme } from './styles/theme';
 
+import 'styled-components/macro';
+
 export const App: FunctionComponent = () => {
   return (
     <Grommet theme={theme} full>
@@ -11,7 +13,12 @@ export const App: FunctionComponent = () => {
           <Box width="medium">
             <Canvas />
             <Heading>spicccy.</Heading>
-            <Button label="play" />
+            <Button
+              label="play"
+              css={{
+                backgroundColor: 'yellow',
+              }}
+            />
           </Box>
         </Box>
       </Box>
