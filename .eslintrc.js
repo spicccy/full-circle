@@ -25,5 +25,15 @@ module.exports = {
     ],
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    'no-restricted-imports': [
+      2,
+      {
+        patterns: [
+          '@full-circle/shared/src/*',
+          '@full-circle/backend/*',
+          '@full-circle/frontend/*',
+        ],
+      },
+    ],
   },
-}
+};

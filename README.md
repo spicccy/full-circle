@@ -23,6 +23,7 @@ cd capstone-project-spicccy
 
 # install and build dependencies
 yarn
+yarn build:shared
 ```
 
 ## Opening in VSCode
@@ -88,3 +89,9 @@ Runs all the tests.
 ```
 yarn test
 ```
+
+## Shared folder
+
+Contains shared code between server and web. Code in this file needs to be compiled first, before it can be imported. Either run `yarn build:shared` or run it in watch mode with `yarn start`.
+
+Linting rule has been added to stop imports from `@full-circle/shared/src`. Please import the compiled code from `@full-circle/shared/lib` instead.
