@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "ms-vsliveshare.vsliveshare",
+    "esbenp.prettier-vscode",
+    "wayou.vscode-todo-highlight",
+    "pflannery.vscode-versionlens",
+    "jpoissonnier.vscode-styled-components"
+  ],
+  "unwantedRecommendations": [
+    "felipecaputo.git-project-manager",
+    "davidanson.vscode-markdownlint",
+    "dbaeumer.jshint",
+    "googlecloudtools.cloudcode",
+    "azuredevspaces.azds"
+  ]
+}
