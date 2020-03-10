@@ -12,6 +12,12 @@
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
     "eslint.packageManager": "yarn",
-    "eslint.workingDirectories": ["../packages/backend", "../packages/frontend"]
+    "eslint.workingDirectories": [
+      "../packages/backend",
+      "../packages/frontend"
+    ],
+    "files.exclude": {
+      "**/node_modules": true
+    }
   }
 }
