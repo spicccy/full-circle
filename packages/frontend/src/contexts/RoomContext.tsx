@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from 'react';
 import { Room } from 'colyseus.js';
+import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { useColyseus } from './ColyseusContext';
 
 interface IRoomLoadingState {
@@ -57,7 +58,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     });
 
     try {
-      const room = await colyseus.create('my_room');
+      const room = await colyseus.create(ROOM_NAME);
       setRoomState({
         isLoading: false,
         room,
