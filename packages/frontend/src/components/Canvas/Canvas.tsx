@@ -129,6 +129,13 @@ export const Canvas: FunctionComponent = () => {
     drawStroke(hoverCtx, { type: 'stroke', pen, points });
   });
 
+  useEventListener(canvasContainerRef, 'pointerleave', () => {
+    const hoverCtx = hoverCanvasRef.current?.getContext('2d');
+    if (!hoverCtx) return;
+
+    clearCanvas(hoverCtx);
+  });
+
   // ctrl z
   useEventListener(document, 'keydown', e => {
     if (e.ctrlKey && e.key === 'z') {
