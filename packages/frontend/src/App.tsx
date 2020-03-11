@@ -11,8 +11,8 @@ export const App: FunctionComponent = () => {
       <Box fill>
         <Box flex align="center" justify="center">
           <Box width="medium">
-            <Canvas />
             <Heading>spicccy.</Heading>
+            <Canvas />
             <Button
               label="play"
               css={{

@@ -5,9 +5,10 @@ export const getPointerPosition = (
   e: PointerEvent,
   ctx: CanvasRenderingContext2D
 ): ICoord => {
+  const { left, top } = ctx.canvas.getBoundingClientRect();
   return {
-    x: e.pageX - ctx.canvas.offsetLeft,
-    y: e.pageY - ctx.canvas.offsetTop,
+    x: e.clientX - left,
+    y: e.clientY - top,
   };
 };
 

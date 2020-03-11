@@ -3,6 +3,7 @@ import React, {
   useState,
   useRef,
   useLayoutEffect,
+  useEffect,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
 import { ICoord, CanvasAction, IPen } from './interfaces';
@@ -40,10 +41,25 @@ export const Canvas: FunctionComponent = () => {
     penThickness,
   };
 
+  useEffect(() => {
+    if (drawingCanvasRef.current) {
+      drawingCanvasRef.current.width = drawingCanvasRef.current.clientWidth;
+      drawingCanvasRef.current.height = drawingCanvasRef.current.clientHeight;
+    }
+  }, [drawingCanvasRef]);
+
+  useEffect(() => {
+    if (hoverCanvasRef.current) {
+      hoverCanvasRef.current.width = hoverCanvasRef.current.clientWidth;
+      hoverCanvasRef.current.height = hoverCanvasRef.current.clientHeight;
+    }
+  }, [hoverCanvasRef]);
+
   useEventListener(canvasContainerRef, 'pointerdown', e => {
     const drawingCtx = drawingCanvasRef.current?.getContext('2d');
     if (!drawingCtx) return;
 
+    // currentPath.current.push({ x: 10, y: 10 });
     currentPath.current.push(getPointerPosition(e, drawingCtx));
 
     redrawCanvas(drawingCtx, [
@@ -138,8 +154,8 @@ export const Canvas: FunctionComponent = () => {
   return (
     <div>
       <div className="drawing-canvas" ref={canvasContainerRef}>
-        <canvas ref={drawingCanvasRef} width={400} height={400} />
-        <canvas ref={hoverCanvasRef} width={400} height={400} />
+        <canvas ref={drawingCanvasRef} />
+        <canvas ref={hoverCanvasRef} />
       </div>
       <div>
         <button disabled={canvasActions.length === 0} onClick={undo}>

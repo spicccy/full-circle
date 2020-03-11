@@ -16,11 +16,13 @@ code {
   position: relative;
   touch-action: none;
   border: 2px solid red;
-  width: max-content;
-  height: max-content;
+  width: 400px;
+  height: 400px;
 }
 
 .drawing-canvas > canvas {
+  height: 100%;
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;
