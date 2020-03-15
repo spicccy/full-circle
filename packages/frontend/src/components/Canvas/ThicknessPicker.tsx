@@ -21,6 +21,7 @@ export const ThicknessPicker: FunctionComponent<IThicknessPickerProps> = ({
         key={thickness}
         onClick={() => setThickness(thickness)}
         style={{
+          position: 'relative',
           cursor: 'pointer',
           height: 50,
           width: 50,
