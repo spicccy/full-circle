@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { Server } from 'colyseus';
 import { monitor } from '@colyseus/monitor';
-import { BACKEND_PORT } from '@full-circle/shared/lib/constants';
+import { BACKEND_PORT, ROOM_NAME } from '@full-circle/shared/lib/constants';
 // import socialRoutes from "@colyseus/social/express"
 
 import { MyRoom } from './MyRoom';
@@ -20,7 +20,7 @@ const gameServer = new Server({
 });
 
 // register your room handlers
-gameServer.define('my_room', MyRoom);
+gameServer.define(ROOM_NAME, MyRoom);
 
 /**
  * Register @colyseus/social routes
