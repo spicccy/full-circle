@@ -1,5 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { BrushType, brushTypes } from './constants';
+import {
+  BrushType,
+  brushTypes,
+} from '@full-circle/shared/lib/canvas/constants';
 
 interface IBrushTypePickerProps {
   currentBrushType: BrushType;
