@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Canvas } from 'src/components/Canvas/Canvas';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { Box, Button } from 'grommet';
+import { Box, Button, Heading } from 'grommet';
 import { Room } from 'colyseus.js';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
@@ -14,6 +14,7 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
 
   return (
     <Box>
+      <Heading>Room {room.id}</Heading>
       <Canvas
         canvasActions={canvasActions}
         setCanvasActions={setCanvasActions}
