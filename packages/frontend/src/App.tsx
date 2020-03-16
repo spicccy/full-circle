@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import { Grommet } from 'grommet';
 import { theme } from './styles/theme';
 import { RoomProvider } from './contexts/RoomContext';
-import { LoginPage, MainPage, CreateRoomPage } from './pages';
+import { LoginPage, GamePage, CreateRoomPage } from './pages';
 
 import 'styled-components/macro';
 
@@ -15,7 +15,7 @@ export const App: FunctionComponent = () => {
           <Route exact path="/" component={LoginPage} />
           <Route exact path="/join" component={LoginPage} />
           <Route exact path="/create" component={CreateRoomPage} />
-          <Route path="/play" component={MainPage} />
+          <Route path="/play" component={GamePage} />
         </Switch>
       </Grommet>
     </RoomProvider>

@@ -4,17 +4,17 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { Canvas } from 'src/components/Canvas/Canvas';
 import { useHistory } from 'react-router-dom';
 
-const MainPage: FunctionComponent = () => {
+const GamePage: FunctionComponent = () => {
   const { room, leaveRoom } = useRoom();
   const history = useHistory();
 
   // redirect the user if there is no valid game
   useEffect(() => {
     if (!room) {
-      history.push('/');
+      history.replace('/');
     } else {
       if (room.id.length === 0) {
-        history.push('/');
+        history.replace('/');
       }
     }
   }, [room, history]);
@@ -26,17 +26,11 @@ const MainPage: FunctionComponent = () => {
           <Heading>spicccy.</Heading>
           <Canvas />
           {room ? <h1>Room {room.id}</h1> : null}
-          <Button
-            onClick={() => {
-              leaveRoom();
-              history.push('/');
-            }}
-            label="Leave Room"
-          />
+          <Button onClick={leaveRoom} label="Leave Room" />
         </Box>
       </Box>
     </Box>
   );
 };
 
-export { MainPage };
+export { GamePage };

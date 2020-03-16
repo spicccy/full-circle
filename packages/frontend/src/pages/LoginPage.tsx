@@ -17,6 +17,9 @@ const LoginPage: FunctionComponent = () => {
     const joinedRoom = await joinRoomById(roomID);
     if (joinedRoom) {
       history.push('/play');
+    } else {
+      //TODO: implement precise error states
+      alert('Failed to join room');
     }
   };
 
@@ -76,22 +79,12 @@ const LoginPage: FunctionComponent = () => {
               onClick={attemptToJoinRoom}
             />
           </Box>
-          <Box direction="row" justify="center" pad="small">
-            <Link css={{ color: 'white', textDecoration: 'none' }} to="/create">
-              OR create a game{' '}
-              <span
-                css={{
-                  textDecoration: 'underline',
-                  '&:hover': {
-                    fontWeight: 'bolder',
-                  },
-                }}
-              >
-                here
-              </span>
-              .
+          <div css={{ paddingTop: 8 }}>
+            OR create a new game{' '}
+            <Link css={{ color: 'white' }} to="/create">
+              here
             </Link>
-          </Box>
+          </div>
         </Box>
       </Box>
     </Box>

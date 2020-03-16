@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { render, wait, act } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { App } from './App';
-import { Router, withRouter } from 'react-router-dom';
-
-// @ts-ignore
-window.HTMLCanvasElement.prototype.getContext = () => {};
+import { Router } from 'react-router-dom';
 
 describe('The App renders routes correctly', () => {
   it('should render the login page by default', () => {
