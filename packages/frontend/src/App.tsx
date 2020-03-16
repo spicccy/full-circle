@@ -15,6 +15,7 @@ export const App: FunctionComponent = () => {
         <Grommet theme={theme} full>
           <Switch>
             <Route exact path="/" component={LoginPage} />
+            <Route exact path="/join" component={LoginPage} />
             <Route path="/play" component={MainPage} />
           </Switch>
         </Grommet>
