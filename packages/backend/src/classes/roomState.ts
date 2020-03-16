@@ -1,6 +1,6 @@
 import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema';
 import Chain from './chain';
-import Player from './Player';
+import Player from './player';
 import Phase from './phase';
 
 class RoomState extends Schema {
