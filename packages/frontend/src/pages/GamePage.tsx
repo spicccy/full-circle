@@ -12,15 +12,9 @@ const GamePage: FunctionComponent = () => {
   }
 
   return (
-    <Box fill>
-      <Box flex align="center" justify="center">
-        <Box width="medium">
-          <Heading>spicccy.</Heading>
-          <Box>
-            <Heading>Room {room.id}</Heading>
-            <DrawPage room={room} />
-          </Box>
-        </Box>
+    <Box fill flex align="center" justify="center">
+      <Box width="medium">
+        <DrawPage room={room} />
       </Box>
     </Box>
   );
