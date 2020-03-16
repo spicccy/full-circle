@@ -1,5 +1,8 @@
 import { Room, Client } from 'colyseus';
 import RoomState from './classes/roomState';
+import { ClientAction } from '@full-circle/shared/lib/actions';
+import { getType } from 'typesafe-actions';
+import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 
 export class MyRoom extends Room {
   onCreate(_options: any) {
@@ -13,9 +16,17 @@ export class MyRoom extends Room {
     return;
   }
 
-  onMessage(client: Client, message: any) {
-    console.log(`[${client.sessionId}] ${message}.`);
-    return;
+  onMessage(client: Client, message: ClientAction) {
+    switch (message.type) {
+      case getType(submitDrawing): {
+        console.log(`[${client.sessionId}] submitted a drawing.`);
+        return;
+      }
+
+      default: {
+        console.log(`[${client.sessionId}] ${JSON.stringify(message)}.`);
+      }
+    }
   }
 
   onLeave(client: Client, _consented: boolean) {

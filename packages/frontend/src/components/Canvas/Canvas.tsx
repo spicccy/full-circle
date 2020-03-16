@@ -6,8 +6,16 @@ import React, {
   useEffect,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
-import { ICoord, CanvasAction, IPen } from './interfaces';
-import { BrushType, Colour, PenThickness } from './constants';
+import {
+  ICoord,
+  CanvasAction,
+  IPen,
+} from '@full-circle/shared/lib/canvas/interfaces';
+import {
+  BrushType,
+  Colour,
+  PenThickness,
+} from '@full-circle/shared/lib/canvas/constants';
 import {
   getPointerPosition,
   redrawCanvas,
@@ -19,14 +27,20 @@ import { BrushTypePicker } from './BrushTypePicker';
 import { ColourPicker } from './ColourPicker';
 import { ThicknessPicker } from './ThicknessPicker';
 
-export const Canvas: FunctionComponent = () => {
+interface ICanvasProps {
+  canvasActions: CanvasAction[];
+  setCanvasActions: (canvasActions: CanvasAction[]) => void;
+}
+
+export const Canvas: FunctionComponent<ICanvasProps> = ({
+  canvasActions,
+  setCanvasActions,
+}) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
   const hoverCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const currentPath = useRef<ICoord[]>([]);
-
-  const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushType, setBrushType] = useState<BrushType>(BrushType.SOLID);
