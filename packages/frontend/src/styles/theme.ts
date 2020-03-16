@@ -4,6 +4,7 @@ export const theme: ThemeType = {
   global: {
     colors: {
       brand: '#228BE6',
+      'background-back': '#333333',
     },
     font: {
       family: 'Roboto',

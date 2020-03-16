@@ -1,10 +1,23 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { Button, Box, Heading } from 'grommet';
 import { useRoom } from 'src/contexts/RoomContext';
 import { Canvas } from 'src/components/Canvas/Canvas';
+import { useHistory } from 'react-router-dom';
 
-const MainPage: FunctionComponent = () => {
-  const { room, createAndJoinRoom, leaveRoom } = useRoom();
+const GamePage: FunctionComponent = () => {
+  const { room, leaveRoom } = useRoom();
+  const history = useHistory();
+
+  // redirect the user if there is no valid game
+  useEffect(() => {
+    if (!room) {
+      history.replace('/');
+    } else {
+      if (room.id.length === 0) {
+        history.replace('/');
+      }
+    }
+  }, [room, history]);
 
   return (
     <Box fill>
@@ -13,7 +26,6 @@ const MainPage: FunctionComponent = () => {
           <Heading>spicccy.</Heading>
           <Canvas />
           {room ? <h1>Room {room.id}</h1> : null}
-          <Button onClick={createAndJoinRoom} label="Join Room" />
           <Button onClick={leaveRoom} label="Leave Room" />
         </Box>
       </Box>
@@ -21,4 +33,4 @@ const MainPage: FunctionComponent = () => {
   );
 };
 
-export { MainPage };
+export { GamePage };
