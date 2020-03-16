@@ -11,6 +11,10 @@ class Link extends Schema {
 
   @type(Image)
   image = new Image();
+
+  getImage(){
+    return this.image
+  }
 }
 
 export default Link;

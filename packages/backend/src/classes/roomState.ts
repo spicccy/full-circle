@@ -2,6 +2,7 @@ import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema';
 import Chain from './chain';
 import Player from './player';
 import Phase from './phase';
+import Image from './image';
 
 class RoomState extends Schema {
   @type('string')
@@ -18,6 +19,11 @@ class RoomState extends Schema {
 
   @type(Phase)
   phase = new Phase();
+
+  getImage(chainId:number):Image{
+    return this.chains[chainId].getLink(this.round).getImage();
+  }
+
 }
 
 export default RoomState;
