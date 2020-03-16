@@ -3,11 +3,22 @@ import { Box, Heading, TextInput, Text, Button } from 'grommet';
 import logo from '../images/fullcircle.png';
 
 import 'styled-components/macro';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { useRoom } from 'src/contexts/RoomContext';
 
 const LoginPage: FunctionComponent = () => {
   const [name, setName] = useState('');
   const [roomID, setRoomID] = useState('');
+
+  const { joinRoomById } = useRoom();
+  const history = useHistory();
+
+  const attemptToJoinRoom = async () => {
+    const joinedRoom = await joinRoomById(roomID);
+    if (joinedRoom) {
+      history.push('/play');
+    }
+  };
 
   return (
     <Box background="dark-1" fill>
@@ -58,7 +69,12 @@ const LoginPage: FunctionComponent = () => {
                 value={roomID}
               ></TextInput>
             </Box>
-            <Button margin={{ top: 'large' }} size="large" label="JOIN" />
+            <Button
+              margin={{ top: 'large' }}
+              size="large"
+              label="JOIN"
+              onClick={attemptToJoinRoom}
+            />
           </Box>
           <Box direction="row" justify="center" pad="small">
             <Link css={{ color: 'white', textDecoration: 'none' }} to="/create">
