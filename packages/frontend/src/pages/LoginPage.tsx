@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
+import { Box } from 'grommet';
 
 const LoginPage: FunctionComponent = () => {
-  return <div>Login Page</div>;
+  return <Box>Login</Box>;
 };
 
 export { LoginPage };
