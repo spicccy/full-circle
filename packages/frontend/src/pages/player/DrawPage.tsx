@@ -4,9 +4,20 @@ import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { Box, Button, Heading } from 'grommet';
 import { Room } from 'colyseus.js';
+import { useRoomMessage } from 'src/hooks/useRoomMessage';
+import { getType } from 'typesafe-actions';
+import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
+
+  useRoomMessage(message => {
+    switch (message.type) {
+      case getType(displayDrawing): {
+        setCanvasActions(message.payload);
+      }
+    }
+  });
 
   const handleSubmit = () => {
     room.send(submitDrawing(canvasActions));

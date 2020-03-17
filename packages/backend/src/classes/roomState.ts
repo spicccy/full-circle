@@ -9,6 +9,7 @@ import GuessState from './stateMachine/guessState';
 import RevealState from './stateMachine/revealState';
 import LobbyState from './stateMachine/lobbyState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;
@@ -16,7 +17,7 @@ export interface IState {
   debugTransition: () => string;
 }
 
-class RoomState extends Schema implements IState {
+class RoomState extends Schema implements IState, IRoomState {
   @type('string')
   curator = '';
 
