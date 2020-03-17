@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Box, Heading, TextInput, Text, Button } from 'grommet';
-import logo from '../images/fullcircle.png';
+import logo from 'src/images/fullcircle.png';
 
 import 'styled-components/macro';
 import { Link, useHistory } from 'react-router-dom';
