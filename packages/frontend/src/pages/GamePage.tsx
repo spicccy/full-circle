@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Box, Heading } from 'grommet';
+import { Box } from 'grommet';
 import { useRoom } from 'src/contexts/RoomContext';
 import { Redirect } from 'react-router-dom';
 import { DrawPage } from './DrawPage';
