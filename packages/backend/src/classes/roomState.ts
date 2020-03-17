@@ -1,9 +1,21 @@
 import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema';
-import Chain from './chain';
-import Player from './player';
-import Phase from './phase';
+import Chain from './subSchema/chain';
+import Player from './subSchema/player';
+import Phase from './subSchema/phase';
+import { Client } from 'colyseus';
+import DrawState from './stateMachine/drawState';
+import EndState from './stateMachine/endState';
+import GuessState from './stateMachine/guessState';
+import RevealState from './stateMachine/revealState';
+import LobbyState from './stateMachine/lobbyState';
 
-class RoomState extends Schema {
+export interface IState {
+  onReceive: (message: any) => void;
+  onJoin: (client: Client) => void;
+  debugTransition: () => string;
+}
+
+class RoomState extends Schema implements IState {
   @type('string')
   curator = '';
 
@@ -18,6 +30,48 @@ class RoomState extends Schema {
 
   @type(Phase)
   phase = new Phase();
+
+  currState = new LobbyState(this);
+
+  setDrawState = () => {
+    this.currState = new DrawState(this);
+  };
+
+  setEndState = () => {
+    this.currState = new EndState(this);
+  };
+
+  setGuessState = () => {
+    this.currState = new GuessState(this);
+  };
+
+  setRevealState = () => {
+    this.currState = new RevealState(this);
+  };
+
+  setLobbyState = () => {
+    this.currState = new LobbyState(this);
+  };
+
+  setCurator = (id: string) => {
+    this.curator = id;
+  };
+
+  //Interface implementations
+
+  onReceive = (message: any) => {
+    this.currState.onReceive(message);
+    console.log(message);
+  };
+
+  onJoin = (client: Client) => {
+    this.currState.onJoin(client);
+    console.log(client);
+  };
+
+  debugTransition = () => {
+    return this.currState.debugTransition();
+  };
 }
 
 export default RoomState;
