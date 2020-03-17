@@ -8,10 +8,6 @@ class Chain extends Schema {
 
   @type([Link])
   links = new ArraySchema<Link>();
-
-  getLink(id:number): Link{
-    return this.links[id];
-  }
 }
 
 export default Chain;

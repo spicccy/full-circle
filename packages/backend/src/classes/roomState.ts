@@ -19,11 +19,6 @@ class RoomState extends Schema {
 
   @type(Phase)
   phase = new Phase();
-
-  getImage(chainId:number):Image{
-    return this.chains[chainId].getLink(this.round).getImage();
-  }
-
 }
 
 export default RoomState;
