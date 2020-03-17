@@ -1,5 +1,6 @@
 import RoomState, { IState } from '../roomState';
 import { Client } from 'colyseus';
+import { ClientAction } from '@full-circle/shared/lib/actions';
 
 class DrawState implements IState {
   room: RoomState;
@@ -12,7 +13,7 @@ class DrawState implements IState {
     console.log(client);
   };
 
-  onReceive = (message: any) => {
+  onReceive = (message: ClientAction) => {
     console.log(message);
   };
 

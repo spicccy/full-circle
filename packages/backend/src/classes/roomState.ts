@@ -8,9 +8,10 @@ import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import RevealState from './stateMachine/revealState';
 import LobbyState from './stateMachine/lobbyState';
+import { ClientAction } from '@full-circle/shared/lib/actions';
 
 export interface IState {
-  onReceive: (message: any) => void;
+  onReceive: (message: ClientAction) => void;
   onJoin: (client: Client) => void;
   debugTransition: () => string;
 }
@@ -59,7 +60,7 @@ class RoomState extends Schema implements IState {
 
   //Interface implementations
 
-  onReceive = (message: any) => {
+  onReceive = (message: ClientAction) => {
     this.currState.onReceive(message);
     console.log(message);
   };
