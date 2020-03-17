@@ -1,5 +1,9 @@
-import { ICoord, IPen, CanvasAction } from './interfaces';
-import { BrushType } from './constants';
+import {
+  ICoord,
+  IPen,
+  CanvasAction,
+} from '@full-circle/shared/lib/canvas/interfaces';
+import { BrushType } from '@full-circle/shared/lib/canvas/constants';
 
 export const getPointerPosition = (
   e: PointerEvent,

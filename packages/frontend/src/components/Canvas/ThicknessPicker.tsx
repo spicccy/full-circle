@@ -1,5 +1,10 @@
 import React, { FunctionComponent } from 'react';
-import { PenThickness, penThicknesses, Colour, BrushType } from './constants';
+import {
+  PenThickness,
+  penThicknesses,
+  Colour,
+  BrushType,
+} from '@full-circle/shared/lib/canvas/constants';
 
 interface IThicknessPickerProps {
   currentBrushType: BrushType;
