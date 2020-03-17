@@ -1,3 +1,3 @@
-export { CreateRoomPage } from './CreateRoomPage';
-export { LoginPage } from './LoginPage';
-export { GamePage } from './GamePage';
+export { CreateRoomPage } from './curator/CreateRoomPage';
+export { LoginPage } from './player/LoginPage';
+export { GamePage } from './player/GamePage';
