@@ -1,6 +1,7 @@
 import { Room, Client } from 'colyseus';
 import RoomState from './classes/roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 import { getType } from 'typesafe-actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 
@@ -20,6 +21,8 @@ export class MyRoom extends Room {
     switch (message.type) {
       case getType(submitDrawing): {
         console.log(`[${client.sessionId}] submitted a drawing.`);
+        const canvasAction = message.payload;
+        this.broadcast(displayDrawing(canvasAction));
         return;
       }
 
