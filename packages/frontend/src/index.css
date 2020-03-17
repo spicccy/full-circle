@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+@font-face {
+  font-family: 'PermanentMarker';
+  src: url(./fonts/PermanentMarker.ttf);
+}
+
 .drawing-canvas {
   position: relative;
   touch-action: none;

@@ -12,4 +12,10 @@ export const theme: ThemeType = {
       height: '20px',
     },
   },
+  anchor: {
+    textDecoration: 'underline 2px',
+    hover: {
+      textDecoration: 'underline 2px',
+    },
+  },
 };
