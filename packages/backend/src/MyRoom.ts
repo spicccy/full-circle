@@ -14,6 +14,7 @@ export class MyRoom extends Room {
 
   onJoin(client: Client, _options: any) {
     console.log(`${client.sessionId} joined ${this.roomId}.`);
+    this.state.onJoin(client, _options);
     return;
   }
 

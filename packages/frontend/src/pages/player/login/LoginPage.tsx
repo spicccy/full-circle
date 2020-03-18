@@ -10,7 +10,12 @@ const LoginPage: FunctionComponent = () => {
   const history = useHistory();
 
   const attemptToJoinRoom = async (_name: string, roomId: string) => {
-    const joinedRoom = await joinRoomById(roomId);
+    const options = {
+      username: _name,
+    };
+
+    const joinedRoom = await joinRoomById(roomId, options);
+
     if (joinedRoom) {
       history.push('/play');
     } else {

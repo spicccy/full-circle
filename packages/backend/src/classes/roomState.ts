@@ -9,11 +9,15 @@ import GuessState from './stateMachine/guessState';
 import RevealState from './stateMachine/revealState';
 import LobbyState from './stateMachine/lobbyState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
+import {
+  IRoomState,
+  IPlayer,
+  IJoin,
+} from '@full-circle/shared/lib/roomState/interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;
-  onJoin: (client: Client) => void;
+  onJoin: (client: Client, options: IJoin) => void;
   debugTransition: () => string;
 }
 
@@ -55,20 +59,26 @@ class RoomState extends Schema implements IState, IRoomState {
     this.currState = new LobbyState(this);
   };
 
-  setCurator = (id: string) => {
+  //helpers
+
+  setCurator = (id: string): void => {
     this.curator = id;
   };
 
-  //Interface implementations
+  addPlayer = (player: IPlayer): void => {
+    const id = player.id;
+    this.player[id] = player;
+  };
 
+  //State implementations
   onReceive = (message: ClientAction) => {
     this.currState.onReceive(message);
     console.log(message);
   };
 
-  onJoin = (client: Client) => {
-    this.currState.onJoin(client);
-    console.log(client);
+  onJoin = (client: Client, options: any) => {
+    this.currState.onJoin(client, options);
+    console.log('state', this.player, this.curator);
   };
 
   debugTransition = () => {
