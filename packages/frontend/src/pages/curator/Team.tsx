@@ -13,7 +13,7 @@ const Team: FunctionComponent = () => {
             <Heading level="2" margin="none">
               Alexander Su
             </Heading>
-            <Paragraph>I love sucking toes.</Paragraph>
+            <Paragraph>Hi I am wholesome.</Paragraph>
           </Box>
         </Box>
       </Box>
