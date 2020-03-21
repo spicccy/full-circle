@@ -12,8 +12,8 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
   IRoomState,
   IPlayer,
-  IJoin,
 } from '@full-circle/shared/lib/roomState/interfaces';
+import { IJoin } from '@full-circle/shared/lib/join/interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;

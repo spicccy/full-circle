@@ -1,7 +1,7 @@
 import RoomState, { IState } from '../roomState';
 import { Client } from 'colyseus';
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { IJoin } from '@full-circle/shared/lib/roomState/interfaces';
+import { IJoin } from '@full-circle/shared/lib/join/interfaces';
 
 class RevealState implements IState {
   room: RoomState;
