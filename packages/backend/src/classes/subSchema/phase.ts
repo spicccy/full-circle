@@ -4,7 +4,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 class Phase extends Schema implements IPhase {
   @type('number')
-  timestamp = 0;
+  phaseStart = 0;
 
   @type('number')
   phaseEnd = 0;
@@ -12,10 +12,14 @@ class Phase extends Schema implements IPhase {
   @type('string')
   phaseType = PhaseType.LOBBY;
 
+  /**
+   *
+   * @param duration in seconds
+   */
   constructor(duration: number) {
     super();
-    this.timestamp = Date.now();
-    this.phaseEnd = this.timestamp + duration * 1000;
+    this.phaseStart = Date.now();
+    this.phaseEnd = this.phaseStart + duration * 1000;
   }
 }
 
