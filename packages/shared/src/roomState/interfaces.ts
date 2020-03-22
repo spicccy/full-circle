@@ -36,7 +36,7 @@ export interface IPhase {
 export interface IRoomState {
   curator: string;
   chains: IChain[];
-  player: Record<string, IPlayer>;
+  players: Record<string, IPlayer>;
   round: number;
   phase: IPhase;
 }

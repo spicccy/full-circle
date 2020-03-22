@@ -57,5 +57,6 @@ describe('Room State test', () => {
     const result = state.getPlayer('something');
 
     expect(result).toEqual(data);
+    expect(state.getNumPlayers()).toEqual(1);
   });
 });
