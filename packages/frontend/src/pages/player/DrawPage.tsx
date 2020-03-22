@@ -6,15 +6,19 @@ import { Box, Button, Heading } from 'grommet';
 import { Room } from 'colyseus.js';
 import { useRoomMessage } from 'src/hooks/useRoomMessage';
 import { getType } from 'typesafe-actions';
-import { displayDrawing } from '@full-circle/shared/lib/actions/server';
+import { displayDrawing, displayPrompt } from '@full-circle/shared/lib/actions/server';
+import PlayerGuess from 'src/components/PlayerGuess';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
-
+  
   useRoomMessage(message => {
     switch (message.type) {
       case getType(displayDrawing): {
         setCanvasActions(message.payload);
+      }
+      case getType(displayPrompt):{
+        //display new prompt
       }
     }
   });
@@ -26,6 +30,7 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   return (
     <Box>
       <Heading>Room {room.id}</Heading>
+      <Heading>Prompt: <PlayerGuess/></Heading>
       <Canvas
         canvasActions={canvasActions}
         setCanvasActions={setCanvasActions}
