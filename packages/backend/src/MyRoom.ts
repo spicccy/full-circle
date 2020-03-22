@@ -12,9 +12,9 @@ export class MyRoom extends Room {
     return;
   }
 
-  onJoin(client: Client, _options: any) {
+  onJoin(client: Client, options: any) {
     console.log(`${client.sessionId} joined ${this.roomId}.`);
-    this.state.onJoin(client, _options);
+    this.state.onJoin(client, options);
     return;
   }
 
