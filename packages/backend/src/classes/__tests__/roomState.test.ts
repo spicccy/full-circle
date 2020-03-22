@@ -45,7 +45,6 @@ describe('Room State test', () => {
     const state = new RoomState();
     state.setCurator('something');
 
-    expect(state.getNumPlayers()).toEqual(1);
     expect(state.getCurator()).toEqual('something');
   });
 

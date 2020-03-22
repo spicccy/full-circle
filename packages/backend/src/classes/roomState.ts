@@ -37,8 +37,6 @@ class RoomState extends Schema implements IState, IRoomState {
   @type(Phase)
   phase = new Phase();
 
-  numPlayers = 0;
-
   currState = new LobbyState(this);
 
   setDrawState = () => {
@@ -64,7 +62,6 @@ class RoomState extends Schema implements IState, IRoomState {
   //helpers
 
   setCurator = (id: string): void => {
-    this.numPlayers++;
     this.curator = id;
   };
 
@@ -75,7 +72,6 @@ class RoomState extends Schema implements IState, IRoomState {
   addPlayer = (player: IPlayer): void => {
     const id = player.id; //colyseus assigns id so they should all be unique
     this.players[id] = player;
-    this.numPlayers++;
   };
 
   getPlayer = (id: string): IPlayer => {
@@ -83,7 +79,7 @@ class RoomState extends Schema implements IState, IRoomState {
   };
 
   getNumPlayers = (): number => {
-    return this.numPlayers;
+    return Object.keys(this.players).length;
   };
 
   //State implementations
