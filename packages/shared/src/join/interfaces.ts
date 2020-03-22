@@ -1,3 +1,3 @@
-export interface IJoin {
+export interface IJoinOptions {
   username: string;
 }

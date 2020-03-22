@@ -13,11 +13,11 @@ import {
   IRoomState,
   IPlayer,
 } from '@full-circle/shared/lib/roomState/interfaces';
-import { IJoin } from '@full-circle/shared/lib/join/interfaces';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;
-  onJoin: (client: Client, options: IJoin) => void;
+  onJoin: (client: Client, options: IJoinOptions) => void;
   debugTransition: () => string;
 }
 
