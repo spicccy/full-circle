@@ -70,7 +70,7 @@ class RoomState extends Schema implements IState, IRoomState {
   };
 
   addPlayer = (player: IPlayer): void => {
-    const id = player.id; //Using Colyseus assigned id, all ids will be unique
+    const id = player.id; //Using Colyseus assigned unique id, no checks needed
     this.players[id] = player;
   };
 
@@ -78,9 +78,9 @@ class RoomState extends Schema implements IState, IRoomState {
     return this.players[id];
   };
 
-  getNumPlayers = (): number => {
+  get numPlayers() {
     return Object.keys(this.players).length;
-  };
+  }
 
   //State implementations
   onReceive = (message: ClientAction) => {
@@ -88,7 +88,7 @@ class RoomState extends Schema implements IState, IRoomState {
     console.log(message);
   };
 
-  onJoin = (client: Client, options: any) => {
+  onJoin = (client: Client, options: IJoinOptions) => {
     this.currState.onJoin(client, options);
   };
 
