@@ -40,4 +40,22 @@ describe('Room State test', () => {
     expect(state.debugTransition()).toEqual('Guess State');
     expect(state.debugTransition()).toEqual('Lobby State');
   });
+
+  it('Can set curator Id', () => {
+    const state = new RoomState();
+    state.setCurator('something');
+    expect(state.getCurator()).toEqual('something');
+  });
+
+  it('Can add new Player', () => {
+    const state = new RoomState();
+    const data = {
+      id: 'something',
+      username: 'notsomething',
+    };
+    state.addPlayer(data);
+    const result = state.getPlayer('something');
+
+    expect(result).toEqual(data);
+  });
 });

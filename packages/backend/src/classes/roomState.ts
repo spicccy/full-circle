@@ -65,9 +65,17 @@ class RoomState extends Schema implements IState, IRoomState {
     this.curator = id;
   };
 
+  getCurator = (): string => {
+    return this.curator;
+  };
+
   addPlayer = (player: IPlayer): void => {
     const id = player.id;
     this.player[id] = player;
+  };
+
+  getPlayer = (id: string): IPlayer => {
+    return this.player[id];
   };
 
   //State implementations
@@ -78,7 +86,6 @@ class RoomState extends Schema implements IState, IRoomState {
 
   onJoin = (client: Client, options: any) => {
     this.currState.onJoin(client, options);
-    console.log('state', this.player, this.curator);
   };
 
   debugTransition = () => {
