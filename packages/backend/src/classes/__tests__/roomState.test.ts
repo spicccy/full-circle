@@ -44,6 +44,8 @@ describe('Room State test', () => {
   it('Can set curator Id', () => {
     const state = new RoomState();
     state.setCurator('something');
+
+    expect(state.getNumPlayers()).toEqual(1);
     expect(state.getCurator()).toEqual('something');
   });
 

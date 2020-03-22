@@ -64,6 +64,7 @@ class RoomState extends Schema implements IState, IRoomState {
   //helpers
 
   setCurator = (id: string): void => {
+    this.numPlayers++;
     this.curator = id;
   };
 

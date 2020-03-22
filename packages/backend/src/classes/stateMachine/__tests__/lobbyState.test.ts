@@ -1,9 +1,9 @@
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
 
-const foo = new RoomState();
-const spySetCurator = jest.spyOn(foo, 'setCurator'); // spy on foo.addListener
-const spyAddPlayer = jest.spyOn(foo, 'addPlayer');
+const room = new RoomState();
+const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
+const spyAddPlayer = jest.spyOn(room, 'addPlayer');
 
 describe('Lobby state test', () => {
   it('Can add a curator', () => {
@@ -12,7 +12,7 @@ describe('Lobby state test', () => {
       sessionId: 'abcd',
     };
 
-    const lobbyState = new LobbyState(foo);
+    const lobbyState = new LobbyState(room);
     const option: any = {};
     lobbyState.onJoin(testClient, option);
 
@@ -26,7 +26,9 @@ describe('Lobby state test', () => {
       sessionId: 'abcd',
     };
 
-    const lobbyState = new LobbyState(foo);
+    room.setCurator('something');
+
+    const lobbyState = new LobbyState(room);
     const option: any = { username: 'whatup' };
     lobbyState.onJoin(testClient, option);
 

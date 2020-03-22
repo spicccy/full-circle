@@ -15,7 +15,7 @@ class LobbyState implements IState {
     const username = options.username;
     const clientId = client.id;
 
-    if (!username) {
+    if (!this.room.getNumPlayers()) {
       this.room.setCurator(clientId);
       return;
     }
