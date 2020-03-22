@@ -9,9 +9,9 @@ const LoginPage: FunctionComponent = () => {
   const { joinRoomById } = useRoom();
   const history = useHistory();
 
-  const attemptToJoinRoom = async (_name: string, roomId: string) => {
+  const attemptToJoinRoom = async (name: string, roomId: string) => {
     const options = {
-      username: _name,
+      username: name,
     };
 
     const joinedRoom = await joinRoomById(roomId, options);

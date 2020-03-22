@@ -70,7 +70,7 @@ class RoomState extends Schema implements IState, IRoomState {
   };
 
   addPlayer = (player: IPlayer): void => {
-    const id = player.id; //colyseus assigns id so they should all be unique
+    const id = player.id; //Using Colyseus assigned id, all ids will be unique
     this.players[id] = player;
   };
 
