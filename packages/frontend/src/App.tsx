@@ -9,6 +9,7 @@ import {
   CreateRoomPage,
   Instructions,
   Team,
+  TimerTest,
 } from './pages';
 
 import 'styled-components/macro';
@@ -19,6 +20,7 @@ export const App: FunctionComponent = () => {
       <Grommet theme={theme} full>
         <Switch>
           <Route exact path="/" component={LoginPage} />
+          <Route exact path="/lobby" component={TimerTest} />
           <Route exact path="/join" component={LoginPage} />
           <Route exact path="/create" component={CreateRoomPage} />
           <Route exact path="/play" component={GamePage} />

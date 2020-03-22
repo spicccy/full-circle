@@ -42,7 +42,16 @@ interface IRoomContext {
   leaveRoom(): void;
 }
 
-export const RoomContext = createContext<IRoomContext & RoomState>(null as any);
+export const RoomContext = createContext<IRoomContext & RoomState>({
+  isLoading: false,
+  room: undefined,
+  createAndJoinRoom: async () => null,
+  joinRoomById: async (_roomId: string) => null,
+  leaveRoom: () => {
+    return;
+  },
+  roomError: 'Unitialised Room',
+});
 
 export const useRoom = () => useContext(RoomContext);
 

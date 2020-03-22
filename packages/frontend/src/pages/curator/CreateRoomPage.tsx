@@ -10,6 +10,11 @@ const CreateRoomPage: FunctionComponent = () => {
   const history = useHistory();
   const room = useRoom();
 
+  const createLobby = async () => {
+    await room.createAndJoinRoom();
+    history.push('/lobby');
+  };
+
   return (
     <Box background="light-2" fill>
       <Navbar />
@@ -30,10 +35,7 @@ const CreateRoomPage: FunctionComponent = () => {
             alignSelf="center"
             label="Create"
             icon={<Add />}
-            onClick={async () => {
-              await room.createAndJoinRoom();
-              history.push('/play');
-            }}
+            onClick={createLobby}
           />
         </Box>
       </Box>

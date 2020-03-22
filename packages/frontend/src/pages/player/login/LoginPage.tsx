@@ -12,7 +12,7 @@ const LoginPage: FunctionComponent = () => {
   const attemptToJoinRoom = async (_name: string, roomId: string) => {
     const joinedRoom = await joinRoomById(roomId);
     if (joinedRoom) {
-      history.push('/play');
+      history.push('/lobby');
     } else {
       //TODO: implement precise error states
       alert('Failed to join room');
