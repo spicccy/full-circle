@@ -29,7 +29,7 @@ class RoomState extends Schema implements IState, IRoomState {
   chains = new ArraySchema<Chain>();
 
   @type({ map: Player })
-  player = new MapSchema<Player>();
+  players = new MapSchema<Player>();
 
   @type('number')
   round = 0;
@@ -71,11 +71,11 @@ class RoomState extends Schema implements IState, IRoomState {
 
   addPlayer = (player: IPlayer): void => {
     const id = player.id;
-    this.player[id] = player;
+    this.players[id] = player;
   };
 
   getPlayer = (id: string): IPlayer => {
-    return this.player[id];
+    return this.players[id];
   };
 
   //State implementations
