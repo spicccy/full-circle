@@ -29,7 +29,6 @@ const TimerTest: FunctionComponent = () => {
     if (roomState) {
       const timerLength = roomState.phase.phaseEnd - Date.now();
       if (timerLength <= 0) {
-        console.log(timerLength);
         advanceClientToGame();
       }
       setMsTimer(timerLength);
@@ -39,8 +38,6 @@ const TimerTest: FunctionComponent = () => {
   useEffect(() => {
     if (roomState) {
       const ticker = setInterval(updateTimer, 500);
-      const timerLength = roomState.phase.phaseEnd - Date.now();
-      setMsTimer(timerLength);
       return () => {
         clearInterval(ticker);
       };
