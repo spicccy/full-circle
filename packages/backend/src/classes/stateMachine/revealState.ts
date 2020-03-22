@@ -1,6 +1,7 @@
 import RoomState, { IState } from '../roomState';
 import { Client } from 'colyseus';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 class RevealState implements IState {
   room: RoomState;
@@ -9,8 +10,8 @@ class RevealState implements IState {
     this.room = room;
   }
 
-  onJoin = (client: Client) => {
-    console.log(client);
+  onJoin = (client: Client, options: IJoinOptions) => {
+    console.log(client, options);
   };
 
   onReceive = (message: ClientAction) => {

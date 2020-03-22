@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { Room } from 'colyseus.js';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { useColyseus } from './ColyseusContext';
 
 interface IRoomLoadingState {
@@ -38,7 +39,7 @@ const defaultRoomState: RoomState = {
 
 interface IRoomContext {
   createAndJoinRoom(): Promise<Room | null>;
-  joinRoomById(roomId: string): Promise<Room | null>;
+  joinRoomById(roomId: string, options: IJoinOptions): Promise<Room | null>;
   leaveRoom(): void;
 }
 
@@ -76,7 +77,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   }, [colyseus]);
 
   const joinRoomById = useCallback(
-    async (roomId: string): Promise<Room | null> => {
+    async (roomId: string, options: IJoinOptions): Promise<Room | null> => {
       setRoomState({
         isLoading: true,
         room: undefined,
@@ -84,7 +85,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       });
 
       try {
-        const room = await colyseus.joinById(roomId);
+        const room = await colyseus.joinById(roomId, options);
         setRoomState({
           isLoading: false,
           room,

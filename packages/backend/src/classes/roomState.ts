@@ -9,11 +9,15 @@ import GuessState from './stateMachine/guessState';
 import RevealState from './stateMachine/revealState';
 import LobbyState from './stateMachine/lobbyState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
+import {
+  IRoomState,
+  IPlayer,
+} from '@full-circle/shared/lib/roomState/interfaces';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;
-  onJoin: (client: Client) => void;
+  onJoin: (client: Client, options: IJoinOptions) => void;
   debugTransition: () => string;
 }
 
@@ -25,7 +29,7 @@ class RoomState extends Schema implements IState, IRoomState {
   chains = new ArraySchema<Chain>();
 
   @type({ map: Player })
-  player = new MapSchema<Player>();
+  players = new MapSchema<Player>();
 
   @type('number')
   round = 0;
@@ -55,20 +59,37 @@ class RoomState extends Schema implements IState, IRoomState {
     this.currState = new LobbyState(this);
   };
 
-  setCurator = (id: string) => {
+  //helpers
+
+  setCurator = (id: string): void => {
     this.curator = id;
   };
 
-  //Interface implementations
+  getCurator = (): string => {
+    return this.curator;
+  };
 
+  addPlayer = (player: IPlayer): void => {
+    const id = player.id; //Using Colyseus assigned unique id, no checks needed
+    this.players[id] = player;
+  };
+
+  getPlayer = (id: string): IPlayer => {
+    return this.players[id];
+  };
+
+  get numPlayers() {
+    return Object.keys(this.players).length;
+  }
+
+  //State implementations
   onReceive = (message: ClientAction) => {
     this.currState.onReceive(message);
     console.log(message);
   };
 
-  onJoin = (client: Client) => {
-    this.currState.onJoin(client);
-    console.log(client);
+  onJoin = (client: Client, options: IJoinOptions) => {
+    this.currState.onJoin(client, options);
   };
 
   debugTransition = () => {
