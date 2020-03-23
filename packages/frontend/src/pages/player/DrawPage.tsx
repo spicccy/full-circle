@@ -2,15 +2,15 @@ import React, { FunctionComponent, useState } from 'react';
 import { Canvas } from 'src/components/Canvas/Canvas';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { Box, Button, Heading } from 'grommet';
+import { Box, Button, Heading, Text } from 'grommet';
 import { Room } from 'colyseus.js';
 import { useRoomMessage } from 'src/hooks/useRoomMessage';
 import { getType } from 'typesafe-actions';
 import { displayDrawing } from '@full-circle/shared/lib/actions/server';
-import PlayerGuess from 'src/components/PlayerGuess';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
+  const [value, setValue] = useState('GUESS1');
 
   useRoomMessage(message => {
     switch (message.type) {
@@ -28,7 +28,16 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
     <Box>
       <Heading>Room {room.id}</Heading>
       <div>
-        <PlayerGuess />
+        <Box
+          margin={{ bottom: 'medium' }}
+          justify="center"
+          align="center"
+          border="all"
+          pad="medium"
+        >
+          <Text id="prompt text">Your prompt is: </Text>
+          <Heading>{value}</Heading>
+        </Box>
       </div>
       <Canvas
         canvasActions={canvasActions}
