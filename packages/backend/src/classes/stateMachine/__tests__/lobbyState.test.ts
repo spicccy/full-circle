@@ -1,5 +1,6 @@
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
+import { IClient } from '../../../interfaces';
 
 const room = new RoomState();
 const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
@@ -21,7 +22,7 @@ describe('Lobby state test', () => {
   });
 
   it('Can add a player', () => {
-    const testClient: any = {
+    const testClient: IClient = {
       id: 'something',
       sessionId: 'abcd',
     };
