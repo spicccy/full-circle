@@ -27,7 +27,7 @@ export class MyRoom extends Room {
         this.broadcast(displayDrawing(canvasAction));
         return;
       }
-      
+
       default: {
         console.log(`[${client.sessionId}] ${JSON.stringify(message)}.`);
       }
