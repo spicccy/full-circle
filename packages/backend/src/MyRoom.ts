@@ -4,6 +4,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { displayDrawing} from '@full-circle/shared/lib/actions/server';
 import { getType } from 'typesafe-actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 export class MyRoom extends Room {
   onCreate(_options: any) {
@@ -12,8 +13,9 @@ export class MyRoom extends Room {
     return;
   }
 
-  onJoin(client: Client, _options: any) {
+  onJoin(client: Client, options: IJoinOptions) {
     console.log(`${client.sessionId} joined ${this.roomId}.`);
+    this.state.onJoin(client, options);
     return;
   }
 

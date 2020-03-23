@@ -1,6 +1,8 @@
 import RoomState, { IState } from '../roomState';
 import { Client } from 'colyseus';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import Player from './../subSchema/player';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 class LobbyState implements IState {
   room: RoomState;
@@ -9,8 +11,17 @@ class LobbyState implements IState {
     this.room = room;
   }
 
-  onJoin = (client: Client) => {
-    console.log(client);
+  onJoin = (client: Client, options: IJoinOptions) => {
+    const username = options.username;
+    const clientId = client.id;
+
+    if (!this.room.getCurator()) {
+      this.room.setCurator(clientId);
+      return;
+    }
+
+    const player = new Player(clientId, username);
+    this.room.addPlayer(player);
   };
 
   onReceive = (message: ClientAction) => {

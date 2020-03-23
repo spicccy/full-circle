@@ -7,6 +7,12 @@ class Player extends Schema implements IPlayer {
 
   @type('string')
   username = '';
+
+  constructor(id: string, username: string) {
+    super();
+    this.id = id;
+    this.username = username;
+  }
 }
 
 export default Player;

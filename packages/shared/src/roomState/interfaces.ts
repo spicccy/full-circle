@@ -29,14 +29,18 @@ export interface IPlayer {
 }
 
 export interface IPhase {
-  timestamp: number;
+  // When did this phase start? UNIX time
+  phaseStart: number;
+
+  // When does the phase end?
+  phaseEnd: number;
   phaseType: PhaseType;
 }
 
 export interface IRoomState {
   curator: string;
   chains: IChain[];
-  player: Record<string, IPlayer>;
+  players: Record<string, IPlayer>;
   round: number;
   phase: IPhase;
 }
