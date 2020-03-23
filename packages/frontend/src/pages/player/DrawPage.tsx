@@ -7,10 +7,6 @@ import { Room } from 'colyseus.js';
 import { useRoomMessage } from 'src/hooks/useRoomMessage';
 import { getType } from 'typesafe-actions';
 import { displayDrawing } from '@full-circle/shared/lib/actions/server';
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-} from '@full-circle/shared/lib/canvas/constants';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
@@ -31,8 +27,6 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
     <Box>
       <Heading>Room {room.id}</Heading>
       <Canvas
-        height={CANVAS_HEIGHT}
-        width={CANVAS_WIDTH}
         canvasActions={canvasActions}
         setCanvasActions={setCanvasActions}
       />

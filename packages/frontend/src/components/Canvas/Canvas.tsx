@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import {
   ICoord,
   CanvasAction,
@@ -15,6 +15,8 @@ import {
   BrushType,
   Colour,
   PenThickness,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
 } from '@full-circle/shared/lib/canvas/constants';
 import {
   getPointerPosition,
@@ -26,8 +28,6 @@ import {
 import { BrushTypePicker } from './BrushTypePicker';
 import { ColourPicker } from './ColourPicker';
 import { ThicknessPicker } from './ThicknessPicker';
-
-import 'styled-components/macro';
 
 const CanvasContainer = styled.div`
   position: relative;
@@ -47,15 +47,11 @@ const CanvasContainer = styled.div`
 `;
 
 interface ICanvasProps {
-  height: number;
-  width: number;
   canvasActions: CanvasAction[];
   setCanvasActions: (canvasActions: CanvasAction[]) => void;
 }
 
 export const Canvas: FunctionComponent<ICanvasProps> = ({
-  height,
-  width,
   canvasActions,
   setCanvasActions,
 }) => {
@@ -184,8 +180,16 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   return (
     <div>
       <CanvasContainer ref={canvasContainerRef}>
-        <canvas height={height} width={width} ref={drawingCanvasRef} />
-        <canvas height={height} width={width} ref={hoverCanvasRef} />
+        <canvas
+          height={CANVAS_HEIGHT}
+          width={CANVAS_WIDTH}
+          ref={drawingCanvasRef}
+        />
+        <canvas
+          height={CANVAS_HEIGHT}
+          width={CANVAS_WIDTH}
+          ref={hoverCanvasRef}
+        />
       </CanvasContainer>
       <div>
         <button disabled={canvasActions.length === 0} onClick={undo}>

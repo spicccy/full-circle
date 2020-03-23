@@ -1,9 +1,11 @@
 import React, { FunctionComponent, useRef, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { redrawCanvas } from './helpers';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
-
-import 'styled-components/macro';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+} from '@full-circle/shared/lib/canvas/constants';
 
 const CanvasContainer = styled.div`
   touch-action: none;
@@ -16,14 +18,10 @@ const CanvasContainer = styled.div`
 `;
 
 interface IViewCanvasProps {
-  height: number;
-  width: number;
   canvasActions: CanvasAction[];
 }
 
 export const ViewCanvas: FunctionComponent<IViewCanvasProps> = ({
-  height,
-  width,
   canvasActions,
 }) => {
   const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -37,7 +35,11 @@ export const ViewCanvas: FunctionComponent<IViewCanvasProps> = ({
 
   return (
     <CanvasContainer>
-      <canvas height={height} width={width} ref={drawingCanvasRef} />
+      <canvas
+        height={CANVAS_HEIGHT}
+        width={CANVAS_WIDTH}
+        ref={drawingCanvasRef}
+      />
     </CanvasContainer>
   );
 };
