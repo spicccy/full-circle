@@ -1,4 +1,4 @@
-import { Room } from 'colyseus';
+import { Room, Client } from 'colyseus';
 import RoomState from './classes/roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { displayDrawing } from '@full-circle/shared/lib/actions/server';
