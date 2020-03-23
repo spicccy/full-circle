@@ -3,9 +3,9 @@ import React, {
   useState,
   useRef,
   useLayoutEffect,
-  useEffect,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
+import styled from 'styled-components';
 import {
   ICoord,
   CanvasAction,
@@ -27,12 +27,35 @@ import { BrushTypePicker } from './BrushTypePicker';
 import { ColourPicker } from './ColourPicker';
 import { ThicknessPicker } from './ThicknessPicker';
 
+import 'styled-components/macro';
+
+const CanvasContainer = styled.div`
+  position: relative;
+  touch-action: none;
+  border: 2px solid red;
+
+  > canvas {
+    height: 100%;
+    width: 100%;
+
+    :not(:first-child) {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+`;
+
 interface ICanvasProps {
+  height: number;
+  width: number;
   canvasActions: CanvasAction[];
   setCanvasActions: (canvasActions: CanvasAction[]) => void;
 }
 
 export const Canvas: FunctionComponent<ICanvasProps> = ({
+  height,
+  width,
   canvasActions,
   setCanvasActions,
 }) => {
@@ -54,20 +77,6 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     penColour,
     penThickness,
   };
-
-  useEffect(() => {
-    if (drawingCanvasRef.current) {
-      drawingCanvasRef.current.width = drawingCanvasRef.current.clientWidth;
-      drawingCanvasRef.current.height = drawingCanvasRef.current.clientHeight;
-    }
-  }, [drawingCanvasRef]);
-
-  useEffect(() => {
-    if (hoverCanvasRef.current) {
-      hoverCanvasRef.current.width = hoverCanvasRef.current.clientWidth;
-      hoverCanvasRef.current.height = hoverCanvasRef.current.clientHeight;
-    }
-  }, [hoverCanvasRef]);
 
   useEventListener(canvasContainerRef, 'pointerdown', e => {
     const drawingCtx = drawingCanvasRef.current?.getContext('2d');
@@ -174,10 +183,10 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
 
   return (
     <div>
-      <div className="drawing-canvas" ref={canvasContainerRef}>
-        <canvas ref={drawingCanvasRef} />
-        <canvas ref={hoverCanvasRef} />
-      </div>
+      <CanvasContainer ref={canvasContainerRef}>
+        <canvas height={height} width={width} ref={drawingCanvasRef} />
+        <canvas height={height} width={width} ref={hoverCanvasRef} />
+      </CanvasContainer>
       <div>
         <button disabled={canvasActions.length === 0} onClick={undo}>
           Undo
