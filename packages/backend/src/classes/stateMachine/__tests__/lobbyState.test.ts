@@ -57,7 +57,7 @@ describe('Lobby state test', () => {
     room.setCurator('something');
 
     const lobbyState = new LobbyState(room);
-    const option: any = { username: 'whatup' };
+    const option: IJoinOptions = { username: 'whatup' };
 
     for (let i = 0; i < MAX_PLAYERS; i++) {
       lobbyState.onJoin(
