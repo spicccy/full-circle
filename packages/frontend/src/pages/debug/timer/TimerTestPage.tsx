@@ -40,11 +40,7 @@ const TimerTest: FunctionComponent = () => {
               transferred to the game page. Click the button below to be
               redirected early.
             </Paragraph>
-            <Paragraph>
-              {msTimer && msTimer > 0
-                ? Math.round(msTimer / 1000)
-                : 'Getting Room State'}
-            </Paragraph>
+            <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>
         </Box>
