@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { Heading, Button, Box, Text } from 'grommet';
 
 const PlayerGuess = () =>{
 
@@ -10,10 +11,11 @@ const PlayerGuess = () =>{
   }
 
   return (
-    <div>
-      <span>{value}</span>
-      <button onClick={handleChange}> Submit Guess </button>
-    </div>);
+    <Box margin={{ bottom: 'medium' }} justify="center" align="center">
+      <Text>Your prompt is: </Text>
+      <Heading>{value}</Heading>
+      <Button onClick={handleChange} label="Submit Guess" />
+    </Box>);
 }
 
 export default PlayerGuess;
