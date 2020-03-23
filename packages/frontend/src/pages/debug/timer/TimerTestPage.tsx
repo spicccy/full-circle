@@ -23,7 +23,7 @@ const TimerTest: FunctionComponent = () => {
     return <Redirect to="/" />;
   }
 
-  if (msTimer < 0) {
+  if (msTimer && msTimer < 0) {
     advanceClientToGame();
   }
 
@@ -36,14 +36,14 @@ const TimerTest: FunctionComponent = () => {
             <Paragraph>ID:{room.id}</Paragraph>
             <Paragraph>Welcome to the Lobby ya filthy animal.</Paragraph>
             <Paragraph>
-              For now, nothing interesting happens here. Look at ominous timer
-              on this page and hope it doesn't get to 0. Who knows what will
-              happen when it does? (Certainly not us devs: we still need to
-              implement phase transitions). But notice how synchronised the
-              timer is with all your friends! Wonderful isn't it? :)
+              For now, when the timer reaches 0, you will be automaticall
+              transferred to the game page. Click the button below to be
+              redirected early.
             </Paragraph>
             <Paragraph>
-              {msTimer > 0 ? Math.round(msTimer / 1000) : 'Getting Room State'}
+              {msTimer && msTimer > 0
+                ? Math.round(msTimer / 1000)
+                : 'Getting Room State'}
             </Paragraph>
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>

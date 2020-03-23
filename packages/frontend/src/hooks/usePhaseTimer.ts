@@ -3,15 +3,13 @@ import invariant from 'tiny-invariant';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomState } from './useRoomState';
 
-export const MAX_PHASE_TIMER = 180;
-
 /**
  * Custom hook that returns a timer countdown for the current phase
  */
-export const usePhaseTimer = (): number => {
+export const usePhaseTimer = (): number | undefined => {
   const { room } = useRoom();
   const roomState = useRoomState();
-  const [value, setValue] = useState<number>(MAX_PHASE_TIMER);
+  const [value, setValue] = useState<number | undefined>(undefined);
 
   const updateTimer = useCallback(() => {
     invariant(roomState, 'Room State not initialised');
