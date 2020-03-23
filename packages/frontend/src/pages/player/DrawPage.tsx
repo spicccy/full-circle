@@ -11,7 +11,7 @@ import PlayerGuess from 'src/components/PlayerGuess';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
-  
+
   useRoomMessage(message => {
     switch (message.type) {
       case getType(displayDrawing): {
@@ -27,7 +27,9 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   return (
     <Box>
       <Heading>Room {room.id}</Heading>
-      <div><PlayerGuess/></div>
+      <div>
+        <PlayerGuess />
+      </div>
       <Canvas
         canvasActions={canvasActions}
         setCanvasActions={setCanvasActions}
