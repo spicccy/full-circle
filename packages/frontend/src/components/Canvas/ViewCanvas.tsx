@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useRef, useEffect } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { redrawCanvas } from './helpers';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import {

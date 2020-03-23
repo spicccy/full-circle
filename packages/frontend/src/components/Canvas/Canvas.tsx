@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import {
   ICoord,
   CanvasAction,
