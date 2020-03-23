@@ -29,7 +29,11 @@ export interface IPlayer {
 }
 
 export interface IPhase {
-  timestamp: number;
+  // When did this phase start? UNIX time
+  phaseStart: number;
+
+  // When does the phase end?
+  phaseEnd: number;
   phaseType: PhaseType;
 }
 

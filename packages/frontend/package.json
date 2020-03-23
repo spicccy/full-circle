@@ -25,7 +25,8 @@
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "styled-components": "^5.0.1"
+    "styled-components": "^5.0.1",
+    "tiny-invariant": "^1.1.0"
   },
   "devDependencies": {
     "@testing-library/user-event": "^10.0.0",
