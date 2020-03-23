@@ -1,8 +1,8 @@
 import RoomState, { IState } from '../roomState';
-import { Client } from 'colyseus';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import Player from './../subSchema/player';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IClient } from '../../interfaces';
 
 class LobbyState implements IState {
   room: RoomState;
@@ -11,7 +11,7 @@ class LobbyState implements IState {
     this.room = room;
   }
 
-  onJoin = (client: Client, options: IJoinOptions) => {
+  onJoin = (client: IClient, options: IJoinOptions) => {
     const username = options.username;
     const clientId = client.id;
 

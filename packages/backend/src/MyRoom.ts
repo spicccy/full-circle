@@ -1,10 +1,11 @@
-import { Room, Client } from 'colyseus';
+import { Room } from 'colyseus';
 import RoomState from './classes/roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 import { getType } from 'typesafe-actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IClient } from './interfaces';
 
 export class MyRoom extends Room {
   onCreate(_options: any) {
@@ -13,13 +14,13 @@ export class MyRoom extends Room {
     return;
   }
 
-  onJoin(client: Client, options: IJoinOptions) {
+  onJoin(client: IClient, options: IJoinOptions) {
     console.log(`${client.sessionId} joined ${this.roomId}.`);
     this.state.onJoin(client, options);
     return;
   }
 
-  onMessage(client: Client, message: ClientAction) {
+  onMessage(client: IClient, message: ClientAction) {
     switch (message.type) {
       case getType(submitDrawing): {
         console.log(`[${client.sessionId}] submitted a drawing.`);
@@ -34,7 +35,7 @@ export class MyRoom extends Room {
     }
   }
 
-  onLeave(client: Client, _consented: boolean) {
+  onLeave(client: IClient, _consented: boolean) {
     console.log(`${client.sessionId} left ${this.roomId}.`);
     return;
   }
