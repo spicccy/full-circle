@@ -6,7 +6,7 @@ import { Navbar } from 'src/components/Navbar';
 
 import { useRoom } from 'src/contexts/RoomContext';
 
-const CreateRoomPage: FunctionComponent = () => {
+const HomePage: FunctionComponent = () => {
   const history = useHistory();
   const room = useRoom();
 
@@ -19,7 +19,7 @@ const CreateRoomPage: FunctionComponent = () => {
     <Box background="light-2" fill>
       <Navbar />
       <Box flex align="center" justify="center">
-        <Box width="medium">
+        <Box width="medium" align="center">
           <Heading>Create a Room</Heading>
           <Box align="center">
             <Paragraph>
@@ -43,4 +43,4 @@ const CreateRoomPage: FunctionComponent = () => {
   );
 };
 
-export { CreateRoomPage };
+export { HomePage };

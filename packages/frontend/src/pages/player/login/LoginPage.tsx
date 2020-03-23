@@ -30,7 +30,7 @@ const LoginPage: FunctionComponent = () => {
         <LoginCard attemptToJoinRoom={attemptToJoinRoom} />
       </Box>
       <Text>
-        OR create a new game <LinkAnchor href="/create">here</LinkAnchor>
+        OR create a new game <LinkAnchor href="/home">here</LinkAnchor>
       </Text>
     </Box>
   );
