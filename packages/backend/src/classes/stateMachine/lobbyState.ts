@@ -3,7 +3,6 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import Player from './../subSchema/player';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IClient } from '../../interfaces';
-import { closeClient } from '../../helpers/clientHelpers';
 
 class LobbyState implements IState {
   room: RoomState;
@@ -17,7 +16,7 @@ class LobbyState implements IState {
     const clientId = client.id;
 
     if (this.room.numPlayers >= 8) {
-      closeClient(client);
+      client.close();
       return;
     }
 

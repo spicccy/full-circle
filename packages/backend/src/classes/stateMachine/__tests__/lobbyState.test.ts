@@ -46,12 +46,12 @@ describe('Lobby state test', () => {
   });
 
   it('Not more than 8 players can join', () => {
+    const mockClose = jest.fn();
+
     const testClient: IClient = {
       id: 'something',
       sessionId: 'abcd',
-      close: () => {
-        return;
-      },
+      close: mockClose,
     };
     const room = new RoomState();
     room.setCurator('something');
@@ -64,19 +64,16 @@ describe('Lobby state test', () => {
         {
           id: `something${i}`,
           sessionId: 'abcd',
-          close: () => {
-            return;
-          },
+          close: mockClose,
         },
         option
       );
     }
 
-    expect(spyCloseClient).toBeCalledTimes(0);
+    expect(mockClose).toBeCalledTimes(0);
 
     lobbyState.onJoin(testClient, option);
 
-    expect(spyCloseClient).toBeCalledTimes(1);
-    expect(spyCloseClient).toBeCalledWith(testClient);
+    expect(mockClose).toBeCalledTimes(1);
   });
 });
