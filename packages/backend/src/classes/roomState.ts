@@ -2,7 +2,6 @@ import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema';
 import Chain from './subSchema/chain';
 import Player from './subSchema/player';
 import Phase from './subSchema/phase';
-import { Client } from 'colyseus';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -14,10 +13,11 @@ import {
   IPlayer,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IClient } from '../interfaces';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;
-  onJoin: (client: Client, options: IJoinOptions) => void;
+  onJoin: (client: IClient, options: IJoinOptions) => void;
   debugTransition: () => string;
 }
 
@@ -88,7 +88,7 @@ class RoomState extends Schema implements IState, IRoomState {
     console.log(message);
   };
 
-  onJoin = (client: Client, options: IJoinOptions) => {
+  onJoin = (client: IClient, options: IJoinOptions) => {
     this.currState.onJoin(client, options);
   };
 

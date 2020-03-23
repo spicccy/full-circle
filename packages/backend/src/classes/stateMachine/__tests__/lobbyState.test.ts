@@ -1,5 +1,8 @@
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
+import { IClient } from '../../../interfaces';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { MAX_PLAYERS } from '../../../constants';
 
 const room = new RoomState();
 const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
@@ -21,15 +24,18 @@ describe('Lobby state test', () => {
   });
 
   it('Can add a player', () => {
-    const testClient: any = {
+    const testClient: IClient = {
       id: 'something',
       sessionId: 'abcd',
+      close: () => {
+        return;
+      },
     };
 
     room.setCurator('something');
 
     const lobbyState = new LobbyState(room);
-    const option: any = { username: 'whatup' };
+    const option: IJoinOptions = { username: 'whatup' };
     lobbyState.onJoin(testClient, option);
 
     expect(spyAddPlayer).toBeCalledTimes(1);
@@ -37,5 +43,37 @@ describe('Lobby state test', () => {
       id: 'something',
       username: 'whatup',
     });
+  });
+
+  it('Not more than 8 players can join', () => {
+    const mockClose = jest.fn();
+
+    const testClient: IClient = {
+      id: 'something',
+      sessionId: 'abcd',
+      close: mockClose,
+    };
+    const room = new RoomState();
+    room.setCurator('something');
+
+    const lobbyState = new LobbyState(room);
+    const option: IJoinOptions = { username: 'whatup' };
+
+    for (let i = 0; i < MAX_PLAYERS; i++) {
+      lobbyState.onJoin(
+        {
+          id: `something${i}`,
+          sessionId: 'abcd',
+          close: mockClose,
+        },
+        option
+      );
+    }
+
+    expect(mockClose).toBeCalledTimes(0);
+
+    lobbyState.onJoin(testClient, option);
+
+    expect(mockClose).toBeCalledTimes(1);
   });
 });
