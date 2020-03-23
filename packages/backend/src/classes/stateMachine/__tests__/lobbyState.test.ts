@@ -1,12 +1,10 @@
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
 import { IClient } from '../../../interfaces';
-import * as ClientHelpers from '../../../helpers/clientHelpers';
 
 const room = new RoomState();
 const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
 const spyAddPlayer = jest.spyOn(room, 'addPlayer');
-const spyCloseClient = jest.spyOn(ClientHelpers, 'closeClient');
 
 describe('Lobby state test', () => {
   it('Can add a curator', () => {
