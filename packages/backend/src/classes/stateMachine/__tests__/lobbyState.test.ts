@@ -1,6 +1,8 @@
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
 import { IClient } from '../../../interfaces';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { MAX_PLAYERS } from '../../../constants';
 
 const room = new RoomState();
 const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
@@ -33,7 +35,7 @@ describe('Lobby state test', () => {
     room.setCurator('something');
 
     const lobbyState = new LobbyState(room);
-    const option: any = { username: 'whatup' };
+    const option: IJoinOptions = { username: 'whatup' };
     lobbyState.onJoin(testClient, option);
 
     expect(spyAddPlayer).toBeCalledTimes(1);
@@ -57,7 +59,7 @@ describe('Lobby state test', () => {
     const lobbyState = new LobbyState(room);
     const option: any = { username: 'whatup' };
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < MAX_PLAYERS; i++) {
       lobbyState.onJoin(
         {
           id: `something${i}`,
