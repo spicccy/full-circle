@@ -10,7 +10,7 @@ import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 
 const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
-  const [value, setValue] = useState('GUESS1');
+  const [prompt, setPrompt] = useState('GUESS1');
 
   useRoomMessage(message => {
     switch (message.type) {
@@ -35,8 +35,8 @@ const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
           border="all"
           pad="medium"
         >
-          <Text id="prompt text">Your prompt is: </Text>
-          <Heading>{value}</Heading>
+          <Text>Your prompt is: </Text>
+          <Heading>{prompt}</Heading>
         </Box>
       </div>
       <Canvas
