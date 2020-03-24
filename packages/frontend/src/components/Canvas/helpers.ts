@@ -5,14 +5,18 @@ import {
 } from '@full-circle/shared/lib/canvas/interfaces';
 import { BrushType } from '@full-circle/shared/lib/canvas/constants';
 
+// https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 export const getPointerPosition = (
   e: PointerEvent,
   ctx: CanvasRenderingContext2D
 ): ICoord => {
-  const { left, top } = ctx.canvas.getBoundingClientRect();
+  const { left, top, width, height } = ctx.canvas.getBoundingClientRect();
+  const scaleX = ctx.canvas.width / width;
+  const scaleY = ctx.canvas.height / height;
+
   return {
-    x: e.clientX - left,
-    y: e.clientY - top,
+    x: (e.clientX - left) * scaleX,
+    y: (e.clientY - top) * scaleY,
   };
 };
 
