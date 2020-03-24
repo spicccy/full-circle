@@ -4,7 +4,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { Redirect } from 'react-router-dom';
 import { DrawPage } from './DrawPage';
 
-const GamePage: FunctionComponent = () => {
+const PlayerGamePage: FunctionComponent = () => {
   const { room } = useRoom();
 
   if (!room) {
@@ -20,4 +20,4 @@ const GamePage: FunctionComponent = () => {
   );
 };
 
-export { GamePage };
+export { PlayerGamePage };

@@ -4,7 +4,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Lobby } from './Lobby';
 import { IngameDraw } from './IngameDraw';
 
-const GamePage: FunctionComponent = () => {
+const CuratorGamePage: FunctionComponent = () => {
   const [phase, setPhase] = useState(PhaseType.LOBBY);
 
   const startGame = () => {
@@ -16,4 +16,4 @@ const GamePage: FunctionComponent = () => {
   return <div></div>;
 };
 
-export { GamePage };
+export { CuratorGamePage };

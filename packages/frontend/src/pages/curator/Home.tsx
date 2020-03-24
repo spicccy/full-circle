@@ -12,7 +12,7 @@ const HomePage: FunctionComponent = () => {
 
   const createLobby = async () => {
     await room.createAndJoinRoom();
-    history.push('/play');
+    history.push('/game');
   };
 
   return (
@@ -36,6 +36,15 @@ const HomePage: FunctionComponent = () => {
             label="Create"
             icon={<Add />}
             onClick={createLobby}
+          />
+          <Button
+            alignSelf="center"
+            label="Timer Test"
+            icon={<Add />}
+            onClick={async () => {
+              await room.createAndJoinRoom();
+              history.push('/timertest');
+            }}
           />
         </Box>
       </Box>
