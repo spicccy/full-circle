@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Box, Heading, Paragraph, Button } from 'grommet';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useRoom } from '../../../contexts/RoomContext';
@@ -8,6 +8,11 @@ const TimerTest: FunctionComponent = () => {
   const history = useHistory();
   const { room } = useRoom();
   const msTimer = usePhaseTimer();
+  const [users, setUsers] = useState<string[] | null>(null);
+
+  const createUserTiles = (usernames: string[]): JSX.Element[] => {
+    return usernames.map(name => <div>{name}</div>);
+  };
 
   const advanceClientToGame = useCallback(() => {
     // TODO: notify the backend that this player is 'ready'.
@@ -19,6 +24,8 @@ const TimerTest: FunctionComponent = () => {
     history.push('/play');
   }, [history]);
 
+  const createUserTilesCallback = React.useCallback(createUserTiles, [users]);
+
   if (!room) {
     return <Redirect to="/" />;
   }
@@ -26,6 +33,13 @@ const TimerTest: FunctionComponent = () => {
   if (msTimer && msTimer < 0) {
     advanceClientToGame();
   }
+
+  room.onStateChange(state => {
+    const usernames = Object.values(state.players).map(
+      (user: any) => user.username
+    );
+    setUsers(usernames);
+  });
 
   return (
     <Box background="light-2" fill>
@@ -41,6 +55,9 @@ const TimerTest: FunctionComponent = () => {
               redirected early.
             </Paragraph>
             <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
+            <h1>Joined Users:</h1>
+            {users ? createUserTilesCallback(users) : <></>}
+            <br />
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>
         </Box>
