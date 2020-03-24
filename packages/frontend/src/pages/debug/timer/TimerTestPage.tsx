@@ -29,6 +29,7 @@ const TimerTest: FunctionComponent = () => {
     if (users) {
       return users.map(name => <div>{name}</div>);
     }
+
     return null;
   }, [state]);
 
