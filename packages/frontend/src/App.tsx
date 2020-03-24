@@ -13,11 +13,13 @@ import {
 } from './pages';
 
 import 'styled-components/macro';
+import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 
 export const App: FunctionComponent = () => {
   try {
     return (
       <RoomProvider>
+        <DebugRoomState debug={true} />
         <Grommet theme={theme} full>
           <Switch>
             <Route exact path="/" component={LoginPage} />
