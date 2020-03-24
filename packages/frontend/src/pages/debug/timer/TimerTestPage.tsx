@@ -1,20 +1,18 @@
-import React, {
-  FunctionComponent,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
+import React, { FunctionComponent, useCallback } from 'react';
 import { Box, Heading, Paragraph, Button } from 'grommet';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useRoom } from '../../../contexts/RoomContext';
 import { usePhaseTimer } from '../../../hooks/usePhaseTimer';
+import { useRoomState } from 'src/hooks/useRoomState';
 
 const TimerTest: FunctionComponent = () => {
   const history = useHistory();
   const { room } = useRoom();
   const msTimer = usePhaseTimer();
-  const [users, setUsers] = useState<string[] | null>(null);
-  const [onStateChange, setOnStateChange] = useState<any>(null);
+  const state = useRoomState();
+  const users = state?.players
+    ? Object.values(state.players).map((user: any) => user.username)
+    : null;
 
   const createUserTiles = (usernames: string[]): JSX.Element[] => {
     return usernames.map(name => <div>{name}</div>);
@@ -31,23 +29,6 @@ const TimerTest: FunctionComponent = () => {
   }, [history]);
 
   const createUserTilesCallback = useCallback(createUserTiles, [users]);
-
-  useEffect(() => {
-    if (!onStateChange && room) {
-      const stateListeners = room.onStateChange(state => {
-        const usernames = Object.values(state.players).map(
-          (user: any) => user.username
-        );
-        setUsers(usernames);
-      });
-      setOnStateChange(stateListeners);
-    }
-    return () => {
-      if (onStateChange) {
-        onStateChange.remove();
-      }
-    };
-  }, [onStateChange, room]);
 
   if (!room) {
     return <Redirect to="/" />;
