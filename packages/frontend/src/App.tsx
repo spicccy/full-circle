@@ -5,11 +5,12 @@ import { theme } from './styles/theme';
 import { RoomProvider } from './contexts/RoomContext';
 import {
   LoginPage,
-  GamePage,
-  CreateRoomPage,
+  CuratorGamePage,
   Instructions,
   Team,
+  HomePage,
   TimerTest,
+  PlayerGamePage,
 } from './pages';
 
 import 'styled-components/macro';
@@ -23,13 +24,13 @@ export const App: FunctionComponent = () => {
         <Grommet theme={theme} full>
           <Switch>
             <Route exact path="/" component={LoginPage} />
-            <Route exact path="/lobby" component={TimerTest} />
             <Route exact path="/join" component={LoginPage} />
-            <Route exact path="/create" component={CreateRoomPage} />
-            <Route exact path="/play" component={GamePage} />
+            <Route exact path="/home" component={HomePage} />
+            <Route exact path="/play" component={PlayerGamePage} />
+            <Route exact path="/game" component={CuratorGamePage} />
             <Route exact path="/instructions" component={Instructions} />
             <Route exact path="/team" component={Team} />
-            <Route path="/" component={LoginPage} />
+            <Route exact path="/timertest" component={TimerTest} />
           </Switch>
         </Grommet>
       </RoomProvider>

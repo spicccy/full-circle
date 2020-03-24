@@ -17,7 +17,7 @@ const LoginPage: FunctionComponent = () => {
     const joinedRoom = await joinRoomById(roomId, options);
 
     if (joinedRoom) {
-      history.push('/lobby');
+      history.push('/play');
     } else {
       //TODO: implement precise error states
       alert('Failed to join room');
@@ -30,7 +30,7 @@ const LoginPage: FunctionComponent = () => {
         <LoginCard attemptToJoinRoom={attemptToJoinRoom} />
       </Box>
       <Text>
-        OR create a new game <LinkAnchor href="/create">here</LinkAnchor>
+        OR create a new game <LinkAnchor href="/home">here</LinkAnchor>
       </Text>
     </Box>
   );
