@@ -37,3 +37,6 @@ export enum BrushType {
   ERASE = 'erase',
 }
 export const brushTypes: BrushType[] = Object.values(BrushType);
+
+export const CANVAS_WIDTH = 600;
+export const CANVAS_HEIGHT = 400;
