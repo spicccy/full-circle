@@ -10,9 +10,6 @@ const TimerTest: FunctionComponent = () => {
   const { room } = useRoom();
   const msTimer = usePhaseTimer();
   const state = useRoomState();
-  const users = state?.players
-    ? Object.values(state.players).map((user: any) => user.username)
-    : null;
 
   const advanceClientToGame = useCallback(() => {
     // TODO: notify the backend that this player is 'ready'.
@@ -25,11 +22,15 @@ const TimerTest: FunctionComponent = () => {
   }, [history]);
 
   const createUserTilesCallback = useCallback((): JSX.Element[] | null => {
+    const users = state?.players
+      ? Object.values(state.players).map((user: any) => user.username)
+      : null;
+
     if (users) {
       return users.map(name => <div>{name}</div>);
     }
     return null;
-  }, [users]);
+  }, [state]);
 
   if (!room) {
     return <Redirect to="/" />;
