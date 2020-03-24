@@ -23,7 +23,7 @@ const TimerTest: FunctionComponent = () => {
     history.push('/play');
   }, [history]);
 
-  const UserTiles = useMemo((): JSX.Element[] | null => {
+  const userTiles = useMemo((): React.ReactNode | null => {
     const users = players
       ? objectValues(players).map((user: IPlayer) => user.username)
       : null;
@@ -58,7 +58,7 @@ const TimerTest: FunctionComponent = () => {
             </Paragraph>
             <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
             <h1>Joined Users:</h1>
-            {UserTiles}
+            {userTiles}
             <br />
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>
