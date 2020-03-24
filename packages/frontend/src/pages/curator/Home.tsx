@@ -12,7 +12,7 @@ const HomePage: FunctionComponent = () => {
 
   const createLobby = async () => {
     await room.createAndJoinRoom();
-    history.push('/lobby');
+    history.push('/play');
   };
 
   return (
