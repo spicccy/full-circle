@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, useCallback, Fragment } from 'react';
 import { Box, Heading, Paragraph, Button } from 'grommet';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useRoom } from '../../../contexts/RoomContext';
@@ -53,7 +53,7 @@ const TimerTest: FunctionComponent = () => {
             </Paragraph>
             <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
             <h1>Joined Users:</h1>
-            {users ? createUserTilesCallback(users) : <></>}
+            {users ? createUserTilesCallback(users) : Fragment}
             <br />
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>
