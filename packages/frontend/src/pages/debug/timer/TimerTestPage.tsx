@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useCallback, useMemo } from 'react';
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from 'react';
 import { Box, Heading, Paragraph, Button } from 'grommet';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useRoom } from '../../../contexts/RoomContext';
@@ -23,7 +28,7 @@ const TimerTest: FunctionComponent = () => {
     history.push('/play');
   }, [history]);
 
-  const userTiles = useMemo((): React.ReactNode | null => {
+  const userTiles = useMemo((): ReactNode => {
     const users = players
       ? objectValues(players).map((user: IPlayer) => user.username)
       : null;
