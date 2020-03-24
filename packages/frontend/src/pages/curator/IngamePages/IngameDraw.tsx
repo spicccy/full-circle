@@ -1,10 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { Box, Heading, Button, Paragraph } from 'grommet';
-import { useHistory } from 'react-router-dom';
+import { Box, Heading, Paragraph } from 'grommet';
+import { LinkButton } from 'src/components/Link/LinkButton';
 
 const IngameDraw: FunctionComponent = () => {
-  const history = useHistory();
-
   return (
     <Box background="light-2" fill>
       <Box flex align="center" justify="center">
@@ -14,13 +12,7 @@ const IngameDraw: FunctionComponent = () => {
             <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
             <Paragraph>Timer : </Paragraph>
           </Box>
-          <Button
-            alignSelf="center"
-            label="Go to Home"
-            onClick={async () => {
-              history.push('/home');
-            }}
-          />
+          <LinkButton alignSelf="center" label="Go to Home" href="/home" />
         </Box>
       </Box>
     </Box>
