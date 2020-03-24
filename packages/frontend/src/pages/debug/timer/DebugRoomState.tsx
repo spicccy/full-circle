@@ -7,8 +7,6 @@ import { useRoomMessage } from 'src/hooks/useRoomMessage';
 
 const Debug = styled.pre`
   position: fixed;
-  top: 0;
-  left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 24px 8px 8px 8px;
@@ -17,6 +15,7 @@ const Debug = styled.pre`
   user-select: none;
   max-height: 300px;
   overflow-y: auto;
+  font-size: 12px;
 `;
 
 export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
