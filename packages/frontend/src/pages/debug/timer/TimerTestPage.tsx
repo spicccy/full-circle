@@ -14,10 +14,6 @@ const TimerTest: FunctionComponent = () => {
     ? Object.values(state.players).map((user: any) => user.username)
     : null;
 
-  const createUserTiles = (usernames: string[]): JSX.Element[] => {
-    return usernames.map(name => <div>{name}</div>);
-  };
-
   const advanceClientToGame = useCallback(() => {
     // TODO: notify the backend that this player is 'ready'.
     // When all players are ready,
@@ -28,7 +24,12 @@ const TimerTest: FunctionComponent = () => {
     history.push('/play');
   }, [history]);
 
-  const createUserTilesCallback = useCallback(createUserTiles, [users]);
+  const createUserTilesCallback = useCallback((): JSX.Element[] | null => {
+    if (users) {
+      return users.map(name => <div>{name}</div>);
+    }
+    return null;
+  }, [users]);
 
   if (!room) {
     return <Redirect to="/" />;
@@ -53,7 +54,7 @@ const TimerTest: FunctionComponent = () => {
             </Paragraph>
             <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
             <h1>Joined Users:</h1>
-            {users ? createUserTilesCallback(users) : Fragment}
+            {users ? createUserTilesCallback() : Fragment}
             <br />
             <Button onClick={advanceClientToGame} label="Skip to the Game" />
           </Box>
