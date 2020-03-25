@@ -36,9 +36,9 @@ const PlayerGamePage: FunctionComponent = () => {
     case PhaseType.GUESS: {
       return (
         <GuessPage
+          room={room}
           receivedDrawing={receivedDrawing}
           receivedArtist="Skithy"
-          onSubmitGuess={() => setCurrentPhase(PhaseType.DRAW)}
         />
       );
     }
