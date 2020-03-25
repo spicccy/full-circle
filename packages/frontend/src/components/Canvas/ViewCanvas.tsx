@@ -9,7 +9,6 @@ import {
 
 const CanvasContainer = styled.div`
   touch-action: none;
-  border: 2px solid red;
 
   > canvas {
     height: 100%;
