@@ -3,7 +3,6 @@ import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { Box, Grommet, Heading } from 'grommet';
 import { notepadTheme } from 'src/styles/notepadTheme';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
-
 import styled from 'styled-components';
 
 const Card = styled(Box)`
