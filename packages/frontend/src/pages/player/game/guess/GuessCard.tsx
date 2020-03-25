@@ -31,7 +31,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
         elevation="large"
         round="small"
         height="xsmall"
-        pad="small"
+        justify="center"
         css={{ position: 'relative' }}
       >
         <TextInput
