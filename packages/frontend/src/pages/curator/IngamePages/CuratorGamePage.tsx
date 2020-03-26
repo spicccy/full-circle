@@ -3,6 +3,7 @@ import React, { FunctionComponent, useState } from 'react';
 
 import { IngameDraw } from './IngameDraw';
 import { Lobby } from './Lobby';
+import { IngameGuess } from './IngameGuess';
 
 const CuratorGamePage: FunctionComponent = () => {
   const [phase, setPhase] = useState(PhaseType.LOBBY);
@@ -13,6 +14,7 @@ const CuratorGamePage: FunctionComponent = () => {
 
   if (phase === PhaseType.LOBBY) return <Lobby startGame={startGame} />;
   if (phase === PhaseType.DRAW) return <IngameDraw />;
+  if (phase === PhaseType.GUESS) return <IngameGuess />;
   return <div></div>;
 };
 
