@@ -11,7 +11,12 @@
     "lint": "eslint --fix src/**/*.{ts,tsx}",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier --write src/**/*.{ts,tsx}",
-    "prettylint": "yarn typecheck && yarn lint && yarn prettier"
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier",
+    "precommit": "yarn typecheck && lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix",
+    "*.{ts,tsx,md,html}": "prettier --write"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.1.1",
