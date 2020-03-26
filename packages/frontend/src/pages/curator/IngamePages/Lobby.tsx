@@ -3,6 +3,9 @@ import { Add } from 'grommet-icons';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+import { PlayerBox, ICoord } from 'src/components/PlayerBox';
+import { useRoomState } from 'src/hooks/useRoomState';
+import { objectValues } from 'src/helpers';
 import logo from 'src/images/fullcircle.png';
 
 interface ILobbyProps {
@@ -11,6 +14,23 @@ interface ILobbyProps {
 
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { room } = useRoom();
+  const players = useRoomState()?.players;
+
+  const arrayOfPlayers = players ? objectValues(players) : [];
+  const arrayOfCoords: ICoord[] = [
+    { x: 100, y: 100 },
+    { x: 600, y: 50 },
+    { x: 350, y: 300 },
+    { x: 1200, y: 100 },
+    { x: 1000, y: 300 },
+    { x: 1100, y: 400 },
+    { x: 900, y: 600 },
+    { x: 200, y: 500 }
+  ];
+
+  const playerBoxes = arrayOfCoords.map((coord, index) => (
+    <PlayerBox coord={coord} player={arrayOfPlayers[index]} key={index} />
+  ));
 
   return (
     <Box background="light-2" fill>
@@ -22,6 +42,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
           <Box align="center">
             <Paragraph>Room ID : {room?.id} </Paragraph>
           </Box>
+          {playerBoxes}
           <Button
             alignSelf="center"
             label="Start Game"

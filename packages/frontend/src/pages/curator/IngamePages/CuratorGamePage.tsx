@@ -4,7 +4,12 @@ import React, { FunctionComponent, useState } from 'react';
 import { IngameDraw } from './IngameDraw';
 import { Lobby } from './Lobby';
 import { IngameGuess } from './IngameGuess';
-
+/* 
+TODO:
+The page constantly renders as the phasetimer
+ticks down - use useMemo to fix this 
+Lobby should only re-render when a new player has joined
+*/
 const CuratorGamePage: FunctionComponent = () => {
   const [phase, setPhase] = useState(PhaseType.LOBBY);
 
