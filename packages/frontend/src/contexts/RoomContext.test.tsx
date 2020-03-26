@@ -40,6 +40,10 @@ const TestConsumer: React.FunctionComponent = () => {
 };
 
 describe('RoomContext', () => {
+  it('should fail', () => {
+    expect(true).toBe(false);
+  });
+
   it('can create and joins a room', async () => {
     const mockRoom = partialMock<Room>({ id: '123', leave: jest.fn() });
     const mockColyseus = partialMock<Client>({
