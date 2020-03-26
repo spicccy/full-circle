@@ -17,6 +17,8 @@ import {
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { theme } from './styles/theme';
 
+const test = 'test';
+
 export const App: FunctionComponent = () => {
   try {
     return (
