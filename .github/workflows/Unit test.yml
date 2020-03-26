@@ -24,5 +24,6 @@ jobs:
       with:
         node-version: '10.x'
     - run: yarn install
+    - run: yarn build:shared
     - run: yarn prettylint
     - run: yarn test
