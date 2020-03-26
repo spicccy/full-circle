@@ -1,7 +1,8 @@
-import RoomState, { IState } from '../roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+
 import { IClient } from '../../interfaces';
+import RoomState, { IState } from '../roomState';
 
 class GuessState implements IState {
   room: RoomState;

@@ -1,5 +1,5 @@
+import { Box, Button, Grommet, TextInput } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
-import { Grommet, Box, Button, TextInput } from 'grommet';
 import { notepadTheme } from 'src/styles/notepadTheme';
 import styled from 'styled-components/macro';
 

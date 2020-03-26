@@ -1,4 +1,4 @@
-import { RefObject, useRef, useEffect } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
 type RefOrElement<TElement> = RefObject<TElement> | TElement;
 

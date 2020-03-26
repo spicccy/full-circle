@@ -1,9 +1,10 @@
-import RoomState, { IState } from '../roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import Player from './../subSchema/player';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IClient } from '../../interfaces';
+
 import { MAX_PLAYERS } from '../../constants';
+import { IClient } from '../../interfaces';
+import RoomState, { IState } from '../roomState';
+import Player from './../subSchema/player';
 
 class LobbyState implements IState {
   room: RoomState;

@@ -1,32 +1,33 @@
+import {
+  BrushType,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  Colour,
+  PenThickness,
+} from '@full-circle/shared/lib/canvas/constants';
+import {
+  CanvasAction,
+  ICoord,
+  IPen,
+} from '@full-circle/shared/lib/canvas/interfaces';
 import React, {
   FunctionComponent,
-  useState,
-  useRef,
   useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
+
+import { BrushTypePicker } from './BrushTypePicker';
+import { ColourPicker } from './ColourPicker';
 import {
-  ICoord,
-  CanvasAction,
-  IPen,
-} from '@full-circle/shared/lib/canvas/interfaces';
-import {
-  BrushType,
-  Colour,
-  PenThickness,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-} from '@full-circle/shared/lib/canvas/constants';
-import {
+  clearCanvas,
+  drawStroke,
   getPointerPosition,
   redrawCanvas,
   setupPen,
-  clearCanvas,
-  drawStroke,
 } from './helpers';
-import { BrushTypePicker } from './BrushTypePicker';
-import { ColourPicker } from './ColourPicker';
 import { ThicknessPicker } from './ThicknessPicker';
 
 const CanvasContainer = styled.div`

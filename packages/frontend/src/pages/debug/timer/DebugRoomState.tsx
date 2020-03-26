@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
-import { useRoomState } from 'src/hooks/useRoomState';
-import styled from 'styled-components';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomMessage } from 'src/hooks/useRoomMessage';
+import { useRoomState } from 'src/hooks/useRoomState';
+import styled from 'styled-components';
 
 const Debug = styled.pre`
   position: fixed;

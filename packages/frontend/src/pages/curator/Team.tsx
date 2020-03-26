@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react';
 import { Box, Heading, Paragraph } from 'grommet';
+import React, { FunctionComponent } from 'react';
 import { Navbar } from 'src/components/Navbar';
 
 const Team: FunctionComponent = () => {

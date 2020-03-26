@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useRoom, RoomProvider } from './RoomContext';
-import { render, waitForDomChange, wait } from '@testing-library/react';
-import { useColyseus } from './ColyseusContext';
-import { mocked, partialMock } from 'src/testHelpers';
-import { Room, Client } from 'colyseus.js';
+import { render, wait, waitForDomChange } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Client, Room } from 'colyseus.js';
+import React, { useState } from 'react';
+import { mocked, partialMock } from 'src/testHelpers';
+
+import { useColyseus } from './ColyseusContext';
+import { RoomProvider, useRoom } from './RoomContext';
 
 jest.mock('./ColyseusContext');
 
@@ -32,7 +33,7 @@ const TestConsumer: React.FunctionComponent = () => {
       />
       <button
         data-testid="joinRoomById"
-        onClick={() => joinRoomById(joinRoomId)}
+        onClick={() => joinRoomById(joinRoomId, { username: 'test' })}
       />
       <button data-testid="leaveRoom" onClick={leaveRoom} />
     </div>

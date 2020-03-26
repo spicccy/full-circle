@@ -1,5 +1,5 @@
+import { Colour, colours } from '@full-circle/shared/lib/canvas/constants';
 import React, { FunctionComponent } from 'react';
-import { colours, Colour } from '@full-circle/shared/lib/canvas/constants';
 
 interface IColourPickerProps {
   currentColour: Colour;

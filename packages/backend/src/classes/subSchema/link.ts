@@ -1,7 +1,8 @@
 import { Schema, type } from '@colyseus/schema';
+import { ILink } from '@full-circle/shared/lib/roomState/interfaces';
+
 import Image from './image';
 import Prompt from './prompt';
-import { ILink } from '@full-circle/shared/lib/roomState/interfaces';
 
 class Link extends Schema implements ILink {
   @type('string')

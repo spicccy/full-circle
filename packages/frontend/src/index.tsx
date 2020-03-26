@@ -1,14 +1,15 @@
+import './index.css';
+import 'normalize.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import { App } from './App';
-import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom';
-
 // Typescript types for css prop
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as _types from 'styled-components/cssprop';
-import 'normalize.css';
+
+import { App } from './App';
+import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <Router>

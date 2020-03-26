@@ -1,8 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import React, { FunctionComponent, useState } from 'react';
 
-import { Lobby } from './Lobby';
 import { IngameDraw } from './IngameDraw';
+import { Lobby } from './Lobby';
 
 const CuratorGamePage: FunctionComponent = () => {
   const [phase, setPhase] = useState(PhaseType.LOBBY);

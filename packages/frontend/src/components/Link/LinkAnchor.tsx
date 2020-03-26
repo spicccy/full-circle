@@ -1,5 +1,5 @@
-import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { Anchor, AnchorProps } from 'grommet';
+import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { useHistory } from 'react-router-dom';
 
 interface ILinkAnchorProps extends AnchorProps {

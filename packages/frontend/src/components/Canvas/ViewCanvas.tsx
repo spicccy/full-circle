@@ -1,11 +1,12 @@
-import React, { FunctionComponent, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { redrawCanvas } from './helpers';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
 } from '@full-circle/shared/lib/canvas/constants';
+import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import React, { FunctionComponent, useEffect, useRef } from 'react';
+import styled from 'styled-components';
+
+import { redrawCanvas } from './helpers';
 
 const CanvasContainer = styled.div`
   touch-action: none;

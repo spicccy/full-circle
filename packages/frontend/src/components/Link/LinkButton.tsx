@@ -1,5 +1,5 @@
-import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { Button, ButtonProps } from 'grommet';
+import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { useHistory } from 'react-router-dom';
 
 interface ILinkButtonProps extends ButtonProps {

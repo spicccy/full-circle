@@ -1,8 +1,9 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { App } from './App';
+import React from 'react';
 import { Router } from 'react-router-dom';
+
+import { App } from './App';
 
 describe('The App renders routes correctly', () => {
   it('should render the login page by default', () => {

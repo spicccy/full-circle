@@ -1,10 +1,9 @@
-import React, { FunctionComponent } from 'react';
-import { Box, Heading, Button, Paragraph } from 'grommet';
+import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
-import logo from 'src/images/fullcircle.png';
+import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
-
 import { useRoom } from 'src/contexts/RoomContext';
+import logo from 'src/images/fullcircle.png';
 
 interface ILobbyProps {
   startGame(): void;
