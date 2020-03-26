@@ -1,9 +1,9 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import React, { FunctionComponent, useState } from 'react';
-
-import { IngameDraw } from './IngameDraw';
 import { Lobby } from './Lobby';
+import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
+import { useState, FunctionComponent } from 'react';
+import React from 'react';
 /* 
 TODO:
 The page constantly renders as the phasetimer
