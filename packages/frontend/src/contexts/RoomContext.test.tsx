@@ -29,7 +29,7 @@ const TestConsumer: React.FunctionComponent = () => {
       <input
         data-testid="joinRoomId"
         value={joinRoomId}
-        onChange={e => setJoinRoomId(e.target.value)}
+        onChange={(e) => setJoinRoomId(e.target.value)}
       />
       <button
         data-testid="joinRoomById"
@@ -74,7 +74,7 @@ describe('RoomContext', () => {
 
   it('can join a room by id', async () => {
     const mockColyseus = partialMock<Client>({
-      joinById: roomCode =>
+      joinById: (roomCode) =>
         Promise.resolve(partialMock({ id: roomCode, leave: jest.fn() })),
     });
 

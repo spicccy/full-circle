@@ -12,7 +12,7 @@ export const ColourPicker: FunctionComponent<IColourPickerProps> = ({
 }) => (
   <div style={{ display: 'flex' }}>
     <label>Colour picker</label>
-    {colours.map(colour => (
+    {colours.map((colour) => (
       <div
         key={colour}
         onClick={() => setColour(colour)}

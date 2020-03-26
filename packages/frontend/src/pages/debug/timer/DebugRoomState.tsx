@@ -30,7 +30,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
     setMessages([]);
   }, [room]);
 
-  useRoomMessage(message => {
+  useRoomMessage((message) => {
     setMessages([...messages, message.type]);
   });
 

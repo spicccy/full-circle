@@ -75,7 +75,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     penThickness,
   };
 
-  useEventListener(canvasContainerRef, 'pointerdown', e => {
+  useEventListener(canvasContainerRef, 'pointerdown', (e) => {
     const drawingCtx = drawingCanvasRef.current?.getContext('2d');
     if (!drawingCtx) return;
 
@@ -90,7 +90,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     setIsDrawing(true);
   });
 
-  useEventListener(document, 'pointermove', e => {
+  useEventListener(document, 'pointermove', (e) => {
     if (isDrawing) {
       const drawingCtx = drawingCanvasRef.current?.getContext('2d');
       if (!drawingCtx) return;
@@ -116,7 +116,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   // cursor
-  useEventListener(canvasContainerRef, 'pointermove', e => {
+  useEventListener(canvasContainerRef, 'pointermove', (e) => {
     const hoverCtx = hoverCanvasRef.current?.getContext('2d');
     if (!hoverCtx) return;
 
@@ -157,7 +157,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   // ctrl z
-  useEventListener(document, 'keydown', e => {
+  useEventListener(document, 'keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
       undo();
     }

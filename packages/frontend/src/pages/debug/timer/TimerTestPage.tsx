@@ -35,7 +35,7 @@ const TimerTest: FunctionComponent = () => {
       : null;
 
     if (users) {
-      return users.map(name => <div>{name}</div>);
+      return users.map((name) => <div>{name}</div>);
     }
 
     return null;

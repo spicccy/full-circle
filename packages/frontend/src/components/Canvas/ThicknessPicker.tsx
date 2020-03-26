@@ -21,7 +21,7 @@ export const ThicknessPicker: FunctionComponent<IThicknessPickerProps> = ({
 }) => (
   <div style={{ display: 'flex' }}>
     <label>Pen thickness</label>
-    {penThicknesses.map(thickness => (
+    {penThicknesses.map((thickness) => (
       <div
         key={thickness}
         onClick={() => setThickness(thickness)}

@@ -12,7 +12,7 @@ export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
 
   useEffect(() => {
     if (room) {
-      const listener = room.onMessage(message => handlerRef.current(message));
+      const listener = room.onMessage((message) => handlerRef.current(message));
       return () => listener.clear();
     }
   }, [room]);

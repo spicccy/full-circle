@@ -15,7 +15,7 @@ export const BrushTypePicker: FunctionComponent<IBrushTypePickerProps> = ({
 }) => (
   <div>
     <label>Brush Type</label>
-    {brushTypes.map(brushType => (
+    {brushTypes.map((brushType) => (
       <button
         key={brushType}
         onClick={() => setBrushType(brushType)}

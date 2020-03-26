@@ -1,5 +1,5 @@
 const numberValues = (items: object): number[] =>
-  Object.values(items).filter(value => typeof value === 'number');
+  Object.values(items).filter((value) => typeof value === 'number');
 
 export enum Colour {
   NAVY = '#001F3F',

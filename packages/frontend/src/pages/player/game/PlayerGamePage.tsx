@@ -16,7 +16,7 @@ const PlayerGamePage: FunctionComponent = () => {
 
   const { room } = useRoom();
 
-  useRoomMessage(message => {
+  useRoomMessage((message) => {
     switch (message.type) {
       case getType(displayDrawing): {
         setCurrentPhase(PhaseType.GUESS);

@@ -40,7 +40,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
           placeholder="Enter your guess"
           size="large"
           value={guess}
-          onChange={e => setGuess(e.target.value)}
+          onChange={(e) => setGuess(e.target.value)}
           css={{ textAlign: 'center' }}
         />
         <SubmitButton
