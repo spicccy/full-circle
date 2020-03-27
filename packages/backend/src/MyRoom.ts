@@ -8,7 +8,7 @@ import {
   displayPrompt,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { Client, Room } from 'colyseus';
+import { Room } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
 import RoomState from './classes/roomState';
