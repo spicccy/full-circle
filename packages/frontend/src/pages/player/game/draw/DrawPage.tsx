@@ -5,9 +5,11 @@ import { Box, Button, Heading, Text } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { Canvas } from 'src/components/Canvas/Canvas';
 
-const DrawPage: FunctionComponent<{ room: Room }> = ({ room }) => {
+const DrawPage: FunctionComponent<{ room: Room; prompt: string }> = ({
+  room,
+  prompt,
+}) => {
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
-  const [prompt, setPrompt] = useState('GUESS1');
 
   const handleSubmit = () => {
     room.send(submitDrawing(canvasActions));

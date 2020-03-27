@@ -1,6 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { displayDrawing } from '@full-circle/shared/lib/actions/server';
+import {
+  submitDrawing,
+  submitGuess,
+} from '@full-circle/shared/lib/actions/client';
+import {
+  displayDrawing,
+  displayPrompt,
+} from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { Client, Room } from 'colyseus';
 import { getType } from 'typesafe-actions';
@@ -27,6 +33,12 @@ export class MyRoom extends Room {
         console.log(`[${client.sessionId}] submitted a drawing.`);
         const canvasAction = message.payload;
         this.broadcast(displayDrawing(canvasAction));
+        return;
+      }
+      case getType(submitGuess): {
+        console.log(`[${client.sessionId}] submitted a guess.`);
+        const guess = message.payload;
+        this.broadcast(displayPrompt(guess));
         return;
       }
 
