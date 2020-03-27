@@ -11,7 +11,16 @@ import logo from 'src/images/fullcircle.png';
 interface ILobbyProps {
   startGame(): void;
 }
-
+const arrayOfCoords: ICoord[] = [
+  { x: 100, y: 100 },
+  { x: 600, y: 50 },
+  { x: 350, y: 300 },
+  { x: 1200, y: 100 },
+  { x: 1000, y: 300 },
+  { x: 1100, y: 400 },
+  { x: 900, y: 600 },
+  { x: 200, y: 500 }
+];
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { room } = useRoom();
   const players = useRoomState()?.players;

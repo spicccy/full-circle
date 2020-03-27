@@ -13,7 +13,6 @@ const PlayerLocation = styled.div<ICoord>`
   position: absolute;
   left: ${props => props.x}px;
   top: ${props => props.y}px;
-  padding: 12px;
 `;
 
 interface IPlayerBoxProps {
@@ -27,7 +26,7 @@ export const PlayerBox: FunctionComponent<IPlayerBoxProps> = ({
 }) => {
   return (
     <PlayerLocation x={coord.x} y={coord.y}>
-      <Box background="dark-3" pad="xsmall" justify="center" align="center">
+      <Box background="dark-3" pad="xsmall">
         {player ? `Player ${player.username} has joined` : 'No user has joined'}
       </Box>
     </PlayerLocation>
