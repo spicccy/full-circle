@@ -1,9 +1,8 @@
-import React, { FunctionComponent } from 'react';
-import { Box, Heading, Button, Paragraph } from 'grommet';
+import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
+import React, { FunctionComponent } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Navbar } from 'src/components/Navbar';
-
 import { useRoom } from 'src/contexts/RoomContext';
 
 const HomePage: FunctionComponent = () => {

@@ -1,9 +1,10 @@
-import React, { FunctionComponent } from 'react';
 import { Box, Text } from 'grommet';
+import React, { FunctionComponent } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useRoom } from 'src/contexts/RoomContext';
-import { LoginCard } from './LoginCard';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
+import { useRoom } from 'src/contexts/RoomContext';
+
+import { LoginCard } from './LoginCard';
 
 const LoginPage: FunctionComponent = () => {
   const { joinRoomById } = useRoom();

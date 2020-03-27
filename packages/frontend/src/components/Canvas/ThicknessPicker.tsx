@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from 'react';
 import {
+  BrushType,
+  Colour,
   PenThickness,
   penThicknesses,
-  Colour,
-  BrushType,
 } from '@full-circle/shared/lib/canvas/constants';
+import React, { FunctionComponent } from 'react';
 
 interface IThicknessPickerProps {
   currentBrushType: BrushType;
@@ -21,7 +21,7 @@ export const ThicknessPicker: FunctionComponent<IThicknessPickerProps> = ({
 }) => (
   <div style={{ display: 'flex' }}>
     <label>Pen thickness</label>
-    {penThicknesses.map(thickness => (
+    {penThicknesses.map((thickness) => (
       <div
         key={thickness}
         onClick={() => setThickness(thickness)}

@@ -1,14 +1,15 @@
-import React, {
-  useContext,
-  useState,
-  createContext,
-  FunctionComponent,
-  useEffect,
-  useCallback,
-} from 'react';
-import { Room } from 'colyseus.js';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { Room } from 'colyseus.js';
+import React, {
+  createContext,
+  FunctionComponent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
 import { useColyseus } from './ColyseusContext';
 
 interface IRoomLoadingState {

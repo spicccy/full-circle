@@ -1,5 +1,6 @@
 import { ThemeType } from 'grommet';
 import { deepMerge } from 'grommet/utils';
+
 import { theme } from './theme';
 
 export const notepadTheme: ThemeType = deepMerge(theme, {

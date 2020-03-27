@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { Box, Grommet, Heading } from 'grommet';
-import { notepadTheme } from 'src/styles/notepadTheme';
+import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
+import { notepadTheme } from 'src/styles/notepadTheme';
 import styled from 'styled-components';
 
 const Card = styled(Box)`

@@ -1,8 +1,9 @@
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+
+import { MAX_PLAYERS } from '../../../constants';
+import { IClient } from '../../../interfaces';
 import RoomState from '../../roomState';
 import LobbyState from '../lobbyState';
-import { IClient } from '../../../interfaces';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { MAX_PLAYERS } from '../../../constants';
 
 const room = new RoomState();
 const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener

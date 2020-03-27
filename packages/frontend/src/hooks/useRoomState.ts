@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useRoom } from 'src/contexts/RoomContext';
 import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
+import { useEffect, useState } from 'react';
+import { useRoom } from 'src/contexts/RoomContext';
 
 export const useRoomState = (): IRoomState | undefined => {
   const { room } = useRoom();
@@ -8,7 +8,7 @@ export const useRoomState = (): IRoomState | undefined => {
 
   useEffect(() => {
     if (room) {
-      const listener = room.onStateChange(newState =>
+      const listener = room.onStateChange((newState) =>
         setValue({ ...newState })
       );
 

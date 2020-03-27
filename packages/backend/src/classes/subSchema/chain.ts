@@ -1,6 +1,7 @@
-import { Schema, ArraySchema, type } from '@colyseus/schema';
-import Link from './link';
+import { ArraySchema, Schema, type } from '@colyseus/schema';
 import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
+
+import Link from './link';
 
 class Chain extends Schema implements IChain {
   @type('string')

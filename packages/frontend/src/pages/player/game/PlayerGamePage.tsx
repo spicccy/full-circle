@@ -1,13 +1,14 @@
-import React, { FunctionComponent, useState } from 'react';
-import { useRoom } from 'src/contexts/RoomContext';
-import { Redirect } from 'react-router-dom';
-import { DrawPage } from './draw/DrawPage';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { GuessPage } from './guess/GuessPage';
-import { useRoomMessage } from 'src/hooks/useRoomMessage';
-import { getType } from 'typesafe-actions';
 import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import React, { FunctionComponent, useState } from 'react';
+import { Redirect } from 'react-router-dom';
+import { useRoom } from 'src/contexts/RoomContext';
+import { useRoomMessage } from 'src/hooks/useRoomMessage';
+import { getType } from 'typesafe-actions';
+
+import { DrawPage } from './draw/DrawPage';
+import { GuessPage } from './guess/GuessPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const [currentPhase, setCurrentPhase] = useState<PhaseType>(PhaseType.DRAW);
@@ -15,7 +16,7 @@ const PlayerGamePage: FunctionComponent = () => {
 
   const { room } = useRoom();
 
-  useRoomMessage(message => {
+  useRoomMessage((message) => {
     switch (message.type) {
       case getType(displayDrawing): {
         setCurrentPhase(PhaseType.GUESS);

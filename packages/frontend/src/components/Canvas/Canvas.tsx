@@ -1,32 +1,33 @@
+import {
+  BrushType,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  Colour,
+  PenThickness,
+} from '@full-circle/shared/lib/canvas/constants';
+import {
+  CanvasAction,
+  ICoord,
+  IPen,
+} from '@full-circle/shared/lib/canvas/interfaces';
 import React, {
   FunctionComponent,
-  useState,
-  useRef,
   useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
+
+import { BrushTypePicker } from './BrushTypePicker';
+import { ColourPicker } from './ColourPicker';
 import {
-  ICoord,
-  CanvasAction,
-  IPen,
-} from '@full-circle/shared/lib/canvas/interfaces';
-import {
-  BrushType,
-  Colour,
-  PenThickness,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-} from '@full-circle/shared/lib/canvas/constants';
-import {
+  clearCanvas,
+  drawStroke,
   getPointerPosition,
   redrawCanvas,
   setupPen,
-  clearCanvas,
-  drawStroke,
 } from './helpers';
-import { BrushTypePicker } from './BrushTypePicker';
-import { ColourPicker } from './ColourPicker';
 import { ThicknessPicker } from './ThicknessPicker';
 
 const CanvasContainer = styled.div`
@@ -74,7 +75,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     penThickness,
   };
 
-  useEventListener(canvasContainerRef, 'pointerdown', e => {
+  useEventListener(canvasContainerRef, 'pointerdown', (e) => {
     const drawingCtx = drawingCanvasRef.current?.getContext('2d');
     if (!drawingCtx) return;
 
@@ -89,7 +90,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     setIsDrawing(true);
   });
 
-  useEventListener(document, 'pointermove', e => {
+  useEventListener(document, 'pointermove', (e) => {
     if (isDrawing) {
       const drawingCtx = drawingCanvasRef.current?.getContext('2d');
       if (!drawingCtx) return;
@@ -115,7 +116,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   // cursor
-  useEventListener(canvasContainerRef, 'pointermove', e => {
+  useEventListener(canvasContainerRef, 'pointermove', (e) => {
     const hoverCtx = hoverCanvasRef.current?.getContext('2d');
     if (!hoverCtx) return;
 
@@ -156,7 +157,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   // ctrl z
-  useEventListener(document, 'keydown', e => {
+  useEventListener(document, 'keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
       undo();
     }

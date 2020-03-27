@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
 import {
   BrushType,
   brushTypes,
 } from '@full-circle/shared/lib/canvas/constants';
+import React, { FunctionComponent } from 'react';
 
 interface IBrushTypePickerProps {
   currentBrushType: BrushType;
@@ -15,7 +15,7 @@ export const BrushTypePicker: FunctionComponent<IBrushTypePickerProps> = ({
 }) => (
   <div>
     <label>Brush Type</label>
-    {brushTypes.map(brushType => (
+    {brushTypes.map((brushType) => (
       <button
         key={brushType}
         onClick={() => setBrushType(brushType)}

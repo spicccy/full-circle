@@ -1,10 +1,11 @@
-import { Room, Client } from 'colyseus';
-import RoomState from './classes/roomState';
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { displayDrawing } from '@full-circle/shared/lib/actions/server';
-import { getType } from 'typesafe-actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { displayDrawing } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { Client, Room } from 'colyseus';
+import { getType } from 'typesafe-actions';
+
+import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
 export class MyRoom extends Room {

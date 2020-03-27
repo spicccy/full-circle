@@ -1,5 +1,5 @@
+import { Box, Button, Grommet, TextInput } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
-import { Grommet, Box, Button, TextInput } from 'grommet';
 import { notepadTheme } from 'src/styles/notepadTheme';
 import styled from 'styled-components/macro';
 
@@ -40,7 +40,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
           placeholder="Enter your guess"
           size="large"
           value={guess}
-          onChange={e => setGuess(e.target.value)}
+          onChange={(e) => setGuess(e.target.value)}
           css={{ textAlign: 'center' }}
         />
         <SubmitButton

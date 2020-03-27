@@ -1,18 +1,17 @@
-import React, { FunctionComponent, useState } from 'react';
-
-import { Multiple } from 'grommet-icons';
 import {
-  Button,
   Box,
-  Nav,
+  Button,
   Header,
   Heading,
-  ResponsiveContext,
   Layer,
+  Nav,
   Paragraph,
+  ResponsiveContext,
 } from 'grommet';
-import logo from 'src/images/fullcircle.png';
+import { Multiple } from 'grommet-icons';
+import React, { FunctionComponent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import logo from 'src/images/fullcircle.png';
 
 export const Navbar: FunctionComponent = () => {
   const size = React.useContext(ResponsiveContext);

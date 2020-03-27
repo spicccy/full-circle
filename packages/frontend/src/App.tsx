@@ -1,20 +1,21 @@
-import React, { FunctionComponent } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import 'styled-components/macro';
+
 import { Grommet } from 'grommet';
-import { theme } from './styles/theme';
+import React, { FunctionComponent } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
+
 import { RoomProvider } from './contexts/RoomContext';
 import {
-  LoginPage,
   CuratorGamePage,
-  Instructions,
-  Team,
   HomePage,
-  TimerTest,
+  Instructions,
+  LoginPage,
   PlayerGamePage,
+  Team,
+  TimerTest,
 } from './pages';
-
-import 'styled-components/macro';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
+import { theme } from './styles/theme';
 
 export const App: FunctionComponent = () => {
   try {

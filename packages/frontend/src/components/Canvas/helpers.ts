@@ -1,9 +1,9 @@
+import { BrushType } from '@full-circle/shared/lib/canvas/constants';
 import {
+  CanvasAction,
   ICoord,
   IPen,
-  CanvasAction,
 } from '@full-circle/shared/lib/canvas/interfaces';
-import { BrushType } from '@full-circle/shared/lib/canvas/constants';
 
 // https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 export const getPointerPosition = (

@@ -1,6 +1,6 @@
 import { Schema, type } from '@colyseus/schema';
-import { IPhase } from '@full-circle/shared/lib/roomState/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { IPhase } from '@full-circle/shared/lib/roomState/interfaces';
 
 class Phase extends Schema implements IPhase {
   @type('number')

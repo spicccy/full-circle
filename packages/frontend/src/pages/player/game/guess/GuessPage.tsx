@@ -1,11 +1,12 @@
-import React, { FunctionComponent } from 'react';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import { Room } from 'colyseus.js';
 import { Box } from 'grommet';
+import React, { FunctionComponent } from 'react';
+import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
+
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
-import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
-import { Room } from 'colyseus.js';
 
 interface IGuessPageProps {
   room: Room;

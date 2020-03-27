@@ -1,5 +1,5 @@
+import { Colour, colours } from '@full-circle/shared/lib/canvas/constants';
 import React, { FunctionComponent } from 'react';
-import { colours, Colour } from '@full-circle/shared/lib/canvas/constants';
 
 interface IColourPickerProps {
   currentColour: Colour;
@@ -12,7 +12,7 @@ export const ColourPicker: FunctionComponent<IColourPickerProps> = ({
 }) => (
   <div style={{ display: 'flex' }}>
     <label>Colour picker</label>
-    {colours.map(colour => (
+    {colours.map((colour) => (
       <div
         key={colour}
         onClick={() => setColour(colour)}

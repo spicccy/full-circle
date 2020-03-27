@@ -1,16 +1,17 @@
+import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { Box, Button, Heading, Paragraph } from 'grommet';
 import React, {
   FunctionComponent,
+  ReactNode,
   useCallback,
   useMemo,
-  ReactNode,
 } from 'react';
-import { Box, Heading, Paragraph, Button } from 'grommet';
-import { useHistory, Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
+import { objectValues } from 'src/helpers';
+import { useRoomState } from 'src/hooks/useRoomState';
+
 import { useRoom } from '../../../contexts/RoomContext';
 import { usePhaseTimer } from '../../../hooks/usePhaseTimer';
-import { useRoomState } from 'src/hooks/useRoomState';
-import { objectValues } from 'src/helpers';
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 
 const TimerTest: FunctionComponent = () => {
   const history = useHistory();
@@ -34,7 +35,7 @@ const TimerTest: FunctionComponent = () => {
       : null;
 
     if (users) {
-      return users.map(name => <div>{name}</div>);
+      return users.map((name) => <div>{name}</div>);
     }
 
     return null;

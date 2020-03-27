@@ -1,19 +1,20 @@
-import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema';
-import Chain from './subSchema/chain';
-import Player from './subSchema/player';
-import Phase from './subSchema/phase';
+import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
+import { ClientAction } from '@full-circle/shared/lib/actions';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import {
+  IPlayer,
+  IRoomState,
+} from '@full-circle/shared/lib/roomState/interfaces';
+
+import { IClient } from '../interfaces';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
-import RevealState from './stateMachine/revealState';
 import LobbyState from './stateMachine/lobbyState';
-import { ClientAction } from '@full-circle/shared/lib/actions';
-import {
-  IRoomState,
-  IPlayer,
-} from '@full-circle/shared/lib/roomState/interfaces';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IClient } from '../interfaces';
+import RevealState from './stateMachine/revealState';
+import Chain from './subSchema/chain';
+import Phase from './subSchema/phase';
+import Player from './subSchema/player';
 
 export interface IState {
   onReceive: (message: ClientAction) => void;

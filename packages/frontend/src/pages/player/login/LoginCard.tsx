@@ -1,17 +1,18 @@
-import React, { FunctionComponent, FormEvent } from 'react';
+import 'styled-components/macro';
+
 import {
   Box,
+  Button,
+  Form,
+  Grommet,
   Heading,
+  Image,
   Text,
   TextInput,
-  Grommet,
-  Image,
-  Form,
-  Button,
 } from 'grommet';
+import React, { FormEvent, FunctionComponent } from 'react';
 import logo from 'src/images/fullcircle.png';
 import { notepadTheme } from 'src/styles/notepadTheme';
-import 'styled-components/macro';
 
 const Header: FunctionComponent = () => (
   <Box direction="row" align="center" justify="center">
