@@ -2,10 +2,10 @@ import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
+import { ICoord, PlayerBox } from 'src/components/PlayerBox';
 import { useRoom } from 'src/contexts/RoomContext';
-import { PlayerBox, ICoord } from 'src/components/PlayerBox';
-import { useRoomState } from 'src/hooks/useRoomState';
 import { objectValues } from 'src/helpers';
+import { useRoomState } from 'src/hooks/useRoomState';
 import logo from 'src/images/fullcircle.png';
 
 interface ILobbyProps {
@@ -19,7 +19,7 @@ const arrayOfCoords: ICoord[] = [
   { x: 1000, y: 300 },
   { x: 1100, y: 400 },
   { x: 900, y: 600 },
-  { x: 200, y: 500 }
+  { x: 200, y: 500 },
 ];
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { room } = useRoom();

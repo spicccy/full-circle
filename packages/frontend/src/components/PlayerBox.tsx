@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
 import React from 'react';
-import { Box } from 'grommet';
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import styled from 'styled-components';
 
 export interface ICoord {
   x: number;
@@ -11,8 +11,8 @@ export interface ICoord {
 
 const PlayerLocation = styled.div<ICoord>`
   position: absolute;
-  left: ${props => props.x}px;
-  top: ${props => props.y}px;
+  left: ${(props) => props.x}px;
+  top: ${(props) => props.y}px;
 `;
 
 interface IPlayerBoxProps {
