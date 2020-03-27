@@ -26,16 +26,6 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const players = useRoomState()?.players;
 
   const arrayOfPlayers = players ? objectValues(players) : [];
-  const arrayOfCoords: ICoord[] = [
-    { x: 100, y: 100 },
-    { x: 600, y: 50 },
-    { x: 350, y: 300 },
-    { x: 1200, y: 100 },
-    { x: 1000, y: 300 },
-    { x: 1100, y: 400 },
-    { x: 900, y: 600 },
-    { x: 200, y: 500 }
-  ];
 
   const playerBoxes = arrayOfCoords.map((coord, index) => (
     <PlayerBox coord={coord} player={arrayOfPlayers[index]} key={index} />
