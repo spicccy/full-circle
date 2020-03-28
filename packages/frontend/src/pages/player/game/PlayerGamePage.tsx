@@ -15,7 +15,7 @@ import { GuessPage } from './guess/GuessPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const [currentPhase, setCurrentPhase] = useState<PhaseType>(PhaseType.DRAW);
-  const [receivedDrawing, setReceivedDrawing] = useState<CanvasAction[]>();
+  const [receivedDrawing, setReceivedDrawing] = useState<CanvasAction[]>([]);
   const [prompt, setPrompt] = useState<string>('Guess1');
 
   const { room } = useRoom();
@@ -41,16 +41,12 @@ const PlayerGamePage: FunctionComponent = () => {
 
   switch (currentPhase) {
     case PhaseType.DRAW: {
-      return <DrawPage room={room} prompt={prompt} />;
+      return <DrawPage room={room} prompt={prompt} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
       return (
-        <GuessPage
-          room={room}
-          receivedDrawing={receivedDrawing}
-          receivedArtist="Skithy"
-        />
+        <GuessPage room={room} drawing={receivedDrawing} drawingBy="Skithy" />
       );
     }
 

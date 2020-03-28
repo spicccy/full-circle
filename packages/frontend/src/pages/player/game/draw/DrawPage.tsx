@@ -1,41 +1,34 @@
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
 import { Room } from 'colyseus.js';
-import { Box, Button, Heading, Text } from 'grommet';
-import React, { FunctionComponent, useState } from 'react';
-import { Canvas } from 'src/components/Canvas/Canvas';
+import { Box } from 'grommet';
+import React, { FunctionComponent } from 'react';
 
-const DrawPage: FunctionComponent<{ room: Room; prompt: string }> = ({
+import { CanvasCard } from './CanvasCard';
+import { PromptCard } from './PromptCard';
+
+interface IDrawPageProps {
+  room: Room;
+  prompt: string;
+  promptBy: string;
+}
+
+const DrawPage: FunctionComponent<IDrawPageProps> = ({
   room,
   prompt,
+  promptBy,
 }) => {
-  const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
-
-  const handleSubmit = () => {
+  const handleSubmitDrawing = (canvasActions: CanvasAction[]) => {
     room.send(submitDrawing(canvasActions));
   };
 
   return (
-    <Box fill align="center" justify="center" pad="medium">
+    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+      <Box width="medium" margin={{ bottom: 'medium' }}>
+        <PromptCard prompt={prompt} promptBy={promptBy} />
+      </Box>
       <Box width="medium">
-        <Heading>Room {room.id}</Heading>
-        <div>
-          <Box
-            margin={{ bottom: 'medium' }}
-            justify="center"
-            align="center"
-            border="all"
-            pad="medium"
-          >
-            <Text>Your prompt is: </Text>
-            <Heading>{prompt}</Heading>
-          </Box>
-        </div>
-        <Canvas
-          canvasActions={canvasActions}
-          setCanvasActions={setCanvasActions}
-        />
-        <Button onClick={handleSubmit} label="Submit" />
+        <CanvasCard onSubmitDrawing={handleSubmitDrawing} />
       </Box>
     </Box>
   );
