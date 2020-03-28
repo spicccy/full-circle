@@ -1,8 +1,11 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
 import RoomState, { IState } from '../roomState';
+import Phase from '../subSchema/phase';
+import GuessState from './guessState';
 
 class DrawState implements IState {
   room: RoomState;
@@ -19,11 +22,9 @@ class DrawState implements IState {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setEndState();
-    const result = 'Draw State';
-    console.log(result);
-    return result;
+  advanceState = () => {
+    this.room.phase = new Phase(30, PhaseType.GUESS);
+    this.room.currState = new GuessState(this.room);
   };
 }
 

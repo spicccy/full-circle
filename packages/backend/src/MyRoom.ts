@@ -1,12 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
+  notifyPlayerReady,
   submitDrawing,
   submitGuess,
-  notifyPlayerReady
 } from '@full-circle/shared/lib/actions/client';
 import {
   displayDrawing,
-  displayPrompt
+  displayPrompt,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { Room } from 'colyseus';
@@ -46,6 +46,7 @@ export class MyRoom extends Room<RoomState, any> {
         const player = this.state.getPlayer(client.sessionId);
         console.log(`${player.username}: [${player.id}] is ready to progress.`);
         this.state.addReadyPlayer(player);
+        return;
       }
 
       default: {
@@ -56,6 +57,7 @@ export class MyRoom extends Room<RoomState, any> {
 
   onLeave(client: IClient, _consented: boolean) {
     console.log(`${client.sessionId} left ${this.roomId}.`);
+    this.state.removePlayer(client.sessionId);
     return;
   }
 

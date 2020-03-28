@@ -10,16 +10,17 @@ class Phase extends Schema implements IPhase {
   phaseEnd = 0;
 
   @type('string')
-  phaseType = PhaseType.LOBBY;
+  phaseType: PhaseType;
 
   /**
    *
    * @param duration in seconds
    */
-  constructor(duration: number) {
+  constructor(duration: number, phaseType: PhaseType) {
     super();
     this.phaseStart = Date.now();
     this.phaseEnd = this.phaseStart + duration * 1000;
+    this.phaseType = phaseType;
   }
 }
 

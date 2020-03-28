@@ -1,17 +1,14 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
-  IRoomState
+  IRoomState,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../interfaces';
-import DrawState from './stateMachine/drawState';
-import EndState from './stateMachine/endState';
-import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
-import RevealState from './stateMachine/revealState';
 import Chain from './subSchema/chain';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
@@ -19,7 +16,7 @@ import Player from './subSchema/player';
 export interface IState {
   onReceive: (message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
-  debugTransition: () => string;
+  advanceState: () => void;
 }
 
 class RoomState extends Schema implements IState, IRoomState {
@@ -39,31 +36,9 @@ class RoomState extends Schema implements IState, IRoomState {
   round = 0;
 
   @type(Phase)
-  phase = new Phase(60);
+  phase = new Phase(60, PhaseType.LOBBY);
 
   currState = new LobbyState(this);
-
-  setDrawState = () => {
-    this.currState = new DrawState(this);
-  };
-
-  setEndState = () => {
-    this.currState = new EndState(this);
-  };
-
-  setGuessState = () => {
-    this.currState = new GuessState(this);
-  };
-
-  setRevealState = () => {
-    this.currState = new RevealState(this);
-  };
-
-  setLobbyState = () => {
-    this.currState = new LobbyState(this);
-  };
-
-  //helpers
 
   setCurator = (id: string): void => {
     this.curator = id;
@@ -78,11 +53,17 @@ class RoomState extends Schema implements IState, IRoomState {
     this.players[id] = player;
   };
 
+  removePlayer = (playerId: string) => {
+    delete this.players[playerId];
+    delete this.readyPlayers[playerId];
+  };
+
   addReadyPlayer = (player: IPlayer): void => {
     const { id } = player;
     this.readyPlayers[id] = player;
     if (this.numReadyPlayers >= this.numPlayers) {
-      this.debugTransition();
+      this.currState.advanceState();
+      this.readyPlayers = new MapSchema<Player>();
     }
   };
 
@@ -108,8 +89,8 @@ class RoomState extends Schema implements IState, IRoomState {
     this.currState.onJoin(client, options);
   };
 
-  debugTransition = () => {
-    return this.currState.debugTransition();
+  advanceState = () => {
+    this.currState.advanceState();
   };
 }
 

@@ -1,10 +1,14 @@
+import { MapSchema } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
 import RoomState, { IState } from '../roomState';
+import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
+import DrawState from './drawState';
 
 class LobbyState implements IState {
   room: RoomState;
@@ -35,11 +39,10 @@ class LobbyState implements IState {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setRevealState();
-    const result = 'Lobby State';
-    console.log(result);
-    return result;
+  advanceState = () => {
+    this.room.round = 1;
+    this.room.phase = new Phase(60, PhaseType.DRAW);
+    this.room.currState = new DrawState(this.room);
   };
 }
 

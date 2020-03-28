@@ -19,11 +19,8 @@ class RevealState implements IState {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setDrawState();
-    const result = 'Reveal State';
-    console.log(result);
-    return result;
+  advanceState = () => {
+    return;
   };
 }
 

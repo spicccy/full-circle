@@ -19,11 +19,8 @@ class EndState implements IState {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setGuessState();
-    const result = 'End State';
-    console.log(result);
-    return result;
+  advanceState = () => {
+    return;
   };
 }
 
