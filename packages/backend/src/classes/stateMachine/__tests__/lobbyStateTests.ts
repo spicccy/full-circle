@@ -5,22 +5,7 @@ import { MAX_PLAYERS } from '../../../constants';
 import { IClient } from '../../../interfaces';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
-
-const testCurator: IClient = {
-  id: 'curator',
-  sessionId: '',
-  close: () => {
-    return;
-  },
-};
-
-const testPlayer: IClient = {
-  id: 'player',
-  sessionId: '',
-  close: () => {
-    return;
-  },
-};
+import { testCurator, testPlayer } from './shared';
 
 describe('Lobby State', () => {
   let room: RoomState;
@@ -96,52 +81,5 @@ describe('Lobby State', () => {
 
     lobbyState.onJoin(failPlayer, options);
     expect(mockCloseFailPlayer).toBeCalledTimes(1);
-  });
-});
-
-describe('Draw State', () => {
-  let room: RoomState;
-
-  beforeEach(() => {
-    room = new RoomState();
-    room.advanceState();
-  });
-
-  it('has a matching phaseType', () => {
-    expect(room.phase.phaseType).toBe(PhaseType.DRAW);
-  });
-
-  it('has a timer', () => {
-    expect(room.phase.phaseEnd).toBeGreaterThan(0);
-  });
-
-  it('advances to guess phase', () => {
-    room.advanceState();
-    expect(room.phase.phaseType).toBe(PhaseType.GUESS);
-    expect(room.round).toBe(1);
-  });
-});
-
-describe('Guess State', () => {
-  let room: RoomState;
-
-  beforeEach(() => {
-    room = new RoomState();
-    room.advanceState();
-    room.advanceState();
-  });
-
-  it('has a matching phaseType', () => {
-    expect(room.phase.phaseType).toBe(PhaseType.GUESS);
-  });
-
-  it('has a timer', () => {
-    expect(room.phase.phaseEnd).toBeGreaterThan(0);
-  });
-
-  it('advances to draw phase', () => {
-    room.advanceState();
-    expect(room.phase.phaseType).toBe(PhaseType.DRAW);
-    expect(room.round).toBe(2);
   });
 });
