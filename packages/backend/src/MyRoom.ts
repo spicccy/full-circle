@@ -43,9 +43,7 @@ export class MyRoom extends Room<RoomState, any> {
         return;
       }
       case getType(notifyPlayerReady): {
-        const player = this.state.getPlayer(client.sessionId);
-        console.log(`${player.username}: [${player.id}] is ready to progress.`);
-        this.state.addReadyPlayer(player);
+        this.state.addReadyPlayer(client.sessionId);
         return;
       }
 

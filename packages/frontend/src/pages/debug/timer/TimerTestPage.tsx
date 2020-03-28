@@ -1,4 +1,5 @@
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import React, {
@@ -17,6 +18,7 @@ import { usePhaseTimer } from '../../../hooks/usePhaseTimer';
 
 const TimerTest: FunctionComponent = () => {
   const { room } = useRoom();
+  const roomState = useRoomState();
 
   const msTimer = usePhaseTimer();
   const players = useRoomState()?.players;
@@ -40,6 +42,9 @@ const TimerTest: FunctionComponent = () => {
 
   if (!room) {
     return <Redirect to="/" />;
+  }
+  if (roomState?.phase.phaseType === PhaseType.DRAW) {
+    return <Redirect to="/play" />;
   }
 
   if (msTimer && msTimer < 0) {

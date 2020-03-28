@@ -29,5 +29,35 @@ describe('Room state', () => {
     expect(state.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
+  it('automatically transitions only when all players are ready', () => {
+    const state = new RoomState();
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    state.addPlayer({ username: 'Player 1', id: 'player1' });
+    state.addPlayer({ username: 'Player 2', id: 'player2' });
+
+    state.addReadyPlayer('player1');
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    expect(state.numReadyPlayers).toBe(1);
+
+    state.addReadyPlayer('player2');
+    expect(state.phase.phaseType).toBe(PhaseType.DRAW);
+    expect(state.numReadyPlayers).toBe(0);
+  });
+
+  it('should not double count ready players', () => {
+    const state = new RoomState();
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    state.addPlayer({ username: 'Player 1', id: 'player1' });
+    state.addPlayer({ username: 'Player 2', id: 'player2' });
+
+    state.addReadyPlayer('player1');
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    expect(state.numReadyPlayers).toBe(1);
+
+    state.addReadyPlayer('player1');
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    expect(state.numReadyPlayers).toBe(1);
+  });
+
   test.todo('transitions from the final guess state to the reveal state');
 });

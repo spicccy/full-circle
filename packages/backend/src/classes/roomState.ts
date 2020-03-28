@@ -58,9 +58,9 @@ class RoomState extends Schema implements IState, IRoomState {
     delete this.readyPlayers[playerId];
   };
 
-  addReadyPlayer = (player: IPlayer): void => {
-    const { id } = player;
-    this.readyPlayers[id] = player;
+  addReadyPlayer = (playerId: string): void => {
+    const player = this.getPlayer(playerId);
+    this.readyPlayers[playerId] = player;
     if (this.numReadyPlayers >= this.numPlayers) {
       this.currState.advanceState();
       this.readyPlayers = new MapSchema<Player>();
