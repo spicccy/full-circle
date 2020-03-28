@@ -4,7 +4,7 @@ import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
-  IRoomStateShared as IRoomStateSynced,
+  IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../interfaces';

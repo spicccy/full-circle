@@ -1,6 +1,6 @@
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IRoomStateShared } from '@full-circle/shared/lib/roomState/interfaces';
+import { IRoomStateSynced } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus.js';
 import React, {
   createContext,
@@ -13,7 +13,7 @@ import React, {
 
 import { useColyseus } from './ColyseusContext';
 
-export type IRoom = Room<IRoomStateShared>;
+export type IRoom = Room<IRoomStateSynced>;
 
 interface IRoomLoadingState {
   isLoading: true;
@@ -76,7 +76,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     });
 
     try {
-      const room = await colyseus.create<IRoomStateShared>(ROOM_NAME);
+      const room = await colyseus.create<IRoomStateSynced>(ROOM_NAME);
       setRoomState({
         isLoading: false,
         room,
@@ -102,7 +102,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       });
 
       try {
-        const room = await colyseus.joinById<IRoomStateShared>(roomId, options);
+        const room = await colyseus.joinById<IRoomStateSynced>(roomId, options);
         setRoomState({
           isLoading: false,
           room,
