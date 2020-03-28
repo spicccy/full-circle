@@ -37,7 +37,7 @@ class RoomState extends Schema implements IState, IRoomState {
   round = 0;
 
   @type(Phase)
-  phase = new Phase(60, PhaseType.LOBBY);
+  phase = new Phase(PhaseType.LOBBY);
 
   currState: IState = new LobbyState(this);
 

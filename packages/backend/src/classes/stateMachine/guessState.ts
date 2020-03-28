@@ -32,7 +32,7 @@ class GuessState implements IState {
 
   advanceState = () => {
     this.room.round = this.room.round + 1;
-    this.room.phase = new Phase(60, PhaseType.DRAW);
+    this.room.phase = new Phase(PhaseType.DRAW, 60);
     this.room.currState = new DrawState(this.room);
   };
 }

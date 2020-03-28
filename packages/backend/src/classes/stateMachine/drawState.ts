@@ -31,7 +31,7 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
-    this.room.phase = new Phase(30, PhaseType.GUESS);
+    this.room.phase = new Phase(PhaseType.GUESS, 30);
     this.room.currState = new GuessState(this.room);
   };
 }

@@ -1,4 +1,3 @@
-import { MapSchema } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
@@ -47,7 +46,7 @@ class LobbyState implements IState {
 
   advanceState = () => {
     this.room.round = 1;
-    this.room.phase = new Phase(60, PhaseType.DRAW);
+    this.room.phase = new Phase(PhaseType.DRAW, 60);
     this.room.currState = new DrawState(this.room);
   };
 }

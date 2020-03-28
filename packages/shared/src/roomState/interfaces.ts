@@ -33,7 +33,7 @@ export interface IPhase {
   phaseStart: number;
 
   // When does the phase end?
-  phaseEnd: number;
+  phaseEnd?: number;
   phaseType: PhaseType;
 }
 

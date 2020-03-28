@@ -29,36 +29,6 @@ describe('Room state', () => {
     expect(state.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
-  it('automatically transitions only when all players are ready', () => {
-    const state = new RoomState();
-    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
-    state.addPlayer({ username: 'Player 1', id: 'player1' });
-    state.addPlayer({ username: 'Player 2', id: 'player2' });
-
-    state.onClientReady('player1');
-    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
-    expect(state.numReadyPlayers).toBe(1);
-
-    state.onClientReady('player2');
-    expect(state.phase.phaseType).toBe(PhaseType.DRAW);
-    expect(state.numReadyPlayers).toBe(0);
-  });
-
-  it('should not double count ready players', () => {
-    const state = new RoomState();
-    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
-    state.addPlayer({ username: 'Player 1', id: 'player1' });
-    state.addPlayer({ username: 'Player 2', id: 'player2' });
-
-    state.onClientReady('player1');
-    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
-    expect(state.numReadyPlayers).toBe(1);
-
-    state.onClientReady('player1');
-    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
-    expect(state.numReadyPlayers).toBe(1);
-  });
-
   it('should increment the round when a guess/draw cycle is over', () => {
     const state = new RoomState();
     expect(state.round).toBe(0);
