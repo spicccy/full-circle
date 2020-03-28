@@ -8,6 +8,7 @@ import {
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../interfaces';
+import EndState from './stateMachine/endState';
 import LobbyState from './stateMachine/lobbyState';
 import Chain from './subSchema/chain';
 import Phase from './subSchema/phase';
@@ -16,6 +17,7 @@ import Player from './subSchema/player';
 export interface IState {
   onReceive: (message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
+  onLeave: (client: IClient, _consented: boolean) => void;
   advanceState: () => void;
   onClientReady: (clientId: string) => void;
 }
@@ -29,9 +31,6 @@ class RoomState extends Schema implements IState, IRoomState {
 
   @type({ map: Player })
   players = new MapSchema<Player>();
-
-  @type({ map: Player })
-  readyPlayers = new MapSchema<Player>();
 
   @type('number')
   round = 0;
@@ -55,8 +54,11 @@ class RoomState extends Schema implements IState, IRoomState {
   };
 
   removePlayer = (playerId: string) => {
+    if (playerId === this.curator) {
+      // TODO: handle closing the room better
+      this.currState = new EndState(this);
+    }
     delete this.players[playerId];
-    delete this.readyPlayers[playerId];
   };
 
   onClientReady = (clientId: string): void => {
@@ -71,10 +73,6 @@ class RoomState extends Schema implements IState, IRoomState {
     return Object.keys(this.players).length;
   }
 
-  get numReadyPlayers() {
-    return Object.keys(this.readyPlayers).length;
-  }
-
   //State implementations
   onReceive = (message: ClientAction) => {
     this.currState.onReceive(message);
@@ -83,6 +81,10 @@ class RoomState extends Schema implements IState, IRoomState {
 
   onJoin = (client: IClient, options: IJoinOptions) => {
     this.currState.onJoin(client, options);
+  };
+
+  onLeave = (client: IClient, consented: boolean) => {
+    this.currState.onLeave(client, consented);
   };
 
   advanceState = () => {

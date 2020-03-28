@@ -3,7 +3,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { MAX_PLAYERS } from '../../../constants';
 import { IClient } from '../../../interfaces';
-import RoomState from '../../roomState';
+import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
 
 const testCurator: IClient = {
@@ -23,11 +23,13 @@ const testPlayer: IClient = {
 };
 
 describe('Lobby State', () => {
-  const room = new RoomState();
-  const spySetCurator = jest.spyOn(room, 'setCurator'); // spy on foo.addListener
-  const spyAddPlayer = jest.spyOn(room, 'addPlayer');
-  const lobbyState = room.currState;
-  const spyAdvanceState = jest.spyOn(lobbyState, 'advanceState');
+  let room: RoomState;
+  let lobbyState: IState;
+
+  beforeEach(() => {
+    room = new RoomState();
+    lobbyState = room.currState;
+  });
 
   it('has a matching phaseType', () => {
     expect(room.phase.phaseType).toBe(PhaseType.LOBBY);
@@ -45,16 +47,13 @@ describe('Lobby State', () => {
   it('can add a curator', () => {
     const option: any = {};
     lobbyState.onJoin(testCurator, option);
-
-    expect(spySetCurator).toBeCalledTimes(1);
-    expect(spySetCurator).toBeCalledWith('curator');
+    expect(room.curator).toBe('curator');
   });
 
   it('will wait for a curator to advance to the next state', () => {
     room.setCurator('curator');
     room.onClientReady('curator');
-
-    expect(spyAdvanceState).toBeCalledTimes(1);
+    expect(room.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
   it('can add a player', () => {
@@ -63,12 +62,7 @@ describe('Lobby State', () => {
     const lobbyState = new LobbyState(room);
     const option: IJoinOptions = { username: 'username' };
     lobbyState.onJoin(testPlayer, option);
-
-    expect(spyAddPlayer).toBeCalledTimes(1);
-    expect(spyAddPlayer).toBeCalledWith({
-      id: 'player',
-      username: 'username',
-    });
+    expect(room.players[testPlayer.id].username).toBe('username');
   });
 
   it('will not allow more than MAX players to join', () => {
@@ -106,8 +100,12 @@ describe('Lobby State', () => {
 });
 
 describe('Draw State', () => {
-  const room = new RoomState();
-  room.advanceState();
+  let room: RoomState;
+
+  beforeEach(() => {
+    room = new RoomState();
+    room.advanceState();
+  });
 
   it('has a matching phaseType', () => {
     expect(room.phase.phaseType).toBe(PhaseType.DRAW);
@@ -125,9 +123,13 @@ describe('Draw State', () => {
 });
 
 describe('Guess State', () => {
-  const room = new RoomState();
-  room.advanceState();
-  room.advanceState();
+  let room: RoomState;
+
+  beforeEach(() => {
+    room = new RoomState();
+    room.advanceState();
+    room.advanceState();
+  });
 
   it('has a matching phaseType', () => {
     expect(room.phase.phaseType).toBe(PhaseType.GUESS);

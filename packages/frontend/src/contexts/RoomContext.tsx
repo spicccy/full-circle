@@ -13,6 +13,8 @@ import React, {
 
 import { useColyseus } from './ColyseusContext';
 
+type IRoom = Room<IRoomState>;
+
 interface IRoomLoadingState {
   isLoading: true;
   room: undefined;
@@ -21,7 +23,7 @@ interface IRoomLoadingState {
 
 interface IRoomSuccessState {
   isLoading: false;
-  room?: Room<IRoomState>;
+  room?: IRoom;
   roomError: undefined;
 }
 
@@ -40,8 +42,8 @@ const defaultRoomState: RoomState = {
 };
 
 interface IRoomContext {
-  createAndJoinRoom(): Promise<Room | null>;
-  joinRoomById(roomId: string, options: IJoinOptions): Promise<Room | null>;
+  createAndJoinRoom(): Promise<IRoom | null>;
+  joinRoomById(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
 }
 
@@ -66,9 +68,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
   const [roomState, setRoomState] = useState<RoomState>(defaultRoomState);
 
-  const createAndJoinRoom = useCallback(async (): Promise<Room<
-    IRoomState
-  > | null> => {
+  const createAndJoinRoom = useCallback(async (): Promise<IRoom | null> => {
     setRoomState({
       isLoading: true,
       room: undefined,
@@ -94,7 +94,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   }, [colyseus]);
 
   const joinRoomById = useCallback(
-    async (roomId: string, options: IJoinOptions): Promise<Room | null> => {
+    async (roomId: string, options: IJoinOptions): Promise<IRoom | null> => {
       setRoomState({
         isLoading: true,
         room: undefined,

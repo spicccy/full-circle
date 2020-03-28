@@ -2,6 +2,9 @@ import { Schema, type } from '@colyseus/schema';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { IPhase } from '@full-circle/shared/lib/roomState/interfaces';
 
+export const DEFAULT_DRAW_PHASE_LENGTH = 60;
+export const DEFAULT_GUESS_PHASE_LENGTH = 30;
+
 class Phase extends Schema implements IPhase {
   @type('number')
   phaseStart = 0;

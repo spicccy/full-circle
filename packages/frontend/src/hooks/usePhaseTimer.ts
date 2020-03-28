@@ -9,7 +9,7 @@ const nearestSecond = (ms: number) => Math.round(ms / 1000);
  */
 export const usePhaseTimer = (): number | undefined => {
   const roomState = useRoomState();
-  const [value, setValue] = useState<number | undefined>(undefined);
+  const [value, setValue] = useState<number>();
 
   const phaseEnd = roomState?.phase.phaseEnd;
 

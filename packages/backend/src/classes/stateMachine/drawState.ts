@@ -4,7 +4,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
 import RoomState, { IState } from '../roomState';
-import Phase from '../subSchema/phase';
+import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 import GuessState from './guessState';
 
 class DrawState implements IState {
@@ -19,6 +19,11 @@ class DrawState implements IState {
     console.log(client, options);
   };
 
+  onLeave = (client: IClient, _consented: boolean) => {
+    this.readyPlayers.delete(client.id);
+    this.room.removePlayer(client.id);
+  };
+
   onReceive = (message: ClientAction) => {
     console.log(message);
   };
@@ -31,7 +36,7 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
-    this.room.phase = new Phase(PhaseType.GUESS, 30);
+    this.room.phase = new Phase(PhaseType.GUESS, DEFAULT_GUESS_PHASE_LENGTH);
     this.room.currState = new GuessState(this.room);
   };
 }

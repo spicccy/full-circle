@@ -15,6 +15,10 @@ class RevealState implements IState {
     console.log(client, options);
   };
 
+  onLeave = (client: IClient, _consented: boolean) => {
+    this.room.removePlayer(client.id);
+  };
+
   onReceive = (message: ClientAction) => {
     console.log(message);
   };

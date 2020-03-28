@@ -5,9 +5,10 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
 import RoomState, { IState } from '../roomState';
-import Phase from '../subSchema/phase';
+import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
 import Player from './../subSchema/player';
 import DrawState from './drawState';
+import EndState from './endState';
 
 class LobbyState implements IState {
   private room: RoomState;
@@ -34,6 +35,10 @@ class LobbyState implements IState {
     this.room.addPlayer(player);
   };
 
+  onLeave = (client: IClient, _consented: boolean) => {
+    this.room.removePlayer(client.id);
+  };
+
   onReceive = (message: ClientAction) => {
     console.log(message);
   };
@@ -46,7 +51,7 @@ class LobbyState implements IState {
 
   advanceState = () => {
     this.room.round = 1;
-    this.room.phase = new Phase(PhaseType.DRAW, 60);
+    this.room.phase = new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH);
     this.room.currState = new DrawState(this.room);
   };
 }

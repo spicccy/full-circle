@@ -15,7 +15,7 @@ import { getType } from 'typesafe-actions';
 import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
-export class MyRoom extends Room<RoomState, any> {
+export class MyRoom extends Room<RoomState> {
   onCreate(_options: any) {
     this.setState(new RoomState());
     console.log(`MyRoom ${this.roomId} created.`);
@@ -53,9 +53,9 @@ export class MyRoom extends Room<RoomState, any> {
     }
   }
 
-  onLeave(client: IClient, _consented: boolean) {
+  onLeave(client: IClient, consented: boolean) {
     console.log(`${client.sessionId} left ${this.roomId}.`);
-    this.state.removePlayer(client.sessionId);
+    this.state.onLeave(client, consented);
     return;
   }
 
