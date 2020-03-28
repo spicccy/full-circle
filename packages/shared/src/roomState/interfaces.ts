@@ -37,7 +37,7 @@ export interface IPhase {
   phaseType: PhaseType;
 }
 
-export interface IRoomState {
+export interface IRoomStateShared {
   curator: string;
   chains: IChain[];
   players: Record<string, IPlayer>;
