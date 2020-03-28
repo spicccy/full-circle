@@ -3,7 +3,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import {
   IPlayer,
-  IRoomState,
+  IRoomState
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../interfaces';
@@ -31,6 +31,9 @@ class RoomState extends Schema implements IState, IRoomState {
 
   @type({ map: Player })
   players = new MapSchema<Player>();
+
+  @type({ map: Player })
+  readyPlayers = new MapSchema<Player>();
 
   @type('number')
   round = 0;
@@ -71,8 +74,16 @@ class RoomState extends Schema implements IState, IRoomState {
   };
 
   addPlayer = (player: IPlayer): void => {
-    const id = player.id; //Using Colyseus assigned unique id, no checks needed
+    const { id } = player;
     this.players[id] = player;
+  };
+
+  addReadyPlayer = (player: IPlayer): void => {
+    const { id } = player;
+    this.readyPlayers[id] = player;
+    if (this.numReadyPlayers >= this.numPlayers) {
+      this.debugTransition();
+    }
   };
 
   getPlayer = (id: string): IPlayer => {
@@ -81,6 +92,10 @@ class RoomState extends Schema implements IState, IRoomState {
 
   get numPlayers() {
     return Object.keys(this.players).length;
+  }
+
+  get numReadyPlayers() {
+    return Object.keys(this.readyPlayers).length;
   }
 
   //State implementations

@@ -8,7 +8,7 @@ export const useRoomState = (): IRoomState | undefined => {
 
   useEffect(() => {
     if (room) {
-      const listener = room.onStateChange((newState) =>
+      const listener = room.onStateChange(newState =>
         setValue({ ...newState })
       );
 

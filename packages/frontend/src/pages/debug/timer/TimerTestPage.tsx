@@ -1,10 +1,11 @@
 import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Button, Heading, Paragraph } from 'grommet';
+import invariant from 'tiny-invariant';
 import React, {
   FunctionComponent,
   ReactNode,
   useCallback,
-  useMemo,
+  useMemo
 } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import { objectValues } from 'src/helpers';
@@ -12,21 +13,24 @@ import { useRoomState } from 'src/hooks/useRoomState';
 
 import { useRoom } from '../../../contexts/RoomContext';
 import { usePhaseTimer } from '../../../hooks/usePhaseTimer';
+import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 
 const TimerTest: FunctionComponent = () => {
   const history = useHistory();
   const { room } = useRoom();
+
   const msTimer = usePhaseTimer();
   const players = useRoomState()?.players;
 
-  const advanceClientToGame = useCallback(() => {
+  const advanceClient = useCallback(() => {
     // TODO: notify the backend that this player is 'ready'.
     // When all players are ready,
     // everyone should be redirected to the game screen.
     // The backend will then update its 'phase' as well.
+    invariant(room, 'No valid room found!');
+    room.send(notifyPlayerReady());
 
     // Redirects client to the game screen.
-    history.push('/play');
   }, [history]);
 
   const userTiles = useMemo((): ReactNode => {
@@ -35,7 +39,7 @@ const TimerTest: FunctionComponent = () => {
       : null;
 
     if (users) {
-      return users.map((name) => <div>{name}</div>);
+      return users.map(name => <div>{name}</div>);
     }
 
     return null;
@@ -46,7 +50,7 @@ const TimerTest: FunctionComponent = () => {
   }
 
   if (msTimer && msTimer < 0) {
-    advanceClientToGame();
+    advanceClient();
   }
 
   return (
@@ -66,7 +70,7 @@ const TimerTest: FunctionComponent = () => {
             <h1>Joined Users:</h1>
             {userTiles}
             <br />
-            <Button onClick={advanceClientToGame} label="Skip to the Game" />
+            <Button onClick={advanceClient} label="Skip to the Game" />
           </Box>
         </Box>
       </Box>

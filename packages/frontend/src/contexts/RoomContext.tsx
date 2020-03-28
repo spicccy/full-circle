@@ -7,10 +7,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from 'react';
 
 import { useColyseus } from './ColyseusContext';
+import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
 
 interface IRoomLoadingState {
   isLoading: true;
@@ -20,7 +21,7 @@ interface IRoomLoadingState {
 
 interface IRoomSuccessState {
   isLoading: false;
-  room?: Room;
+  room?: Room<IRoomState>;
   roomError: undefined;
 }
 
@@ -35,7 +36,7 @@ type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 const defaultRoomState: RoomState = {
   isLoading: false,
   room: undefined,
-  roomError: undefined,
+  roomError: undefined
 };
 
 interface IRoomContext {
@@ -56,7 +57,7 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   leaveRoom: () => {
     return;
   },
-  roomError: 'Unitialised Room',
+  roomError: 'Unitialised Room'
 });
 
 export const useRoom = () => useContext(RoomContext);
@@ -69,7 +70,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: true,
       room: undefined,
-      roomError: undefined,
+      roomError: undefined
     });
 
     try {
@@ -77,14 +78,14 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       setRoomState({
         isLoading: false,
         room,
-        roomError: undefined,
+        roomError: undefined
       });
       return room;
     } catch (e) {
       setRoomState({
         isLoading: false,
         room: undefined,
-        roomError: e.message,
+        roomError: e.message
       });
       return null;
     }
@@ -95,7 +96,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       setRoomState({
         isLoading: true,
         room: undefined,
-        roomError: undefined,
+        roomError: undefined
       });
 
       try {
@@ -103,14 +104,14 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         setRoomState({
           isLoading: false,
           room,
-          roomError: undefined,
+          roomError: undefined
         });
         return room;
       } catch (e) {
         setRoomState({
           isLoading: false,
           room: undefined,
-          roomError: e.message,
+          roomError: e.message
         });
         return null;
       }
@@ -122,7 +123,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: false,
       room: undefined,
-      roomError: undefined,
+      roomError: undefined
     });
   }, []);
 
@@ -134,7 +135,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     ...roomState,
     createAndJoinRoom,
     joinRoomById,
-    leaveRoom,
+    leaveRoom
   };
 
   return (

@@ -19,7 +19,7 @@ const Debug = styled.pre`
 `;
 
 export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
-  debug,
+  debug
 }) => {
   const [messages, setMessages] = useState<string[]>([]);
 
@@ -30,7 +30,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
     setMessages([]);
   }, [room]);
 
-  useRoomMessage((message) => {
+  useRoomMessage(message => {
     setMessages([...messages, message.type]);
   });
 

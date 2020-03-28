@@ -2,10 +2,11 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
   submitDrawing,
   submitGuess,
+  notifyPlayerReady
 } from '@full-circle/shared/lib/actions/client';
 import {
   displayDrawing,
-  displayPrompt,
+  displayPrompt
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { Room } from 'colyseus';
@@ -14,7 +15,7 @@ import { getType } from 'typesafe-actions';
 import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
-export class MyRoom extends Room {
+export class MyRoom extends Room<RoomState, any> {
   onCreate(_options: any) {
     this.setState(new RoomState());
     console.log(`MyRoom ${this.roomId} created.`);
@@ -40,6 +41,11 @@ export class MyRoom extends Room {
         const guess = message.payload;
         this.broadcast(displayPrompt(guess));
         return;
+      }
+      case getType(notifyPlayerReady): {
+        const player = this.state.getPlayer(client.sessionId);
+        console.log(`${player.username}: [${player.id}] is ready to progress.`);
+        this.state.addReadyPlayer(player);
       }
 
       default: {
