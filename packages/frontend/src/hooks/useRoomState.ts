@@ -1,10 +1,10 @@
-import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
+import { IRoomStateShared } from '@full-circle/shared/lib/roomState/interfaces';
 import { useEffect, useState } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
-export const useRoomState = (): IRoomState | undefined => {
+export const useRoomState = (): IRoomStateShared | undefined => {
   const { room } = useRoom();
-  const [value, setValue] = useState<IRoomState>();
+  const [value, setValue] = useState<IRoomStateShared>();
 
   useEffect(() => {
     if (room) {
