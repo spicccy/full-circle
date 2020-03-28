@@ -59,5 +59,19 @@ describe('Room state', () => {
     expect(state.numReadyPlayers).toBe(1);
   });
 
+  it('should increment the round when a guess/draw cycle is over', () => {
+    const state = new RoomState();
+    expect(state.round).toBe(0);
+
+    state.advanceState();
+    expect(state.round).toBe(1);
+
+    state.advanceState();
+    expect(state.round).toBe(1);
+
+    state.advanceState();
+    expect(state.round).toBe(2);
+  });
+
   test.todo('transitions from the final guess state to the reveal state');
 });
