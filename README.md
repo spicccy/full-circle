@@ -2,6 +2,8 @@
 
 We hope you enjoy your stay
 
+![Unit test](https://github.com/unsw-cse-comp3900-9900/capstone-project-spicccy/workflows/Unit%20test/badge.svg)
+
 ## Prerequisites
 
 - Node Version Manager [windows](https://github.com/coreybutler/nvm-windows) [linux](https://github.com/nvm-sh/nvm)
