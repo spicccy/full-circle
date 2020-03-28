@@ -5,7 +5,22 @@ import { MAX_PLAYERS } from '../../../constants';
 import { IClient } from '../../../interfaces';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
-import { testCurator, testPlayer } from './shared';
+
+export const testCurator: IClient = {
+  id: 'curator',
+  sessionId: '',
+  close: () => {
+    return;
+  },
+};
+
+export const testPlayer: IClient = {
+  id: 'player',
+  sessionId: '',
+  close: () => {
+    return;
+  },
+};
 
 describe('Lobby State', () => {
   let room: RoomState;
