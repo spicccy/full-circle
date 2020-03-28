@@ -1,6 +1,6 @@
-import { Box, Button, Grommet, TextInput } from 'grommet';
+import { Button, TextInput } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
-import { notepadTheme } from 'src/styles/notepadTheme';
+import { Card } from 'src/components/Card/Card';
 import styled from 'styled-components/macro';
 
 const SubmitButton = styled(Button)`
@@ -25,32 +25,23 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
   };
 
   return (
-    <Grommet theme={notepadTheme}>
-      <Box
-        background="light-1"
-        elevation="large"
-        round="small"
-        height="xsmall"
-        justify="center"
-        css={{ position: 'relative' }}
-      >
-        <TextInput
-          plain
-          maxLength={20}
-          placeholder="Enter your guess"
-          size="large"
-          value={guess}
-          onChange={(e) => setGuess(e.target.value)}
-          css={{ textAlign: 'center' }}
-        />
-        <SubmitButton
-          plain
-          disabled={!guess}
-          onClick={handleSubmitGuess}
-          label="Submit"
-        />
-      </Box>
-    </Grommet>
+    <Card height="xsmall" justify="center">
+      <TextInput
+        plain
+        maxLength={20}
+        placeholder="Enter your guess"
+        size="large"
+        value={guess}
+        onChange={(e) => setGuess(e.target.value)}
+        css={{ textAlign: 'center' }}
+      />
+      <SubmitButton
+        plain
+        disabled={!guess}
+        onClick={handleSubmitGuess}
+        label="Submit"
+      />
+    </Card>
   );
 };
 

@@ -1,18 +1,9 @@
 import 'styled-components/macro';
 
-import {
-  Box,
-  Button,
-  Form,
-  Grommet,
-  Heading,
-  Image,
-  Text,
-  TextInput,
-} from 'grommet';
+import { Box, Button, Form, Heading, Image, Text, TextInput } from 'grommet';
 import React, { FormEvent, FunctionComponent } from 'react';
+import { Card } from 'src/components/Card/Card';
 import logo from 'src/images/fullcircle.png';
-import { notepadTheme } from 'src/styles/notepadTheme';
 
 const Header: FunctionComponent = () => (
   <Box direction="row" align="center" justify="center">
@@ -47,26 +38,24 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   };
 
   return (
-    <Grommet theme={notepadTheme}>
-      <Form onSubmit={handleSubmit}>
-        <Box background="light-1" pad="large" elevation="large" round="small">
-          <Header />
-          <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
-            <Text size="xlarge" margin={{ right: 'small' }}>
-              Name:
-            </Text>
-            <TextInput size="medium" name="username" id="username" />
-          </Box>
-          <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
-            <Text size="xlarge" margin={{ right: 'small' }}>
-              Room:
-            </Text>
-            <TextInput size="medium" id="roomId" name="roomId" />
-          </Box>
-          <Button type="submit" size="large" alignSelf="center" label="JOIN" />
+    <Form onSubmit={handleSubmit}>
+      <Card pad="large">
+        <Header />
+        <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
+          <Text size="xlarge" margin={{ right: 'small' }}>
+            Name:
+          </Text>
+          <TextInput size="medium" name="username" id="username" />
         </Box>
-      </Form>
-    </Grommet>
+        <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
+          <Text size="xlarge" margin={{ right: 'small' }}>
+            Room:
+          </Text>
+          <TextInput size="medium" id="roomId" name="roomId" />
+        </Box>
+        <Button type="submit" size="large" alignSelf="center" label="JOIN" />
+      </Card>
+    </Form>
   );
 };
 
