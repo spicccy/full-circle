@@ -1,11 +1,8 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend,IState } from '../roomState';
-import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
-import GuessState from './guessState';
+import RoomState, { IRoomStateBackend, IState } from '../roomState';
 
 class DrawState implements IState {
   private room: IRoomStateBackend;
