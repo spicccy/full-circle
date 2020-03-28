@@ -17,7 +17,7 @@ import Player from './subSchema/player';
 export interface IState {
   onReceive: (message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
-  onLeave: (client: IClient, _consented: boolean) => void;
+  onLeave: (client: IClient, consented: boolean) => void;
   advanceState: () => void;
   onClientReady: (clientId: string) => void;
 }

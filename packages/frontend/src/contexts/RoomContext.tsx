@@ -13,7 +13,7 @@ import React, {
 
 import { useColyseus } from './ColyseusContext';
 
-type IRoom = Room<IRoomState>;
+export type IRoom = Room<IRoomState>;
 
 interface IRoomLoadingState {
   isLoading: true;

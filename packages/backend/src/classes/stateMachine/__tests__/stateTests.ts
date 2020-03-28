@@ -45,8 +45,8 @@ describe('Lobby State', () => {
   });
 
   it('can add a curator', () => {
-    const option: any = {};
-    lobbyState.onJoin(testCurator, option);
+    const options: IJoinOptions = { username: 'curatorUsername' };
+    lobbyState.onJoin(testCurator, options);
     expect(room.curator).toBe('curator');
   });
 
