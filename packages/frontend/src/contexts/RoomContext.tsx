@@ -1,5 +1,6 @@
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IRoomStateSynced } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus.js';
 import React, {
   createContext,
@@ -12,6 +13,8 @@ import React, {
 
 import { useColyseus } from './ColyseusContext';
 
+export type IRoom = Room<IRoomStateSynced>;
+
 interface IRoomLoadingState {
   isLoading: true;
   room: undefined;
@@ -20,7 +23,7 @@ interface IRoomLoadingState {
 
 interface IRoomSuccessState {
   isLoading: false;
-  room?: Room;
+  room?: IRoom;
   roomError: undefined;
 }
 
@@ -39,8 +42,8 @@ const defaultRoomState: RoomState = {
 };
 
 interface IRoomContext {
-  createAndJoinRoom(): Promise<Room | null>;
-  joinRoomById(roomId: string, options: IJoinOptions): Promise<Room | null>;
+  createAndJoinRoom(): Promise<IRoom | null>;
+  joinRoomById(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
 }
 
@@ -65,7 +68,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
   const [roomState, setRoomState] = useState<RoomState>(defaultRoomState);
 
-  const createAndJoinRoom = useCallback(async (): Promise<Room | null> => {
+  const createAndJoinRoom = useCallback(async (): Promise<IRoom | null> => {
     setRoomState({
       isLoading: true,
       room: undefined,
@@ -73,7 +76,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     });
 
     try {
-      const room = await colyseus.create(ROOM_NAME);
+      const room = await colyseus.create<IRoomStateSynced>(ROOM_NAME);
       setRoomState({
         isLoading: false,
         room,
@@ -91,7 +94,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   }, [colyseus]);
 
   const joinRoomById = useCallback(
-    async (roomId: string, options: IJoinOptions): Promise<Room | null> => {
+    async (roomId: string, options: IJoinOptions): Promise<IRoom | null> => {
       setRoomState({
         isLoading: true,
         room: undefined,
@@ -99,7 +102,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       });
 
       try {
-        const room = await colyseus.joinById(roomId, options);
+        const room = await colyseus.joinById<IRoomStateSynced>(roomId, options);
         setRoomState({
           isLoading: false,
           room,

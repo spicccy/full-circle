@@ -1,5 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
+  notifyPlayerReady,
   submitDrawing,
   submitGuess,
 } from '@full-circle/shared/lib/actions/client';
@@ -14,7 +15,7 @@ import { getType } from 'typesafe-actions';
 import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
-export class MyRoom extends Room {
+export class MyRoom extends Room<RoomState> {
   onCreate(_options: any) {
     this.setState(new RoomState());
     console.log(`MyRoom ${this.roomId} created.`);
@@ -41,6 +42,10 @@ export class MyRoom extends Room {
         this.broadcast(displayPrompt(guess));
         return;
       }
+      case getType(notifyPlayerReady): {
+        this.state.onClientReady(client.sessionId);
+        return;
+      }
 
       default: {
         console.log(`[${client.sessionId}] ${JSON.stringify(message)}.`);
@@ -48,8 +53,9 @@ export class MyRoom extends Room {
     }
   }
 
-  onLeave(client: IClient, _consented: boolean) {
+  onLeave(client: IClient, consented: boolean) {
     console.log(`${client.sessionId} left ${this.roomId}.`);
+    this.state.onLeave(client, consented);
     return;
   }
 

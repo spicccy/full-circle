@@ -2,10 +2,10 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IState } from '../roomState';
+import RoomState, { IRoomStateBackend,IState } from '../roomState';
 
 class EndState implements IState {
-  room: RoomState;
+  private room: IRoomStateBackend;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -15,15 +15,22 @@ class EndState implements IState {
     console.log(client, options);
   };
 
+  onLeave = (client: IClient, _consented: boolean) => {
+    this.room.removePlayer(client.id);
+  };
+
   onReceive = (message: ClientAction) => {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setGuessState();
-    const result = 'End State';
-    console.log(result);
-    return result;
+  onClientReady = (clientId: string) => {
+    if (clientId === this.room.getCurator()) {
+      this.advanceState();
+    }
+  };
+
+  advanceState = () => {
+    return;
   };
 }
 

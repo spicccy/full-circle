@@ -7,3 +7,5 @@ export const submitDrawing = createAction('@client/submitDrawing')<
 >();
 
 export const submitGuess = createAction('@client/submitGuess')<string>();
+
+export const notifyPlayerReady = createAction('@client/notifyPlayerReady')();

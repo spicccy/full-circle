@@ -3,11 +3,11 @@ import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
-import RoomState, { IState } from '../roomState';
+import RoomState, { IRoomStateBackend, IState } from '../roomState';
 import Player from './../subSchema/player';
 
 class LobbyState implements IState {
-  room: RoomState;
+  private room: IRoomStateBackend;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -31,15 +31,23 @@ class LobbyState implements IState {
     this.room.addPlayer(player);
   };
 
+  onLeave = (client: IClient, _consented: boolean) => {
+    this.room.removePlayer(client.id);
+  };
+
   onReceive = (message: ClientAction) => {
     console.log(message);
   };
 
-  debugTransition = () => {
-    this.room.setRevealState();
-    const result = 'Lobby State';
-    console.log(result);
-    return result;
+  onClientReady = (clientId: string) => {
+    if (clientId === this.room.getCurator()) {
+      this.advanceState();
+    }
+  };
+
+  advanceState = () => {
+    this.room.incrementRound();
+    this.room.setDrawState();
   };
 }
 

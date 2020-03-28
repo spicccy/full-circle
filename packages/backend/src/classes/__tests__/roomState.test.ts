@@ -1,63 +1,47 @@
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+
 import RoomState from '../roomState';
 
-describe('Room State test', () => {
-  it('Can set state to lobby state', () => {
+describe('Room state', () => {
+  it('starts with the lobby state', () => {
     const state = new RoomState();
-    state.setLobbyState();
-    expect(state.debugTransition()).toEqual('Lobby State');
+    expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
   });
 
-  it('Can set state to reveal state', () => {
+  it('transitions from lobby state to draw state', () => {
     const state = new RoomState();
-    state.setRevealState();
-    expect(state.debugTransition()).toEqual('Reveal State');
+    state.advanceState();
+    expect(state.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
-  it('Can set state to draw state', () => {
+  it('transitions from draw state to guess state', () => {
     const state = new RoomState();
-    state.setDrawState();
-    expect(state.debugTransition()).toEqual('Draw State');
+    state.advanceState();
+    state.advanceState();
+    expect(state.phase.phaseType).toBe(PhaseType.GUESS);
   });
 
-  it('Can set state to end state', () => {
+  it('transitions from guess state to draw state', () => {
     const state = new RoomState();
-    state.setEndState();
-    expect(state.debugTransition()).toEqual('End State');
+    state.advanceState();
+    state.advanceState();
+    state.advanceState();
+    expect(state.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
-  it('Can set state to guess state', () => {
+  it('should increment the round when a guess/draw cycle is over', () => {
     const state = new RoomState();
-    state.setGuessState();
-    expect(state.debugTransition()).toEqual('Guess State');
+    expect(state.round).toBe(0);
+
+    state.advanceState();
+    expect(state.round).toBe(1);
+
+    state.advanceState();
+    expect(state.round).toBe(1);
+
+    state.advanceState();
+    expect(state.round).toBe(2);
   });
 
-  it('successfully runs all test transitions', () => {
-    const state = new RoomState();
-    expect(state.debugTransition()).toEqual('Lobby State');
-    expect(state.debugTransition()).toEqual('Reveal State');
-    expect(state.debugTransition()).toEqual('Draw State');
-    expect(state.debugTransition()).toEqual('End State');
-    expect(state.debugTransition()).toEqual('Guess State');
-    expect(state.debugTransition()).toEqual('Lobby State');
-  });
-
-  it('Can set curator Id', () => {
-    const state = new RoomState();
-    state.setCurator('something');
-
-    expect(state.getCurator()).toEqual('something');
-  });
-
-  it('Can add new Player', () => {
-    const state = new RoomState();
-    const data = {
-      id: 'something',
-      username: 'notsomething',
-    };
-    state.addPlayer(data);
-    const result = state.getPlayer('something');
-
-    expect(result).toEqual(data);
-    expect(state.numPlayers).toEqual(1);
-  });
+  test.todo('transitions from the final guess state to the reveal state');
 });

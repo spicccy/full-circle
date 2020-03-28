@@ -33,11 +33,11 @@ export interface IPhase {
   phaseStart: number;
 
   // When does the phase end?
-  phaseEnd: number;
+  phaseEnd?: number;
   phaseType: PhaseType;
 }
 
-export interface IRoomState {
+export interface IRoomStateSynced {
   curator: string;
   chains: IChain[];
   players: Record<string, IPlayer>;
