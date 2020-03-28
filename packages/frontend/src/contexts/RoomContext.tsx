@@ -1,5 +1,6 @@
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus.js';
 import React, {
   createContext,
@@ -7,11 +8,10 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
 
 import { useColyseus } from './ColyseusContext';
-import { IRoomState } from '@full-circle/shared/lib/roomState/interfaces';
 
 interface IRoomLoadingState {
   isLoading: true;
@@ -36,7 +36,7 @@ type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 const defaultRoomState: RoomState = {
   isLoading: false,
   room: undefined,
-  roomError: undefined
+  roomError: undefined,
 };
 
 interface IRoomContext {
@@ -57,7 +57,7 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   leaveRoom: () => {
     return;
   },
-  roomError: 'Unitialised Room'
+  roomError: 'Unitialised Room',
 });
 
 export const useRoom = () => useContext(RoomContext);
@@ -66,26 +66,28 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
   const [roomState, setRoomState] = useState<RoomState>(defaultRoomState);
 
-  const createAndJoinRoom = useCallback(async (): Promise<Room | null> => {
+  const createAndJoinRoom = useCallback(async (): Promise<Room<
+    IRoomState
+  > | null> => {
     setRoomState({
       isLoading: true,
       room: undefined,
-      roomError: undefined
+      roomError: undefined,
     });
 
     try {
-      const room = await colyseus.create(ROOM_NAME);
+      const room = await colyseus.create<IRoomState>(ROOM_NAME);
       setRoomState({
         isLoading: false,
         room,
-        roomError: undefined
+        roomError: undefined,
       });
       return room;
     } catch (e) {
       setRoomState({
         isLoading: false,
         room: undefined,
-        roomError: e.message
+        roomError: e.message,
       });
       return null;
     }
@@ -96,22 +98,22 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       setRoomState({
         isLoading: true,
         room: undefined,
-        roomError: undefined
+        roomError: undefined,
       });
 
       try {
-        const room = await colyseus.joinById(roomId, options);
+        const room = await colyseus.joinById<IRoomState>(roomId, options);
         setRoomState({
           isLoading: false,
           room,
-          roomError: undefined
+          roomError: undefined,
         });
         return room;
       } catch (e) {
         setRoomState({
           isLoading: false,
           room: undefined,
-          roomError: e.message
+          roomError: e.message,
         });
         return null;
       }
@@ -123,7 +125,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: false,
       room: undefined,
-      roomError: undefined
+      roomError: undefined,
     });
   }, []);
 
@@ -135,7 +137,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     ...roomState,
     createAndJoinRoom,
     joinRoomById,
-    leaveRoom
+    leaveRoom,
   };
 
   return (
