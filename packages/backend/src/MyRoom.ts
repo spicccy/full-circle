@@ -43,7 +43,7 @@ export class MyRoom extends Room<RoomState, any> {
         return;
       }
       case getType(notifyPlayerReady): {
-        this.state.addReadyPlayer(client.sessionId);
+        this.state.onClientReady(client.sessionId);
         return;
       }
 

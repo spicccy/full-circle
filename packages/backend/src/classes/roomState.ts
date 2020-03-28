@@ -17,6 +17,7 @@ export interface IState {
   onReceive: (message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
   advanceState: () => void;
+  onClientReady: (clientId: string) => void;
 }
 
 class RoomState extends Schema implements IState, IRoomState {
@@ -38,7 +39,7 @@ class RoomState extends Schema implements IState, IRoomState {
   @type(Phase)
   phase = new Phase(60, PhaseType.LOBBY);
 
-  currState = new LobbyState(this);
+  currState: IState = new LobbyState(this);
 
   setCurator = (id: string): void => {
     this.curator = id;
@@ -58,13 +59,8 @@ class RoomState extends Schema implements IState, IRoomState {
     delete this.readyPlayers[playerId];
   };
 
-  addReadyPlayer = (playerId: string): void => {
-    const player = this.getPlayer(playerId);
-    this.readyPlayers[playerId] = player;
-    if (this.numReadyPlayers >= this.numPlayers) {
-      this.currState.advanceState();
-      this.readyPlayers = new MapSchema<Player>();
-    }
+  onClientReady = (clientId: string): void => {
+    this.currState.onClientReady(clientId);
   };
 
   getPlayer = (id: string): IPlayer => {

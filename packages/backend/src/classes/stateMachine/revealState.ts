@@ -5,7 +5,7 @@ import { IClient } from '../../interfaces';
 import RoomState, { IState } from '../roomState';
 
 class RevealState implements IState {
-  room: RoomState;
+  private room: RoomState;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -17,6 +17,12 @@ class RevealState implements IState {
 
   onReceive = (message: ClientAction) => {
     console.log(message);
+  };
+
+  onClientReady = (clientId: string) => {
+    if (clientId === this.room.curator) {
+      this.advanceState();
+    }
   };
 
   advanceState = () => {

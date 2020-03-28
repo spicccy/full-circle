@@ -35,11 +35,11 @@ describe('Room state', () => {
     state.addPlayer({ username: 'Player 1', id: 'player1' });
     state.addPlayer({ username: 'Player 2', id: 'player2' });
 
-    state.addReadyPlayer('player1');
+    state.onClientReady('player1');
     expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
     expect(state.numReadyPlayers).toBe(1);
 
-    state.addReadyPlayer('player2');
+    state.onClientReady('player2');
     expect(state.phase.phaseType).toBe(PhaseType.DRAW);
     expect(state.numReadyPlayers).toBe(0);
   });
@@ -50,11 +50,11 @@ describe('Room state', () => {
     state.addPlayer({ username: 'Player 1', id: 'player1' });
     state.addPlayer({ username: 'Player 2', id: 'player2' });
 
-    state.addReadyPlayer('player1');
+    state.onClientReady('player1');
     expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
     expect(state.numReadyPlayers).toBe(1);
 
-    state.addReadyPlayer('player1');
+    state.onClientReady('player1');
     expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
     expect(state.numReadyPlayers).toBe(1);
   });

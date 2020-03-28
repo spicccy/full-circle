@@ -11,7 +11,7 @@ import Player from './../subSchema/player';
 import DrawState from './drawState';
 
 class LobbyState implements IState {
-  room: RoomState;
+  private room: RoomState;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -37,6 +37,12 @@ class LobbyState implements IState {
 
   onReceive = (message: ClientAction) => {
     console.log(message);
+  };
+
+  onClientReady = (clientId: string) => {
+    if (clientId === this.room.curator) {
+      this.advanceState();
+    }
   };
 
   advanceState = () => {

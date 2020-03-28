@@ -8,7 +8,8 @@ import Phase from '../subSchema/phase';
 import GuessState from './guessState';
 
 class DrawState implements IState {
-  room: RoomState;
+  private room: RoomState;
+  private readyPlayers = new Set<string>();
 
   constructor(room: RoomState) {
     this.room = room;
@@ -20,6 +21,13 @@ class DrawState implements IState {
 
   onReceive = (message: ClientAction) => {
     console.log(message);
+  };
+
+  onClientReady = (clientId: string) => {
+    this.readyPlayers.add(clientId);
+    if (this.readyPlayers.size >= this.room.numPlayers) {
+      this.advanceState();
+    }
   };
 
   advanceState = () => {
