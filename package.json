@@ -8,7 +8,7 @@
     "start:FE": "lerna run start --scope @full-circle/frontend --stream",
     "start:BE": "lerna run start --scope @full-circle/backend --stream",
     "build:shared": "lerna run build --scope @full-circle/shared --stream",
-    "prettylint": "lerna run prettylint --parallel --no-bail",
+    "prettylint": "yarn build:shared && lerna run prettylint --parallel --no-bail",
     "test": "lerna run test --parallel --no-bail",
     "ALL": "yarn -W",
     "BE": "yarn workspace @full-circle/backend",
@@ -16,7 +16,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lerna run precommit --parallel --no-bail --since HEAD"
+      "pre-commit": "yarn build:shared && lerna run precommit --parallel --no-bail --since HEAD"
     }
   },
   "repository": {
