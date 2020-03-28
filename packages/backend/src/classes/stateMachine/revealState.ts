@@ -2,10 +2,10 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IState } from '../roomState';
+import RoomState, { IRoomStateBackend,IState } from '../roomState';
 
 class RevealState implements IState {
-  private room: RoomState;
+  private room: IRoomStateBackend;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -24,13 +24,13 @@ class RevealState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    if (clientId === this.room.curator) {
+    if (clientId === this.room.getCurator()) {
       this.advanceState();
     }
   };
 
   advanceState = () => {
-    return;
+    this.room.setEndState();
   };
 }
 

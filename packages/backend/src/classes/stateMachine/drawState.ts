@@ -3,12 +3,12 @@ import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IState } from '../roomState';
+import RoomState, { IRoomStateBackend,IState } from '../roomState';
 import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 import GuessState from './guessState';
 
 class DrawState implements IState {
-  private room: RoomState;
+  private room: IRoomStateBackend;
   private readyPlayers = new Set<string>();
 
   constructor(room: RoomState) {
@@ -36,8 +36,7 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
-    this.room.phase = new Phase(PhaseType.GUESS, DEFAULT_GUESS_PHASE_LENGTH);
-    this.room.currState = new GuessState(this.room);
+    this.room.setGuessState();
   };
 }
 

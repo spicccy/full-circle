@@ -4,14 +4,13 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
-import RoomState, { IState } from '../roomState';
+import RoomState, { IRoomStateBackend,IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
 import Player from './../subSchema/player';
 import DrawState from './drawState';
-import EndState from './endState';
 
 class LobbyState implements IState {
-  private room: RoomState;
+  private room: IRoomStateBackend;
 
   constructor(room: RoomState) {
     this.room = room;
@@ -44,15 +43,14 @@ class LobbyState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    if (clientId === this.room.curator) {
+    if (clientId === this.room.getCurator()) {
       this.advanceState();
     }
   };
 
   advanceState = () => {
-    this.room.round = 1;
-    this.room.phase = new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH);
-    this.room.currState = new DrawState(this.room);
+    this.room.incrementRound();
+    this.room.setDrawState();
   };
 }
 
