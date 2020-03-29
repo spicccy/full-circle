@@ -1,6 +1,6 @@
 import { createAction } from 'typesafe-actions';
 
-import { CanvasAction } from '../canvas/interfaces';
+import { CanvasAction } from '../canvas';
 
 export const submitDrawing = createAction('@client/submitDrawing')<
   CanvasAction[]

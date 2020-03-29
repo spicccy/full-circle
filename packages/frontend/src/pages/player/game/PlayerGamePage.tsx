@@ -2,7 +2,7 @@ import {
   displayDrawing,
   displayPrompt,
 } from '@full-circle/shared/lib/actions/server';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent, useState } from 'react';
 import { Redirect } from 'react-router-dom';

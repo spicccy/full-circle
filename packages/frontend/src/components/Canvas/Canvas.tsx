@@ -1,15 +1,11 @@
 import {
-  BrushType,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-  Colour,
-  PenThickness,
-} from '@full-circle/shared/lib/canvas/constants';
-import {
   CanvasAction,
+  drawStroke,
   ICoord,
-  IPen,
-} from '@full-circle/shared/lib/canvas/interfaces';
+  Pen,
+} from '@full-circle/shared/lib/canvas';
 import React, {
   FunctionComponent,
   useLayoutEffect,
@@ -19,21 +15,11 @@ import React, {
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
 
-import { BrushTypePicker } from './BrushTypePicker';
-import { ColourPicker } from './ColourPicker';
-import {
-  clearCanvas,
-  drawStroke,
-  getPointerPosition,
-  redrawCanvas,
-  setupPen,
-} from './helpers';
-import { ThicknessPicker } from './ThicknessPicker';
+import { getPointerPosition, handleHover, redrawCanvas } from './helpers';
 
 const CanvasContainer = styled.div`
   position: relative;
   touch-action: none;
-  border: 2px solid red;
 
   > canvas {
     height: 100%;
@@ -48,11 +34,13 @@ const CanvasContainer = styled.div`
 `;
 
 interface ICanvasProps {
+  pen: Pen;
   canvasActions: CanvasAction[];
   setCanvasActions: (canvasActions: CanvasAction[]) => void;
 }
 
 export const Canvas: FunctionComponent<ICanvasProps> = ({
+  pen,
   canvasActions,
   setCanvasActions,
 }) => {
@@ -63,28 +51,16 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   const currentPath = useRef<ICoord[]>([]);
 
   const [isDrawing, setIsDrawing] = useState(false);
-  const [brushType, setBrushType] = useState<BrushType>(BrushType.SOLID);
-  const [penColour, setPenColour] = useState<Colour>(Colour.NAVY);
-  const [penThickness, setPenThickness] = useState<PenThickness>(
-    PenThickness.MEDIUM
-  );
-
-  const pen: IPen = {
-    brushType,
-    penColour,
-    penThickness,
-  };
 
   useEventListener(canvasContainerRef, 'pointerdown', (e) => {
     const drawingCtx = drawingCanvasRef.current?.getContext('2d');
     if (!drawingCtx) return;
 
-    // currentPath.current.push({ x: 10, y: 10 });
     currentPath.current.push(getPointerPosition(e, drawingCtx));
 
     redrawCanvas(drawingCtx, [
       ...canvasActions,
-      { type: 'stroke', pen, points: currentPath.current },
+      drawStroke({ pen, points: currentPath.current }),
     ]);
 
     setIsDrawing(true);
@@ -99,7 +75,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
 
       redrawCanvas(drawingCtx, [
         ...canvasActions,
-        { type: 'stroke', pen, points: currentPath.current },
+        drawStroke({ pen, points: currentPath.current }),
       ]);
     }
   });
@@ -109,7 +85,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
       setIsDrawing(false);
       setCanvasActions([
         ...canvasActions,
-        { type: 'stroke', pen, points: currentPath.current },
+        drawStroke({ pen, points: currentPath.current }),
       ]);
       currentPath.current = [];
     }
@@ -120,47 +96,14 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     const hoverCtx = hoverCanvasRef.current?.getContext('2d');
     if (!hoverCtx) return;
 
-    const points = [getPointerPosition(e, hoverCtx)];
-    setupPen(hoverCtx, pen);
-    clearCanvas(hoverCtx);
-
-    if (pen.brushType === 'erase') {
-      const outline: IPen = {
-        brushType: BrushType.SOLID,
-        penColour: Colour.BLACK,
-        penThickness: penThickness + 2,
-      };
-
-      const middle: IPen = {
-        brushType: BrushType.SOLID,
-        penColour: Colour.WHITE,
-        penThickness: penThickness,
-      };
-
-      hoverCtx.globalAlpha = 1;
-      drawStroke(hoverCtx, { type: 'stroke', pen: outline, points });
-      drawStroke(hoverCtx, { type: 'stroke', pen, points });
-      hoverCtx.globalAlpha = 0.7;
-      drawStroke(hoverCtx, { type: 'stroke', pen: middle, points });
-      return;
-    }
-
-    hoverCtx.globalAlpha = 0.3;
-    drawStroke(hoverCtx, { type: 'stroke', pen, points });
+    handleHover(hoverCtx, pen, getPointerPosition(e, hoverCtx));
   });
 
   useEventListener(canvasContainerRef, 'pointerleave', () => {
     const hoverCtx = hoverCanvasRef.current?.getContext('2d');
     if (!hoverCtx) return;
 
-    clearCanvas(hoverCtx);
-  });
-
-  // ctrl z
-  useEventListener(document, 'keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
-      undo();
-    }
+    handleHover(hoverCtx, pen);
   });
 
   useLayoutEffect(() => {
@@ -170,45 +113,18 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     redrawCanvas(drawingCtx, canvasActions);
   }, [canvasActions]);
 
-  const undo = () => {
-    setCanvasActions(canvasActions.slice(0, canvasActions.length - 1));
-  };
-
-  const clear = () => {
-    setCanvasActions([...canvasActions, { type: 'clear' }]);
-  };
-
   return (
-    <div>
-      <CanvasContainer ref={canvasContainerRef}>
-        <canvas
-          height={CANVAS_HEIGHT}
-          width={CANVAS_WIDTH}
-          ref={drawingCanvasRef}
-        />
-        <canvas
-          height={CANVAS_HEIGHT}
-          width={CANVAS_WIDTH}
-          ref={hoverCanvasRef}
-        />
-      </CanvasContainer>
-      <div>
-        <button disabled={canvasActions.length === 0} onClick={undo}>
-          Undo
-        </button>
-        <button onClick={clear}>Clear</button>
-      </div>
-      <BrushTypePicker
-        currentBrushType={brushType}
-        setBrushType={setBrushType}
+    <CanvasContainer ref={canvasContainerRef}>
+      <canvas
+        height={CANVAS_HEIGHT}
+        width={CANVAS_WIDTH}
+        ref={drawingCanvasRef}
       />
-      <ThicknessPicker
-        currentBrushType={brushType}
-        currentColour={penColour}
-        currentThickness={penThickness}
-        setThickness={setPenThickness}
+      <canvas
+        height={CANVAS_HEIGHT}
+        width={CANVAS_WIDTH}
+        ref={hoverCanvasRef}
       />
-      <ColourPicker currentColour={penColour} setColour={setPenColour} />
-    </div>
+    </CanvasContainer>
   );
 };

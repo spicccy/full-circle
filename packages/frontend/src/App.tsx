@@ -15,6 +15,7 @@ import {
   TimerTest,
 } from './pages';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
+import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { theme } from './styles/theme';
 
 export const App: FunctionComponent = () => {
@@ -32,6 +33,9 @@ export const App: FunctionComponent = () => {
             <Route exact path="/instructions" component={Instructions} />
             <Route exact path="/team" component={Team} />
             <Route exact path="/timertest" component={TimerTest} />
+            <Route exact path="/drawtest">
+              <DrawPage room={{} as any} prompt="Hi" promptBy="Skithy" />
+            </Route>
           </Switch>
         </Grommet>
       </RoomProvider>
