@@ -12,7 +12,7 @@ const LoginPage: FunctionComponent = () => {
 
   const attemptToJoinRoom = async (name: string, roomId: string) => {
     const options = {
-      username: name
+      username: name,
     };
 
     const joinedRoom = await joinRoomById(roomId, options);
