@@ -23,7 +23,8 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
 }) => {
   const [messages, setMessages] = useState<string[]>([]);
 
-  const { room } = useRoom();
+  const roomContext = useRoom();
+  const { room } = roomContext;
   const roomState = useRoomState();
 
   useEffect(() => {
@@ -42,6 +43,8 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
     <Draggable>
       <Debug>
         Room: {room ? room.id : 'NA'}
+        <br />
+        Room Code: {roomContext.room ? roomContext.roomCode : 'NA'}
         <br />
         Session id: {room ? room.sessionId : 'NA'}
         <br />
