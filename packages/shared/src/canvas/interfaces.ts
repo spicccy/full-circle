@@ -1,24 +1,23 @@
-import { BrushType, Colour, PenThickness } from './constants';
+import { Colour, PenThickness, PenType } from './constants';
 
 export interface ICoord {
   x: number;
   y: number;
 }
 
-export interface IPen {
-  brushType: BrushType;
+interface IBasePen {
+  type: PenType;
+}
+
+export interface ISolidPen extends IBasePen {
+  type: PenType.SOLID;
   penColour: Colour;
   penThickness: PenThickness;
 }
 
-export interface IStrokeAction {
-  type: 'stroke';
-  pen: IPen;
-  points: ICoord[];
+export interface IEraserPen extends IBasePen {
+  type: PenType.ERASE;
+  penThickness: PenThickness;
 }
 
-export interface IClearAction {
-  type: 'clear';
-}
-
-export type CanvasAction = IStrokeAction | IClearAction;
+export type Pen = ISolidPen | IEraserPen;

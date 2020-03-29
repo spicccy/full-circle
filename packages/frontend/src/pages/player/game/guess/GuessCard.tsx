@@ -1,17 +1,11 @@
-import { Button, TextInput } from 'grommet';
+import 'styled-components/macro';
+
+import { Box, TextInput } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { Card } from 'src/components/Card/Card';
-import styled from 'styled-components/macro';
 
-const SubmitButton = styled(Button)`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-size: 20px;
-  padding: 12px;
-  text-decoration: 2px underline;
-  width: min-content;
-`;
+import { BorderBottom } from '../components/BorderBottom';
+import { SubmitButton } from '../components/SubmitButton';
 
 interface IGuessCardProps {
   onSubmitGuess(guess: string): void;
@@ -25,22 +19,25 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
   };
 
   return (
-    <Card height="xsmall" justify="center">
-      <TextInput
-        plain
-        maxLength={20}
-        placeholder="Enter your guess"
-        size="large"
-        value={guess}
-        onChange={(e) => setGuess(e.target.value)}
-        css={{ textAlign: 'center' }}
-      />
-      <SubmitButton
-        plain
-        disabled={!guess}
-        onClick={handleSubmitGuess}
-        label="Submit"
-      />
+    <Card justify="center">
+      <BorderBottom height="xsmall" justify="center">
+        <TextInput
+          plain
+          maxLength={20}
+          placeholder="Guess here"
+          size="large"
+          value={guess}
+          onChange={(e) => setGuess(e.target.value)}
+          css={{ textAlign: 'center', fontSize: '32px' }}
+        />
+      </BorderBottom>
+      <Box>
+        <SubmitButton
+          disabled={!guess}
+          onClick={handleSubmitGuess}
+          label="Submit"
+        />
+      </Box>
     </Card>
   );
 };

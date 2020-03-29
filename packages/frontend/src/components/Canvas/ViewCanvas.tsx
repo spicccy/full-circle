@@ -1,8 +1,8 @@
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-} from '@full-circle/shared/lib/canvas/constants';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+  CanvasAction,
+} from '@full-circle/shared/lib/canvas';
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 

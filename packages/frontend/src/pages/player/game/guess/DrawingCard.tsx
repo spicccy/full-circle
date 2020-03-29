@@ -1,4 +1,4 @@
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { Box, Heading } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';

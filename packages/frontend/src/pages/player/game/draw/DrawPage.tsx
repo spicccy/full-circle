@@ -1,10 +1,17 @@
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import {
+  CanvasAction,
+  Colour,
+  Pen,
+  PenThickness,
+  PenType,
+} from '@full-circle/shared/lib/canvas';
 import { Room } from 'colyseus.js';
 import { Box } from 'grommet';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 
 import { CanvasCard } from './CanvasCard';
+import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
 interface IDrawPageProps {
@@ -18,7 +25,14 @@ const DrawPage: FunctionComponent<IDrawPageProps> = ({
   prompt,
   promptBy,
 }) => {
-  const handleSubmitDrawing = (canvasActions: CanvasAction[]) => {
+  const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
+  const [pen, setPen] = useState<Pen>({
+    type: PenType.SOLID,
+    penColour: Colour.BLACK,
+    penThickness: PenThickness.MEDIUM,
+  });
+
+  const handleSubmitDrawing = () => {
     room.send(submitDrawing(canvasActions));
   };
 
@@ -27,8 +41,16 @@ const DrawPage: FunctionComponent<IDrawPageProps> = ({
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <PromptCard prompt={prompt} promptBy={promptBy} />
       </Box>
-      <Box width="medium">
-        <CanvasCard onSubmitDrawing={handleSubmitDrawing} />
+      <Box width="medium" margin={{ bottom: 'medium' }}>
+        <CanvasCard
+          canvasActions={canvasActions}
+          setCanvasActions={setCanvasActions}
+          pen={pen}
+          onSubmitDrawing={handleSubmitDrawing}
+        />
+      </Box>
+      <Box>
+        <PenPicker pen={pen} setPen={setPen} />
       </Box>
     </Box>
   );

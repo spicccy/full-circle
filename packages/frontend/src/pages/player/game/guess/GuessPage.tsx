@@ -1,5 +1,5 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { CanvasAction } from '@full-circle/shared/lib/canvas/interfaces';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { Room } from 'colyseus.js';
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';

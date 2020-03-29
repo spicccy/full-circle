@@ -2,7 +2,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend,IState } from '../roomState';
+import RoomState, { IRoomStateBackend, IState } from '../roomState';
 
 class RevealState implements IState {
   private room: IRoomStateBackend;
