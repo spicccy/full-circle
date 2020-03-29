@@ -35,6 +35,22 @@ const EraserBlock = styled(BaseButton)<{
   }
 `;
 
+const ColourRow = styled(Box)<{ top: boolean }>`
+  > :first-child {
+    ${(props) =>
+      props.top
+        ? `border-top-left-radius: 4px;`
+        : `border-bottom-left-radius: 4px;`}
+  }
+
+  > :last-child {
+    ${(props) =>
+      props.top
+        ? `border-top-right-radius: 4px;`
+        : `border-bottom-right-radius: 4px;`}
+  }
+`;
+
 const row1: Colour[] = [
   Colour.WHITE,
   Colour.LIGHT_GRAY,
@@ -71,7 +87,7 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
 
   return (
     <Box margin="medium">
-      <Box direction="row">
+      <ColourRow direction="row" top={true}>
         {row1.map((colour) => (
           <ColourBlock
             key={colour}
@@ -80,8 +96,8 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
             onClick={() => setColour(colour)}
           />
         ))}
-      </Box>
-      <Box direction="row">
+      </ColourRow>
+      <ColourRow direction="row" top={false}>
         {row2.map((colour) => (
           <ColourBlock
             key={colour}
@@ -93,7 +109,7 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
         <EraserBlock selected={pen.type === PenType.ERASE} onClick={setEraser}>
           E
         </EraserBlock>
-      </Box>
+      </ColourRow>
     </Box>
   );
 };
