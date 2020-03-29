@@ -23,7 +23,6 @@ const arrayOfCoords: ICoord[] = [
 ];
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const roomContext = useRoom();
-  const { room } = roomContext;
   const players = useRoomState()?.players;
 
   const arrayOfPlayers = players ? objectValues(players) : [];
