@@ -15,7 +15,7 @@ const TestConsumer: React.FunctionComponent = () => {
     room,
     roomError,
     createAndJoinRoom,
-    joinRoomById,
+    joinRoomByCode: joinRoomById,
     leaveRoom,
   } = useRoom();
   const [joinRoomId, setJoinRoomId] = useState('');

@@ -47,7 +47,7 @@ const defaultRoomState: RoomState = {
 
 interface IRoomContext {
   createAndJoinRoom(): Promise<IRoom | null>;
-  joinRoomById(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
+  joinRoomByCode(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
 }
 
@@ -57,7 +57,7 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   createAndJoinRoom: async () => {
     throw new Error('Unitialised room');
   },
-  joinRoomById: async (_roomId: string) => {
+  joinRoomByCode: async (_roomId: string) => {
     throw new Error('Unitiialised room');
   },
   leaveRoom: () => {
@@ -175,7 +175,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const context: IRoomContext & RoomState = {
     ...roomState,
     createAndJoinRoom,
-    joinRoomById: joinRoomByCode,
+    joinRoomByCode,
     leaveRoom,
   };
 
