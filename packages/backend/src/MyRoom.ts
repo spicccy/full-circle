@@ -13,17 +13,14 @@ import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
-import { getNewCode } from './classes/helpers/roomCode';
+import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
 import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
 export class MyRoom extends Room<RoomState, IRoomMetadata> {
-  usedCodes: string[] = [];
-
   onCreate(_options: any) {
     // Create an easy 4-letter code for joining rooms
-    const roomCode = getNewCode(this.usedCodes);
-    this.usedCodes.push(roomCode);
+    const roomCode = RoomCodeGenerator.getNewCode();
     this.setMetadata({ roomCode });
     console.log(`MyRoom ${this.roomId} created with code ${roomCode}.`);
 
@@ -76,6 +73,6 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
     // Release the room code
     const { roomCode } = this.metadata;
-    this.usedCodes = this.usedCodes.filter((code) => code !== roomCode);
+    RoomCodeGenerator.releaseCode(roomCode);
   }
 }

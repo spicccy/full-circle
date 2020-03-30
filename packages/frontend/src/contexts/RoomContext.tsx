@@ -13,6 +13,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import invariant from 'tiny-invariant';
 
 import { useColyseus } from './ColyseusContext';
 
@@ -40,9 +41,9 @@ interface IRoomFailureState {
 type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 
 const defaultRoomState: RoomState = {
-  isLoading: true,
+  isLoading: false,
   room: undefined,
-  roomError: undefined,
+  roomError: 'Uninitialised room',
 };
 
 interface IRoomContext {
@@ -83,14 +84,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       const room = await colyseus.create<IRoomStateSynced>(ROOM_NAME);
       const rooms = await colyseus.getAvailableRooms();
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
-      if (!roomWithMetadata) {
-        setRoomState({
-          isLoading: false,
-          room: undefined,
-          roomError: 'Failed to find a room with a matching code',
-        });
-        return null;
-      }
+      invariant(roomWithMetadata, 'Unable to find the room we just created');
+
+      console.log(JSON.stringify(roomWithMetadata));
 
       setRoomState({
         isLoading: false,
@@ -164,7 +160,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: false,
       room: undefined,
-      roomError: 'The client has left this room',
+      roomError: '',
     });
   }, []);
 
