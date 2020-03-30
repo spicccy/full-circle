@@ -43,7 +43,7 @@ type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 const defaultRoomState: RoomState = {
   isLoading: false,
   room: undefined,
-  roomError: 'Uninitialised room',
+  roomError: '',
 };
 
 interface IRoomContext {

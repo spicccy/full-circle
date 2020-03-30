@@ -1,6 +1,7 @@
 import { render, wait, waitForDomChange } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Client, Room } from 'colyseus.js';
+import { RoomAvailable } from 'colyseus.js/lib/Room';
 import React, { useState } from 'react';
 import { mocked, partialMock } from 'src/testHelpers';
 
@@ -10,20 +11,25 @@ import { RoomProvider, useRoom } from './RoomContext';
 jest.mock('./ColyseusContext');
 
 const TestConsumer: React.FunctionComponent = () => {
+  const roomContext = useRoom();
   const {
     isLoading,
     room,
     roomError,
     createAndJoinRoom,
-    joinRoomByCode: joinRoomById,
+    joinRoomByCode,
     leaveRoom,
-  } = useRoom();
+  } = roomContext;
+
+  const roomCode = roomContext.room ? roomContext.roomCode : '';
+
   const [joinRoomId, setJoinRoomId] = useState('');
 
   return (
     <div>
       <div data-testid="isLoading">{String(isLoading)}</div>
       <div data-testid="roomId">{room?.id}</div>
+      <div data-testid="roomCode">{roomCode}</div>
       <div data-testid="roomError">{roomError}</div>
       <button data-testid="createAndJoinRoom" onClick={createAndJoinRoom} />
       <input
@@ -33,7 +39,7 @@ const TestConsumer: React.FunctionComponent = () => {
       />
       <button
         data-testid="joinRoomById"
-        onClick={() => joinRoomById(joinRoomId, { username: 'test' })}
+        onClick={() => joinRoomByCode(joinRoomId, { username: 'test' })}
       />
       <button data-testid="leaveRoom" onClick={leaveRoom} />
     </div>
@@ -41,12 +47,17 @@ const TestConsumer: React.FunctionComponent = () => {
 };
 
 describe('RoomContext', () => {
-  it('can create and joins a room', async () => {
-    const mockRoom = partialMock<Room>({ id: '123', leave: jest.fn() });
-    const mockColyseus = partialMock<Client>({
-      create: () => Promise.resolve(mockRoom),
-    });
+  const mockRoom = partialMock<Room>({ id: 'roomId', leave: jest.fn() });
+  const mockRoomWithMetada = partialMock<RoomAvailable<any>>({
+    roomId: 'roomId',
+    metadata: { roomCode: 'roomCode' },
+  });
+  const mockColyseus = partialMock<Client>({
+    create: () => Promise.resolve(mockRoom),
+    getAvailableRooms: () => Promise.resolve([mockRoomWithMetada]),
+  });
 
+  it('can create and joins a room', async () => {
     mocked(useColyseus).mockReturnValue(mockColyseus);
 
     const { getByTestId } = render(
@@ -68,14 +79,16 @@ describe('RoomContext', () => {
     await waitForDomChange();
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
-    expect(getByTestId('roomId')).toHaveTextContent('123');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId');
+    expect(getByTestId('roomCode')).toHaveTextContent('roomCode');
     expect(getByTestId('roomError')).toBeEmpty();
   });
 
   it('can join a room by id', async () => {
     const mockColyseus = partialMock<Client>({
-      joinById: (roomCode) =>
+      joinById: (roomCode): Promise<Room<any>> =>
         Promise.resolve(partialMock({ id: roomCode, leave: jest.fn() })),
+      getAvailableRooms: () => Promise.resolve([mockRoomWithMetada]),
     });
 
     mocked(useColyseus).mockReturnValue(mockColyseus);
@@ -86,7 +99,7 @@ describe('RoomContext', () => {
       </RoomProvider>
     );
 
-    userEvent.type(getByTestId('joinRoomId'), 'catcat');
+    userEvent.type(getByTestId('joinRoomId'), 'roomCode');
     userEvent.click(getByTestId('joinRoomById'));
 
     expect(getByTestId('isLoading')).toHaveTextContent('true');
@@ -96,16 +109,12 @@ describe('RoomContext', () => {
     await waitForDomChange();
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
-    expect(getByTestId('roomId')).toHaveTextContent('catcat');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId');
+    expect(getByTestId('roomCode')).toHaveTextContent('roomCode');
     expect(getByTestId('roomError')).toBeEmpty();
   });
 
   it('can leave a room', async () => {
-    const mockRoom = partialMock<Room>({ id: '123', leave: jest.fn() });
-    const mockColyseus = partialMock<Client>({
-      create: () => Promise.resolve(mockRoom),
-    });
-
     mocked(useColyseus).mockReturnValue(mockColyseus);
 
     const { getByTestId } = render(
@@ -117,7 +126,7 @@ describe('RoomContext', () => {
     userEvent.click(getByTestId('createAndJoinRoom'));
     await waitForDomChange();
 
-    expect(getByTestId('roomId')).toHaveTextContent('123');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId');
 
     userEvent.click(getByTestId('leaveRoom'));
 
@@ -126,13 +135,18 @@ describe('RoomContext', () => {
   });
 
   it('leaves a room when you join a new one', async () => {
-    const mockRoom = partialMock<Room>({ id: 'room1', leave: jest.fn() });
-    const mockRoom2 = partialMock<Room>({ id: 'room2', leave: jest.fn() });
+    const mockRoom2 = partialMock<Room>({ id: 'roomId2', leave: jest.fn() });
+    const mockRoomWithMetada2 = partialMock<RoomAvailable<any>>({
+      roomId: 'roomId2',
+      metadata: { roomCode: 'roomCode2' },
+    });
     const mockColyseus = partialMock<Client>({
       create: jest
         .fn()
         .mockResolvedValueOnce(mockRoom)
         .mockResolvedValueOnce(mockRoom2),
+      getAvailableRooms: () =>
+        Promise.resolve([mockRoomWithMetada, mockRoomWithMetada2]),
     });
 
     mocked(useColyseus).mockReturnValue(mockColyseus);
@@ -146,21 +160,16 @@ describe('RoomContext', () => {
     userEvent.click(getByTestId('createAndJoinRoom'));
     await waitForDomChange();
 
-    expect(getByTestId('roomId')).toHaveTextContent('room1');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId');
 
     userEvent.click(getByTestId('createAndJoinRoom'));
     await waitForDomChange();
 
-    expect(getByTestId('roomId')).toHaveTextContent('room2');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId2');
     await wait(() => expect(mockRoom.leave).toBeCalled());
   });
 
   it('leaves a room when component unmounts', async () => {
-    const mockRoom = partialMock<Room>({ id: 'room1', leave: jest.fn() });
-    const mockColyseus = partialMock<Client>({
-      create: () => Promise.resolve(mockRoom),
-    });
-
     mocked(useColyseus).mockReturnValue(mockColyseus);
 
     const { getByTestId, unmount } = render(
@@ -172,7 +181,7 @@ describe('RoomContext', () => {
     userEvent.click(getByTestId('createAndJoinRoom'));
     await waitForDomChange();
 
-    expect(getByTestId('roomId')).toHaveTextContent('room1');
+    expect(getByTestId('roomId')).toHaveTextContent('roomId');
 
     unmount();
 
@@ -181,7 +190,9 @@ describe('RoomContext', () => {
 
   it('handles create room error', async () => {
     const mockColyseus = partialMock<Client>({
-      create: () => Promise.reject(new Error('bleh')),
+      create: () => Promise.reject(new Error('room create failed')),
+      getAvailableRooms: () =>
+        Promise.reject(new Error('get available rooms failed')),
     });
 
     mocked(useColyseus).mockReturnValue(mockColyseus);
@@ -197,12 +208,14 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toHaveTextContent('bleh');
+    expect(getByTestId('roomError')).toHaveTextContent('room create failed');
   });
 
   it('handles join room error', async () => {
     const mockColyseus = partialMock<Client>({
-      joinById: () => Promise.reject(new Error('bleh')),
+      joinById: () => Promise.reject(new Error('joinById failed')),
+      getAvailableRooms: () =>
+        Promise.reject(new Error('get available rooms failed')),
     });
 
     mocked(useColyseus).mockReturnValue(mockColyseus);
@@ -218,6 +231,8 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toHaveTextContent('bleh');
+    expect(getByTestId('roomError')).toHaveTextContent(
+      'get available rooms failed'
+    );
   });
 });
