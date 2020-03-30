@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "prettier": "prettier --write src/**/*.{ts,tsx}",
     "prettylint": "yarn typecheck && yarn lint && yarn prettier",
-    "precommit": "yarn typecheck && lint-staged"
+    "precommit": "yarn typecheck"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",
