@@ -62,20 +62,20 @@ const ColourRow = styled(Box)<{ top: boolean }>`
 `;
 
 const row1 = [
-  { colour: Colour.WHITE, title: 'white (q)' },
-  { colour: Colour.LIGHT_GRAY, title: 'light gray (w)' },
-  { colour: Colour.RED, title: 'red (e)' },
-  { colour: Colour.YELLOW, title: 'yellow (r)' },
-  { colour: Colour.GREEN, title: 'green (t)' },
-  { colour: Colour.PURPLE, title: 'purple (y)' },
+  { colour: Colour.WHITE, title: 'white (q)', key: 'q' },
+  { colour: Colour.LIGHT_GRAY, title: 'light gray (w)', key: 'w' },
+  { colour: Colour.RED, title: 'red (e)', key: 'e' },
+  { colour: Colour.YELLOW, title: 'yellow (r)', key: 'r' },
+  { colour: Colour.GREEN, title: 'green (t)', key: 't' },
+  { colour: Colour.PURPLE, title: 'purple (y)', key: 'y' },
 ];
 
 const row2 = [
-  { colour: Colour.BLACK, title: 'black (a)' },
-  { colour: Colour.DARK_GRAY, title: 'dark gray (s)' },
-  { colour: Colour.ORANGE, title: 'orange (d)' },
-  { colour: Colour.LIGHT_GREEN, title: 'light green (f)' },
-  { colour: Colour.BLUE, title: 'blue (g)' },
+  { colour: Colour.BLACK, title: 'black (a)', key: 'a' },
+  { colour: Colour.DARK_GRAY, title: 'dark gray (s)', key: 's' },
+  { colour: Colour.ORANGE, title: 'orange (d)', key: 'd' },
+  { colour: Colour.LIGHT_GREEN, title: 'light green (f)', key: 'f' },
+  { colour: Colour.BLUE, title: 'blue (g)', key: 'g' },
 ];
 
 interface IColourPickerProps {
@@ -96,30 +96,13 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
     setPen({ type: PenType.ERASE, penThickness: pen.penThickness });
 
   useEventListener(document, 'keydown', (e) => {
-    switch (e.key) {
-      case 'q':
-        return setColour(row1[0].colour);
-      case 'w':
-        return setColour(row1[1].colour);
-      case 'e':
-        return setColour(row1[2].colour);
-      case 'r':
-        return setColour(row1[3].colour);
-      case 't':
-        return setColour(row1[4].colour);
-      case 'y':
-        return setColour(row1[5].colour);
+    [...row1, ...row2].forEach(({ key, colour }) => {
+      if (e.key === key) {
+        setColour(colour);
+      }
+    });
 
-      case 'a':
-        return setColour(row2[0].colour);
-      case 's':
-        return setColour(row2[1].colour);
-      case 'd':
-        return setColour(row2[2].colour);
-      case 'f':
-        return setColour(row2[3].colour);
-      case 'g':
-        return setColour(row2[4].colour);
+    switch (e.key) {
       case 'h':
         return setEraser();
     }

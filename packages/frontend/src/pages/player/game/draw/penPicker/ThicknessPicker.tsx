@@ -51,9 +51,9 @@ const Circle = styled.div<{ colour?: Colour; size: PenThickness }>`
 `;
 
 const thicknesses = [
-  { thickness: PenThickness.SMALL, title: 'small brush (1)' },
-  { thickness: PenThickness.MEDIUM, title: 'medium brush (2)' },
-  { thickness: PenThickness.LARGE, title: 'large brush (3)' },
+  { thickness: PenThickness.SMALL, title: 'small brush (1)', key: '1' },
+  { thickness: PenThickness.MEDIUM, title: 'medium brush (2)', key: '2' },
+  { thickness: PenThickness.LARGE, title: 'large brush (3)', key: '3' },
 ];
 
 interface IThicknessPickerProps {
@@ -71,14 +71,11 @@ const ThicknessPicker: FunctionComponent<IThicknessPickerProps> = ({
     setPen({ ...pen, penThickness });
 
   useEventListener(document, 'keydown', (e) => {
-    switch (e.key) {
-      case '1':
-        return setThickness(PenThickness.SMALL);
-      case '2':
-        return setThickness(PenThickness.MEDIUM);
-      case '3':
-        return setThickness(PenThickness.LARGE);
-    }
+    thicknesses.forEach(({ key, thickness }) => {
+      if (key === e.key) {
+        setThickness(thickness);
+      }
+    });
   });
 
   return (
