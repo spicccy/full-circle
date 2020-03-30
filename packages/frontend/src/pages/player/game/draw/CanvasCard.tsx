@@ -22,11 +22,10 @@ import { ReactComponent as Undo } from '../icons/undo.svg';
 
 const ButtonWrapper = styled(BaseButton)`
   padding: 4px;
-
+  transition: fill 0.2s;
   fill: ${Colour.DARK_GRAY};
 
   :disabled {
-    cursor: default;
     fill: ${Colour.LIGHT_GRAY};
   }
 
@@ -38,8 +37,8 @@ const ButtonWrapper = styled(BaseButton)`
 
 const EraserWrapper = styled(ButtonWrapper)`
   margin-left: 4px;
-  transition: fill 0.2s;
-  :hover:not(:disabled) {
+
+  :hover:enabled {
     fill: ${Colour.RED};
   }
 `;
