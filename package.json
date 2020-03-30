@@ -12,7 +12,8 @@
     "test": "lerna run test --parallel --no-bail",
     "ALL": "yarn -W",
     "BE": "yarn workspace @full-circle/backend",
-    "FE": "yarn workspace @full-circle/frontend"
+    "FE": "yarn workspace @full-circle/frontend",
+    "AT": "yarn workspace @full-circle/automation-test"
   },
   "husky": {
     "hooks": {

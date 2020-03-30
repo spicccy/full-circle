@@ -1,0 +1,17 @@
+{
+  "name": "@full-circle/automation-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "ts-node src/index.ts",
+    "lint": "eslint --fix src/**/*.{ts,tsx}",
+    "typecheck": "tsc --noEmit",
+    "prettier": "prettier --write src/**/*.{ts,tsx}",
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier",
+    "precommit": "yarn typecheck && lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix",
+    "*.{ts,tsx,md,html}": "prettier --write"
+  }
+}
