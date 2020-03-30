@@ -86,8 +86,6 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
       invariant(roomWithMetadata, 'Unable to find the room we just created');
 
-      console.log(JSON.stringify(roomWithMetadata));
-
       setRoomState({
         isLoading: false,
         room,
