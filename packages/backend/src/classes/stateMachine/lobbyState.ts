@@ -29,6 +29,11 @@ class LobbyState implements IState {
 
     const player = new Player(clientId, username);
     this.room.addPlayer(player);
+
+    // TODO: TESTS CHAIN ALLOCATION DELETE THIS
+    if (this.room.numPlayers == 5) {
+      this.room.allocate();
+    }
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

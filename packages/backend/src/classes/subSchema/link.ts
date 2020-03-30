@@ -9,10 +9,16 @@ class Link extends Schema implements ILink {
   id = '';
 
   @type(Prompt)
-  prompt = new Prompt();
+  prompt: Prompt;
 
   @type(Image)
-  image = new Image();
+  image: Image;
+
+  constructor(drawId: string, guessId: string) {
+    super();
+    this.prompt = new Prompt(guessId);
+    this.image = new Image(drawId);
+  }
 }
 
 export default Link;

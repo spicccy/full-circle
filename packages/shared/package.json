@@ -5,9 +5,9 @@
   "scripts": {
     "start": "tsc --watch",
     "build": "tsc",
-    "lint": "eslint --fix src/**/*.{ts,tsx}",
+    "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "prettier": "prettier --write src/**/*.{ts,tsx}",
+    "prettier": "prettier --write src/**/*.ts",
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   }
 }

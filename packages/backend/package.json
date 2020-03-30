@@ -9,7 +9,12 @@
     "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier --write src/**/*.ts",
-    "prettylint": "yarn typecheck && yarn lint && yarn prettier"
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier",
+    "precommit": "yarn typecheck && lint-staged"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --fix",
+    "*.{ts,md}": "prettier --write"
   },
   "dependencies": {
     "cors": "^2.8.5",

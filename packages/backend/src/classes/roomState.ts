@@ -1,5 +1,6 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
@@ -8,12 +9,14 @@ import {
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../interfaces';
+import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Chain from './subSchema/chain';
+import Link from './subSchema/link';
 import Phase, {
   DEFAULT_DRAW_PHASE_LENGTH,
   DEFAULT_GUESS_PHASE_LENGTH,
@@ -45,6 +48,9 @@ export interface IRoomStateBackend {
 
   incrementRound: () => void;
   getRound: () => number;
+
+  allocate: () => void;
+  readonly currChains: ArraySchema<Chain>;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -116,6 +122,34 @@ class RoomState extends Schema
 
   getRound = () => {
     return this.round;
+  };
+
+  get currChains() {
+    return this.chains;
+  }
+
+  allocate = () => {
+    this.chains = new ArraySchema<Chain>();
+    const allocation = getAllocation(0);
+    const ids = objectValues(this.players).map((val) => val.id);
+    const chainOrder = allocation(ids);
+    if (!chainOrder) return;
+    this.setChains(chainOrder);
+  };
+
+  setChains = (chainOrder: string[][]) => {
+    for (const currChain of chainOrder) {
+      const owner = currChain[0];
+      const newChain = new Chain(owner);
+      const numLinks = currChain.length;
+      newChain.addLink(new Link(owner, ''));
+      for (let j = 1; j < numLinks - 1; j += 2) {
+        const guesser = currChain[j];
+        const drawer = currChain[j + 1];
+        newChain.addLink(new Link(drawer, guesser));
+      }
+      this.chains.push(newChain);
+    }
   };
 
   // State-transition helpers
