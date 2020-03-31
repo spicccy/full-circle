@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, waitForDomChange } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { Router } from 'react-router-dom';
@@ -18,7 +18,7 @@ describe('The App renders routes correctly', () => {
     expect(titleElement).toBeInTheDocument();
   });
 
-  it('should allow a player to go to the create room screen', () => {
+  it('should allow a player to go to the create room screen', async () => {
     const history = createMemoryHistory();
     history.push('/');
     const { getByText } = render(
@@ -29,6 +29,8 @@ describe('The App renders routes correctly', () => {
 
     const createRoomButton = getByText('here');
     createRoomButton.click();
+
+    await waitForDomChange();
 
     const titleElement = getByText('Create a Room');
     expect(titleElement).toBeInTheDocument();
