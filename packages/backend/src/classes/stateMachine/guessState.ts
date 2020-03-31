@@ -33,6 +33,9 @@ class GuessState implements IState {
   };
 
   advanceState = () => {
+    if (this.room.gameIsOver) {
+      this.room.setRevealState();
+    }
     this.room.incrementRound();
     this.room.setDrawState();
   };

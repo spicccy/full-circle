@@ -45,6 +45,7 @@ export interface IRoomStateBackend {
   addPlayer: (player: IPlayer) => void;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
+  readonly gameIsOver: boolean;
 
   incrementRound: () => void;
   getRound: () => number;
@@ -151,6 +152,19 @@ class RoomState extends Schema
       this.chains.push(newChain);
     }
   };
+
+  get gameIsOver() {
+    // TODO: implement checking of the room's configured round length
+    let phasesElapsed = this.round * 2;
+    if (this.phase.phaseType === PhaseType.GUESS) {
+      phasesElapsed += 1;
+    }
+    if (phasesElapsed > this.numPlayers) {
+      return true;
+    }
+
+    return false;
+  }
 
   // State-transition helpers
   setDrawState = (duration?: number) => {

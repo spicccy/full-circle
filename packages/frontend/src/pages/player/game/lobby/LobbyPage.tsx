@@ -1,6 +1,5 @@
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { objectValues } from '@full-circle/shared/lib/helpers';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import React, {
@@ -13,12 +12,11 @@ import { Redirect } from 'react-router-dom';
 import { useRoomState } from 'src/hooks/useRoomState';
 import invariant from 'tiny-invariant';
 
-import { useRoom } from '../../../contexts/RoomContext';
-import { usePhaseTimer } from '../../../hooks/usePhaseTimer';
+import { useRoom } from '../../../../contexts/RoomContext';
+import { usePhaseTimer } from '../../../../hooks/usePhaseTimer';
 
-const TimerTest: FunctionComponent = () => {
+const Lobby: FunctionComponent = () => {
   const { room } = useRoom();
-  const roomState = useRoomState();
 
   const msTimer = usePhaseTimer();
   const players = useRoomState()?.players;
@@ -42,9 +40,6 @@ const TimerTest: FunctionComponent = () => {
 
   if (!room) {
     return <Redirect to="/" />;
-  }
-  if (roomState?.phase.phaseType === PhaseType.DRAW) {
-    return <Redirect to="/play" />;
   }
 
   if (msTimer && msTimer < 0) {
@@ -76,4 +71,4 @@ const TimerTest: FunctionComponent = () => {
   );
 };
 
-export { TimerTest };
+export { Lobby };
