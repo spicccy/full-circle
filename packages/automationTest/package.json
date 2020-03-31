@@ -3,16 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test:e2e": "jest src/index.test.ts",
-    "lint": "eslint --fix src/**/*.{ts,tsx}",
+    "test:e2e": "jest",
+    "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "prettier": "prettier --write src/**/*.{ts,tsx}",
-    "prettylint": "yarn typecheck && yarn lint && yarn prettier",
-    "precommit": "yarn typecheck"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": "eslint --fix",
-    "*.{ts,tsx,md,html}": "prettier --write"
+    "prettier": "prettier --write src/**/*.ts",
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
   "devDependencies": {
     "jest-puppeteer": "^4.4.0",
