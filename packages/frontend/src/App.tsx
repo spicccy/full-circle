@@ -12,7 +12,6 @@ import {
   LoginPage,
   PlayerGamePage,
   Team,
-  TimerTest,
 } from './pages';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { theme } from './styles/theme';
@@ -31,7 +30,6 @@ export const App: FunctionComponent = () => {
             <Route exact path="/game" component={CuratorGamePage} />
             <Route exact path="/instructions" component={Instructions} />
             <Route exact path="/team" component={Team} />
-            <Route exact path="/timertest" component={TimerTest} />
           </Switch>
         </Grommet>
       </RoomProvider>

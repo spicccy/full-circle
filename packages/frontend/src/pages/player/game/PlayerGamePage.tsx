@@ -12,6 +12,7 @@ import { getType } from 'typesafe-actions';
 
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
+import { Lobby } from './lobby/LobbyPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const [currentPhase, setCurrentPhase] = useState<PhaseType>(PhaseType.DRAW);
@@ -40,6 +41,10 @@ const PlayerGamePage: FunctionComponent = () => {
   }
 
   switch (currentPhase) {
+    case PhaseType.LOBBY: {
+      return <Lobby />;
+    }
+
     case PhaseType.DRAW: {
       return <DrawPage room={room} prompt={prompt} promptBy="Skithy" />;
     }

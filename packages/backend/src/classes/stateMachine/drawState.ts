@@ -33,6 +33,10 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
+    if (this.room.gameIsOver) {
+      this.room.setRevealState();
+      return;
+    }
     this.room.setGuessState();
   };
 }
