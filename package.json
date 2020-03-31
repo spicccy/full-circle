@@ -16,7 +16,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn prettylint"
+      "pre-push": "yarn prettylint"
     }
   },
   "repository": {
