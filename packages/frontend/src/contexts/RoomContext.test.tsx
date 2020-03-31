@@ -11,7 +11,6 @@ import { RoomProvider, useRoom } from './RoomContext';
 jest.mock('./ColyseusContext');
 
 const TestConsumer: React.FunctionComponent = () => {
-  const roomContext = useRoom();
   const {
     isLoading,
     room,
@@ -19,9 +18,8 @@ const TestConsumer: React.FunctionComponent = () => {
     createAndJoinRoom,
     joinRoomByCode,
     leaveRoom,
-  } = roomContext;
-
-  const roomCode = roomContext.room ? roomContext.roomCode : '';
+    roomCode,
+  } = useRoom();
 
   const [joinRoomId, setJoinRoomId] = useState('');
 
@@ -68,7 +66,7 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toBeEmpty();
+    expect(getByTestId('roomError')).toHaveTextContent('Uninitialised room');
 
     userEvent.click(getByTestId('createAndJoinRoom'));
 
