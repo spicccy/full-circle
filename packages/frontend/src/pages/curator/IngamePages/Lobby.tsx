@@ -22,7 +22,7 @@ const arrayOfCoords: ICoord[] = [
   { x: 200, y: 500 },
 ];
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
-  const { room } = useRoom();
+  const roomContext = useRoom();
   const players = useRoomState()?.players;
 
   const arrayOfPlayers = players ? objectValues(players) : [];
@@ -39,7 +39,9 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
           <Box align="center">
-            <Paragraph>Room ID : {room?.id} </Paragraph>
+            <Paragraph>
+              Room ID : {roomContext.room ? roomContext.roomCode : 'N/A'}
+            </Paragraph>
           </Box>
           {playerBoxes}
           <Button

@@ -7,15 +7,15 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { LoginCard } from './LoginCard';
 
 const LoginPage: FunctionComponent = () => {
-  const { joinRoomById } = useRoom();
+  const { joinRoomByCode } = useRoom();
   const history = useHistory();
 
-  const attemptToJoinRoom = async (name: string, roomId: string) => {
+  const attemptToJoinRoom = async (name: string, roomCode: string) => {
     const options = {
       username: name,
     };
 
-    const joinedRoom = await joinRoomById(roomId, options);
+    const joinedRoom = await joinRoomByCode(roomCode, options);
 
     if (joinedRoom) {
       history.push('/timerTest');

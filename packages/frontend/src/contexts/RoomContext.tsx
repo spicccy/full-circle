@@ -1,6 +1,9 @@
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IRoomStateSynced } from '@full-circle/shared/lib/roomState/interfaces';
+import {
+  IRoomMetadata,
+  IRoomStateSynced,
+} from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus.js';
 import React, {
   createContext,
@@ -10,6 +13,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import invariant from 'tiny-invariant';
 
 import { useColyseus } from './ColyseusContext';
 
@@ -25,6 +29,7 @@ interface IRoomSuccessState {
   isLoading: false;
   room?: IRoom;
   roomError: undefined;
+  roomCode: string;
 }
 
 interface IRoomFailureState {
@@ -38,12 +43,12 @@ type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 const defaultRoomState: RoomState = {
   isLoading: false,
   room: undefined,
-  roomError: undefined,
+  roomError: '',
 };
 
 interface IRoomContext {
   createAndJoinRoom(): Promise<IRoom | null>;
-  joinRoomById(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
+  joinRoomByCode(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
 }
 
@@ -53,7 +58,7 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   createAndJoinRoom: async () => {
     throw new Error('Unitialised room');
   },
-  joinRoomById: async (_roomId: string) => {
+  joinRoomByCode: async (_roomId: string) => {
     throw new Error('Unitiialised room');
   },
   leaveRoom: () => {
@@ -77,10 +82,15 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
     try {
       const room = await colyseus.create<IRoomStateSynced>(ROOM_NAME);
+      const rooms = await colyseus.getAvailableRooms();
+      const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
+      invariant(roomWithMetadata, 'Unable to find the room we just created');
+
       setRoomState({
         isLoading: false,
         room,
         roomError: undefined,
+        roomCode: roomWithMetadata.metadata.roomCode,
       });
       return room;
     } catch (e) {
@@ -93,8 +103,8 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     }
   }, [colyseus]);
 
-  const joinRoomById = useCallback(
-    async (roomId: string, options: IJoinOptions): Promise<IRoom | null> => {
+  const joinRoomByCode = useCallback(
+    async (roomCode: string, options: IJoinOptions): Promise<IRoom | null> => {
       setRoomState({
         isLoading: true,
         room: undefined,
@@ -102,11 +112,34 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       });
 
       try {
+        const rooms = await colyseus.getAvailableRooms<IRoomMetadata>(
+          ROOM_NAME
+        );
+        const matchingRoom = rooms.find((room) => {
+          if (!room.metadata) {
+            return false;
+          }
+          return room.metadata.roomCode === roomCode;
+        });
+
+        if (!matchingRoom) {
+          setRoomState({
+            isLoading: false,
+            room: undefined,
+            roomError: 'Failed to find a room with a matching code',
+          });
+          return null;
+        }
+
+        const { roomId } = matchingRoom;
+
         const room = await colyseus.joinById<IRoomStateSynced>(roomId, options);
+
         setRoomState({
           isLoading: false,
           room,
           roomError: undefined,
+          roomCode,
         });
         return room;
       } catch (e) {
@@ -125,7 +158,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: false,
       room: undefined,
-      roomError: undefined,
+      roomError: '',
     });
   }, []);
 
@@ -136,7 +169,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const context: IRoomContext & RoomState = {
     ...roomState,
     createAndJoinRoom,
-    joinRoomById,
+    joinRoomByCode,
     leaveRoom,
   };
 

@@ -51,7 +51,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           <Text size="xlarge" margin={{ right: 'small' }}>
             Room:
           </Text>
-          <TextInput size="medium" id="roomId" name="roomId" />
+          <TextInput size="medium" id="roomId" name="roomId" maxLength={4} />
         </Box>
         <Button type="submit" size="large" alignSelf="center" label="JOIN" />
       </Card>
