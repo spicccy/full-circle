@@ -123,11 +123,14 @@ describe('Room state', () => {
 
     it('ends the game loop correctly when there are three players', () => {
       addPlayers(roomState, 3);
+      expect(roomState.phase.phaseType).toBe(PhaseType.LOBBY);
       roomState.advanceState(); // LOBBY => DRAW
+      expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
       roomState.advanceState(); // Player one draws: DRAW => GUESS
+      expect(roomState.phase.phaseType).toBe(PhaseType.GUESS);
       roomState.advanceState(); // Player two guesses: GUESS => DRAW
+      expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
       roomState.advanceState(); // Player three draws: DRAW => REVEAL
-
       expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
     });
 
@@ -137,7 +140,7 @@ describe('Room state', () => {
       roomState.advanceState(); // Player one draws: DRAW => GUESS
       roomState.advanceState(); // Player two guesses: GUESS => DRAW
       roomState.advanceState(); // Player three draws: DRAW => GUESS
-      roomState.advanceState(); // Player three draws: GUESS => REVEAL
+      roomState.advanceState(); // Player four guesses: GUESS => REVEAL
 
       expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
     });
