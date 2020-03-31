@@ -66,7 +66,7 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toBeEmpty();
+    expect(getByTestId('roomError')).toHaveTextContent('Uninitialised room');
 
     userEvent.click(getByTestId('createAndJoinRoom'));
 
