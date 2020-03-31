@@ -1,5 +1,6 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
+import { addPlayers } from '../../helpers/testHelper';
 import RoomState from '../../roomState';
 
 describe('Guess State', () => {
@@ -7,6 +8,7 @@ describe('Guess State', () => {
 
   beforeEach(() => {
     room = new RoomState();
+    addPlayers(room, 10);
     room.advanceState();
     room.advanceState();
   });

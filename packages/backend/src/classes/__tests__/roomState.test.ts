@@ -1,6 +1,8 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { mocked } from 'ts-jest/utils';
 
+import { MyRoom } from '../../MyRoom';
+import { addPlayers } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import { getAllocation } from './../../util/sortPlayers/sortPlayers';
 
@@ -8,26 +10,29 @@ jest.mock('./../../util/sortPlayers/sortPlayers');
 
 describe('Room state', () => {
   describe('transitions', () => {
+    let state: RoomState;
+
+    beforeEach(() => {
+      state = new RoomState();
+      addPlayers(state, 10);
+    });
+
     it('starts with the lobby state', () => {
-      const state = new RoomState();
       expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
     });
 
     it('transitions from lobby state to draw state', () => {
-      const state = new RoomState();
       state.advanceState();
       expect(state.phase.phaseType).toBe(PhaseType.DRAW);
     });
 
     it('transitions from draw state to guess state', () => {
-      const state = new RoomState();
       state.advanceState();
       state.advanceState();
       expect(state.phase.phaseType).toBe(PhaseType.GUESS);
     });
 
     it('transitions from guess state to draw state', () => {
-      const state = new RoomState();
       state.advanceState();
       state.advanceState();
       state.advanceState();
@@ -35,7 +40,32 @@ describe('Room state', () => {
     });
 
     it('should increment the round when a guess/draw cycle is over', () => {
-      const state = new RoomState();
+      expect(state.round).toBe(0);
+    });
+
+    it('starts with the lobby state', () => {
+      expect(state.phase.phaseType).toBe(PhaseType.LOBBY);
+    });
+
+    it('transitions from lobby state to draw state', () => {
+      state.advanceState();
+      expect(state.phase.phaseType).toBe(PhaseType.DRAW);
+    });
+
+    it('transitions from draw state to guess state', () => {
+      state.advanceState();
+      state.advanceState();
+      expect(state.phase.phaseType).toBe(PhaseType.GUESS);
+    });
+
+    it('transitions from guess state to draw state', () => {
+      state.advanceState();
+      state.advanceState();
+      state.advanceState();
+      expect(state.phase.phaseType).toBe(PhaseType.DRAW);
+    });
+
+    it('should increment the round when a guess/draw cycle is over', () => {
       expect(state.round).toBe(0);
 
       state.advanceState();
@@ -47,8 +77,6 @@ describe('Room state', () => {
       state.advanceState();
       expect(state.round).toBe(2);
     });
-
-    test.todo('transitions from the final guess state to the reveal state');
   });
 
   describe('chain allocation', () => {
@@ -81,6 +109,37 @@ describe('Room state', () => {
       expect(chain2.links[1].prompt.id).toBe('d');
       expect(chain2.links[2].image.id).toBe('c');
       expect(chain2.links[2].prompt.id).toBe('a');
+    });
+  });
+
+  describe('it should automatically end the game loop', () => {
+    let room: MyRoom;
+    let roomState: RoomState;
+
+    beforeEach(() => {
+      room = new MyRoom();
+      roomState = new RoomState(room);
+    });
+
+    it('ends the game loop correctly when there are three players', () => {
+      addPlayers(roomState, 3);
+      roomState.advanceState(); // LOBBY => DRAW
+      roomState.advanceState(); // Player one draws: DRAW => GUESS
+      roomState.advanceState(); // Player two guesses: GUESS => DRAW
+      roomState.advanceState(); // Player three draws: DRAW => REVEAL
+
+      expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
+    });
+
+    it('ends the game loop correctly when there are four players', () => {
+      addPlayers(roomState, 4);
+      roomState.advanceState(); // LOBBY => DRAW
+      roomState.advanceState(); // Player one draws: DRAW => GUESS
+      roomState.advanceState(); // Player two guesses: GUESS => DRAW
+      roomState.advanceState(); // Player three draws: DRAW => GUESS
+      roomState.advanceState(); // Player three draws: GUESS => REVEAL
+
+      expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
     });
   });
 });
