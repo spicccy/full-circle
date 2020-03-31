@@ -15,7 +15,6 @@
     "*.{ts,tsx,md,html}": "prettier --write"
   },
   "devDependencies": {
-    "jest": "^25.2.4",
     "jest-puppeteer": "^4.4.0",
     "puppeteer": "^2.1.1"
   },
