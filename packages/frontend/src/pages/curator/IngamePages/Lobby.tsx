@@ -1,11 +1,10 @@
-import { objectValues } from '@full-circle/shared/lib/helpers';
+import 'styled-components/macro';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent } from 'react';
 import { AllPlayersCircle } from 'src/components/AllPlayersCircle';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomState } from 'src/hooks/useRoomState';
 import logo from 'src/images/fullcircle.png';
 
 interface ILobbyProps {
