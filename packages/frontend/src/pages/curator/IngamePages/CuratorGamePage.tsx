@@ -35,12 +35,15 @@ const CuratorGamePage: FunctionComponent = () => {
     room.send(notifyPlayerReady());
   }, [room]);
 
-  if (roomState?.phase.phaseType === PhaseType.LOBBY)
-    return <Lobby startGame={startGame} playerBoxes={playerBoxes} />;
-  if (roomState?.phase.phaseType === PhaseType.DRAW)
-    return <IngameDraw playerBoxes={playerBoxes} />;
-  if (roomState?.phase.phaseType === PhaseType.GUESS) return <IngameGuess />;
-  return <div></div>;
+  switch (roomState?.phase.phaseType) {
+    case PhaseType.LOBBY:
+      return <Lobby startGame={startGame} playerBoxes={playerBoxes} />;
+    case PhaseType.DRAW:
+      return <IngameDraw playerBoxes={playerBoxes} />;
+    case PhaseType.GUESS:
+      return <IngameGuess />;
+    default:
+      return <div></div>;
+  }
 };
-
 export { CuratorGamePage };
