@@ -16,6 +16,7 @@ const Debug = styled.pre`
   max-height: 300px;
   overflow-y: auto;
   font-size: 12px;
+  z-index: 5;
 `;
 
 export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
