@@ -16,6 +16,7 @@ const Debug = styled.pre`
   max-height: 300px;
   overflow-y: auto;
   font-size: 12px;
+  z-index: 5;
 `;
 
 export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
@@ -23,7 +24,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
 }) => {
   const [messages, setMessages] = useState<string[]>([]);
 
-  const { room } = useRoom();
+  const { room, roomCode } = useRoom();
   const roomState = useRoomState();
 
   useEffect(() => {
@@ -42,6 +43,8 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
     <Draggable>
       <Debug>
         Room: {room ? room.id : 'NA'}
+        <br />
+        Room Code: {roomCode ?? 'NA'}
         <br />
         Session id: {room ? room.sessionId : 'NA'}
         <br />

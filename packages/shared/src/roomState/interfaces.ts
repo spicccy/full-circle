@@ -37,6 +37,11 @@ export interface IPhase {
   phaseType: PhaseType;
 }
 
+export interface IRoomMetadata {
+  // 4-letter room code
+  roomCode: string;
+}
+
 export interface IRoomStateSynced {
   curator: string;
   chains: IChain[];

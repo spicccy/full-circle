@@ -7,11 +7,13 @@ import {
 import { Box, defaultProps } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { BaseButton } from 'src/components/BaseButton';
-import styled from 'styled-components';
+import { useEventListener } from 'src/hooks/useEventListener';
+import styled, { css } from 'styled-components';
 
 const ButtonWrapper = styled(BaseButton)<{
   selected: boolean;
 }>`
+  background-color: white;
   justify-content: center;
   align-items: center;
   border-width: 4px;
@@ -24,6 +26,7 @@ const ButtonWrapper = styled(BaseButton)<{
 
   :focus {
     outline: 2px dashed black;
+    z-index: 1;
   }
 `;
 
@@ -31,16 +34,26 @@ const Circle = styled.div<{ colour?: Colour; size: PenThickness }>`
   height: ${(props) => props.size}px;
   width: ${(props) => props.size}px;
   border-radius: ${(props) => props.size}px;
-  ${(props) =>
-    props.colour
-      ? `background-color: ${props.colour}`
-      : `border: 2px solid black`}
+  ${(props) => {
+    if (props.colour === Colour.WHITE) return `border: 2px solid black`;
+    if (props.colour) return `background-color: ${props.colour}`;
+    return css`
+      border: 2px solid ${Colour.DARK_GRAY};
+      background: repeating-linear-gradient(
+        45deg,
+        white,
+        white 3px,
+        ${Colour.LIGHT_GRAY} 3px,
+        ${Colour.LIGHT_GRAY} 6px
+      );
+    `;
+  }}
 `;
 
 const thicknesses = [
-  PenThickness.SMALL,
-  PenThickness.MEDIUM,
-  PenThickness.LARGE,
+  { thickness: PenThickness.SMALL, title: 'small brush (1)', key: '1' },
+  { thickness: PenThickness.MEDIUM, title: 'medium brush (2)', key: '2' },
+  { thickness: PenThickness.LARGE, title: 'large brush (3)', key: '3' },
 ];
 
 interface IThicknessPickerProps {
@@ -57,12 +70,21 @@ const ThicknessPicker: FunctionComponent<IThicknessPickerProps> = ({
   const setThickness = (penThickness: PenThickness) =>
     setPen({ ...pen, penThickness });
 
+  useEventListener(document, 'keydown', (e) => {
+    thicknesses.forEach(({ key, thickness }) => {
+      if (key === e.key) {
+        setThickness(thickness);
+      }
+    });
+  });
+
   return (
     <Box direction="row">
-      {thicknesses.map((thickness) => (
+      {thicknesses.map(({ thickness, title }) => (
         <ButtonWrapper
           key={thickness}
           selected={thickness === pen.penThickness}
+          title={title}
           onClick={() => setThickness(thickness)}
         >
           <Circle colour={colour} size={thickness} />
