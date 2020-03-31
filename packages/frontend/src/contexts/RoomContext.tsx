@@ -23,6 +23,7 @@ interface IRoomLoadingState {
   isLoading: true;
   room: undefined;
   roomError: undefined;
+  roomCode: undefined;
 }
 
 interface IRoomSuccessState {
@@ -36,6 +37,7 @@ interface IRoomFailureState {
   isLoading: false;
   room: undefined;
   roomError: string;
+  roomCode: undefined;
 }
 
 type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
@@ -43,7 +45,8 @@ type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
 const defaultRoomState: RoomState = {
   isLoading: false,
   room: undefined,
-  roomError: '',
+  roomError: 'Uninitialised room',
+  roomCode: undefined,
 };
 
 interface IRoomContext {
@@ -65,6 +68,7 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
     return;
   },
   roomError: 'Unitialised Room',
+  roomCode: undefined,
 });
 
 export const useRoom = () => useContext(RoomContext);
@@ -78,6 +82,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       isLoading: true,
       room: undefined,
       roomError: undefined,
+      roomCode: undefined,
     });
 
     try {
@@ -98,6 +103,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         isLoading: false,
         room: undefined,
         roomError: e.message,
+        roomCode: undefined,
       });
       return null;
     }
@@ -109,6 +115,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         isLoading: true,
         room: undefined,
         roomError: undefined,
+        roomCode: undefined,
       });
 
       try {
@@ -127,6 +134,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
             isLoading: false,
             room: undefined,
             roomError: 'Failed to find a room with a matching code',
+            roomCode: undefined,
           });
           return null;
         }
@@ -147,6 +155,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
           isLoading: false,
           room: undefined,
           roomError: e.message,
+          roomCode: undefined,
         });
         return null;
       }
@@ -159,6 +168,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       isLoading: false,
       room: undefined,
       roomError: '',
+      roomCode: undefined,
     });
   }, []);
 
