@@ -9,11 +9,10 @@ import React, {
   useMemo,
 } from 'react';
 import { Redirect } from 'react-router-dom';
+import { useRoom } from 'src/contexts/RoomContext';
+import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
 import { useRoomState } from 'src/hooks/useRoomState';
 import invariant from 'tiny-invariant';
-
-import { useRoom } from '../../../../contexts/RoomContext';
-import { usePhaseTimer } from '../../../../hooks/usePhaseTimer';
 
 const Lobby: FunctionComponent = () => {
   const { room } = useRoom();
