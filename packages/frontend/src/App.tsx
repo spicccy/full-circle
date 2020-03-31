@@ -9,7 +9,6 @@ import {
   CuratorGamePage,
   HomePage,
   Instructions,
-  Lobby,
   LoginPage,
   PlayerGamePage,
   Team,

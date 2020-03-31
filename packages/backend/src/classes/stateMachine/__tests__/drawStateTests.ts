@@ -8,7 +8,7 @@ describe('Draw State', () => {
 
   beforeEach(() => {
     room = new RoomState();
-    addPlayers(room, 10);
+    addPlayers(room, 8);
     room.advanceState();
   });
 
