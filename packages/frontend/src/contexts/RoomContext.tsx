@@ -17,7 +17,11 @@ import invariant from 'tiny-invariant';
 
 import { useColyseus } from './ColyseusContext';
 
-export type IRoom = Room<IRoomStateSynced>;
+type RoomStateWithFn = IRoomStateSynced & {
+  toJSON(): IRoomStateSynced;
+};
+
+export type IRoom = Room<RoomStateWithFn>;
 
 interface IRoomLoadingState {
   isLoading: true;
@@ -59,13 +63,13 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   isLoading: false,
   room: undefined,
   createAndJoinRoom: async () => {
-    throw new Error('Unitialised room');
+    throw new Error('Uninitialised room');
   },
   joinRoomByCode: async (_roomId: string) => {
-    throw new Error('Unitiialised room');
+    throw new Error('Uninitialised room');
   },
   leaveRoom: () => {
-    return;
+    throw new Error('Uninitialised room');
   },
   roomError: 'Unitialised Room',
   roomCode: undefined,
@@ -86,7 +90,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     });
 
     try {
-      const room = await colyseus.create<IRoomStateSynced>(ROOM_NAME);
+      const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME);
       const rooms = await colyseus.getAvailableRooms();
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
       invariant(roomWithMetadata, 'Unable to find the room we just created');
@@ -122,12 +126,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         const rooms = await colyseus.getAvailableRooms<IRoomMetadata>(
           ROOM_NAME
         );
-        const matchingRoom = rooms.find((room) => {
-          if (!room.metadata) {
-            return false;
-          }
-          return room.metadata.roomCode === roomCode;
-        });
+        const matchingRoom = rooms.find(
+          (room) => room.metadata?.roomCode === roomCode
+        );
 
         if (!matchingRoom) {
           setRoomState({
@@ -141,7 +142,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
         const { roomId } = matchingRoom;
 
-        const room = await colyseus.joinById<IRoomStateSynced>(roomId, options);
+        const room = await colyseus.joinById<RoomStateWithFn>(roomId, options);
 
         setRoomState({
           isLoading: false,

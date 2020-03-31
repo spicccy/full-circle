@@ -1,5 +1,4 @@
 import { IRoomStateSynced } from '@full-circle/shared/lib/roomState/interfaces';
-import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
@@ -8,10 +7,10 @@ export const useRoomState = (): IRoomStateSynced | undefined => {
   const [value, setValue] = useState<IRoomStateSynced>();
 
   useEffect(() => {
-    setValue(cloneDeep(room?.state));
+    setValue(room?.state?.toJSON());
     if (room) {
       const listener = room.onStateChange((newState) =>
-        setValue(cloneDeep(newState))
+        setValue(newState?.toJSON())
       );
 
       return () => listener.clear();
