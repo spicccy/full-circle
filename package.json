@@ -12,7 +12,8 @@
     "test": "lerna run test --parallel --no-bail",
     "ALL": "yarn -W",
     "BE": "yarn workspace @full-circle/backend",
-    "FE": "yarn workspace @full-circle/frontend"
+    "FE": "yarn workspace @full-circle/frontend",
+    "AT": "yarn workspace @full-circle/automation-test"
   },
   "husky": {
     "hooks": {
@@ -44,6 +45,7 @@
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-simple-import-sort": "^5.0.2",
     "husky": "^4.2.3",
+    "jest": "24.9",
     "lerna": "^3.20.2",
     "prettier": "^2.0.2",
     "ts-node": "8.6.2",
