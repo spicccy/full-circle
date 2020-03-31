@@ -6,15 +6,10 @@
     "start": "ts-node-dev src/index.ts",
     "loadtest": "colyseus-loadtest src/loadtest/example.ts --room my_room --numClients 2",
     "test": "jest",
-    "lint": "eslint --fix src/**/*.{ts,tsx}",
+    "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "prettier": "prettier --write src/**/*.{ts,tsx}",
-    "prettylint": "yarn typecheck && yarn lint && yarn prettier",
-    "precommit": "yarn typecheck && lint-staged"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": "eslint --fix",
-    "*.{ts,tsx,md,html}": "prettier --write"
+    "prettier": "prettier --write src/**/*.ts",
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
   "dependencies": {
     "cors": "^2.8.5",
