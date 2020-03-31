@@ -113,12 +113,10 @@ describe('Room state', () => {
   });
 
   describe('it should automatically end the game loop', () => {
-    let room: MyRoom;
     let roomState: RoomState;
 
     beforeEach(() => {
-      room = new MyRoom();
-      roomState = new RoomState(room);
+      roomState = new RoomState();
     });
 
     it('ends the game loop correctly when there are three players', () => {
