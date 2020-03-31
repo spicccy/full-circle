@@ -1,17 +1,16 @@
-import { Box, Button, Heading, Paragraph } from 'grommet';
+import { Box, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent } from 'react';
-import { useHistory } from 'react-router-dom';
+import { LinkButton } from 'src/components/Link/LinkButton';
 import { Navbar } from 'src/components/Navbar';
 import { useRoom } from 'src/contexts/RoomContext';
 
 const HomePage: FunctionComponent = () => {
-  const history = useHistory();
-  const room = useRoom();
+  const { createAndJoinRoom } = useRoom();
 
   const createLobby = async () => {
-    await room.createAndJoinRoom();
-    history.push('/game');
+    const createdRoom = await createAndJoinRoom();
+    return Boolean(createdRoom);
   };
 
   return (
@@ -30,20 +29,19 @@ const HomePage: FunctionComponent = () => {
               players can join.
             </Paragraph>
           </Box>
-          <Button
+          <LinkButton
             alignSelf="center"
             label="Create"
             icon={<Add />}
+            href="/game"
             onClick={createLobby}
           />
-          <Button
+          <LinkButton
             alignSelf="center"
             label="Timer Test"
             icon={<Add />}
-            onClick={async () => {
-              await room.createAndJoinRoom();
-              history.push('/timertest');
-            }}
+            href="/timertest"
+            onClick={createLobby}
           />
         </Box>
       </Box>

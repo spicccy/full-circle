@@ -7,9 +7,10 @@ export const useRoomState = (): IRoomStateSynced | undefined => {
   const [value, setValue] = useState<IRoomStateSynced>();
 
   useEffect(() => {
+    setValue(room?.state?.toJSON());
     if (room) {
       const listener = room.onStateChange((newState) =>
-        setValue({ ...newState })
+        setValue(newState?.toJSON())
       );
 
       return () => listener.clear();

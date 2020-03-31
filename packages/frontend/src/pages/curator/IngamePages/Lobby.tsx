@@ -13,7 +13,7 @@ interface ILobbyProps {
 }
 
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame, playerBoxes }) => {
-  const { roomCode } = useRoom();
+  const { roomCode, leaveRoom } = useRoom();
 
   return (
     <Box css={{ position: 'relative' }} fill>
@@ -27,7 +27,12 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame, playerBoxes }) => {
         <AllPlayersCircle />
         {playerBoxes}
       </Box>
-      <LinkButton alignSelf="start" label="Back" href="/home" />
+      <LinkButton
+        alignSelf="start"
+        label="Back"
+        href="/home"
+        onClick={leaveRoom}
+      />
       <Box flex align="center" justify="center">
         <Box width="medium" align="center">
           <img alt="Full Circle" width={100} height={100} src={logo} />

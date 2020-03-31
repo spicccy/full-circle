@@ -1,12 +1,12 @@
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent } from 'react';
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { Player } from 'src/components/Player';
 import { useRoom } from 'src/contexts/RoomContext';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { useRoomState } from 'src/hooks/useRoomState';
-import invariant from 'tiny-invariant';
 
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
@@ -24,16 +24,17 @@ const CuratorGamePage: FunctionComponent = () => {
   const { room } = useRoom();
   const players = useRoomState()?.players;
 
+  if (!room) {
+    return <Redirect to="/home" />;
+  }
+
+  const startGame = () => room.send(notifyPlayerReady());
+
   const arrayOfPlayers = players ? objectValues(players) : [];
 
   const playerBoxes = arrayOfAngles.map((angle, index) => (
     <Player angle={angle} player={arrayOfPlayers[index]} key={index} />
   ));
-
-  const startGame = useCallback(() => {
-    invariant(room, 'No valid room found!');
-    room.send(notifyPlayerReady());
-  }, [room]);
 
   switch (roomState?.phase.phaseType) {
     case PhaseType.LOBBY:
@@ -43,7 +44,8 @@ const CuratorGamePage: FunctionComponent = () => {
     case PhaseType.GUESS:
       return <IngameGuess />;
     default:
-      return <div></div>;
+      return <div>Loading...</div>;
   }
 };
+
 export { CuratorGamePage };
