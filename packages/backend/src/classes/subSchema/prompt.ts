@@ -10,6 +10,11 @@ class Prompt extends Schema implements IPrompt {
 
   @type('string')
   playerId = '';
+
+  constructor(id: string) {
+    super();
+    this.id = id;
+  }
 }
 
 export default Prompt;

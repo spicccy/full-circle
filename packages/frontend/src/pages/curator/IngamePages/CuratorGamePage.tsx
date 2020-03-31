@@ -4,7 +4,7 @@ import { FunctionComponent, useCallback } from 'react';
 import React from 'react';
 import { Player } from 'src/components/Player';
 import { useRoom } from 'src/contexts/RoomContext';
-import { objectValues } from 'src/helpers';
+import { objectValues } from '@full-circle/shared/lib/helpers';
 import { useRoomState } from 'src/hooks/useRoomState';
 import invariant from 'tiny-invariant';
 

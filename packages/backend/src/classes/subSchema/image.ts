@@ -10,6 +10,11 @@ class Image extends Schema implements IImage {
 
   @type('string')
   playerId = '';
+
+  constructor(id: string) {
+    super();
+    this.id = id;
+  }
 }
 
 export default Image;
