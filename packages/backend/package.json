@@ -8,7 +8,8 @@
     "test": "jest",
     "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "prettier": "prettier --write src/**/*.ts"
+    "prettier": "prettier --write src/**/*.ts",
+    "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
   "dependencies": {
     "cors": "^2.8.5",
