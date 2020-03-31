@@ -14,7 +14,7 @@ interface ILobbyProps {
 }
 
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame, playerBoxes }) => {
-  const { room } = useRoom();
+  const { roomCode } = useRoom();
 
   return (
     <Box css={{ position: 'relative' }} fill>
@@ -34,11 +34,8 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame, playerBoxes }) => {
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
           <Box align="center">
-            <Paragraph>
-              Room ID : {roomContext.room ? roomContext.roomCode : 'N/A'}
-            </Paragraph>
+            <Paragraph>Room ID : {roomCode}</Paragraph>
           </Box>
-          {playerBoxes}
           <Button
             alignSelf="center"
             label="Start Game"

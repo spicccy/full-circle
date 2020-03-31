@@ -1,3 +1,4 @@
+import { Colour } from '@full-circle/shared/lib/canvas';
 import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
@@ -11,6 +12,8 @@ const PlayerLocation = styled.div<IPlayerBoxAngleProps>`
 `;
 
 const PlayerBox = styled(Box)<IPlayerBoxAngleProps>`
+  font-family: PermanentMarker;
+  font-size: 24px;
   transform: rotate(${(props) => props.angle}deg);
 `;
 
@@ -26,7 +29,12 @@ interface IPlayerProps {
 export const Player: FunctionComponent<IPlayerProps> = ({ player, angle }) => {
   return (
     <PlayerLocation angle={angle}>
-      <PlayerBox angle={-angle} background="dark-3" pad="xsmall">
+      <PlayerBox
+        angle={-angle}
+        background={Colour.ORANGE}
+        pad="small"
+        round="small"
+      >
         {player ? `Player ${player.username} has joined` : 'No user has joined'}
       </PlayerBox>
     </PlayerLocation>

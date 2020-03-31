@@ -1,3 +1,4 @@
+import { Colour } from '@full-circle/shared/lib/canvas';
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
@@ -11,7 +12,7 @@ export const AllPlayersCircle: FunctionComponent = () => {
   return (
     <BackgroundCircle
       round="full"
-      border={{ color: 'blue', size: '5vw' }}
+      border={{ color: Colour.YELLOW, size: '5vw' }}
     ></BackgroundCircle>
   );
 };
