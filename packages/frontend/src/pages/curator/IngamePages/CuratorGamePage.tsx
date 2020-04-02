@@ -1,15 +1,17 @@
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import { objectValues } from '@full-circle/shared/lib/helpers';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Player } from 'src/components/Player';
 import { useRoom } from 'src/contexts/RoomContext';
-import { objectValues } from '@full-circle/shared/lib/helpers';
+import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
 import { useRoomState } from 'src/hooks/useRoomState';
 
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
+import { IngameReveal } from './IngameReveal';
 import { Lobby } from './Lobby';
 /* 
 TODO:
@@ -23,6 +25,7 @@ const CuratorGamePage: FunctionComponent = () => {
   const roomState = useRoomState();
   const { room } = useRoom();
   const players = useRoomState()?.players;
+  const phaseTimer = usePhaseTimer();
 
   if (!room) {
     return <Redirect to="/home" />;
@@ -40,9 +43,11 @@ const CuratorGamePage: FunctionComponent = () => {
     case PhaseType.LOBBY:
       return <Lobby startGame={startGame} playerBoxes={playerBoxes} />;
     case PhaseType.DRAW:
-      return <IngameDraw playerBoxes={playerBoxes} />;
+      return <IngameDraw playerBoxes={playerBoxes} phaseTimer={phaseTimer} />;
     case PhaseType.GUESS:
-      return <IngameGuess />;
+      return <IngameGuess playerBoxes={playerBoxes} phaseTimer={phaseTimer} />;
+    case PhaseType.REVEAL:
+      return <IngameReveal playerBoxes={playerBoxes} />;
     default:
       return <div>Loading...</div>;
   }
