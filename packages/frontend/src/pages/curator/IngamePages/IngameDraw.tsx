@@ -2,38 +2,26 @@ import 'styled-components/macro';
 
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { AllPlayersCircle } from 'src/components/AllPlayersCircle';
+import { CuratorTimer } from 'src/components/CuratorTimer';
 import { LinkButton } from 'src/components/Link/LinkButton';
+import { PlayerBackground } from 'src/components/PlayerBackground';
+import { useRoomState } from 'src/hooks/useRoomState';
 
-interface IDrawProps {
-  playerBoxes: {};
-  phaseTimer?: number;
-}
 /* 
 TODO
 Players who have submitted,
 their box should be highlighted
 */
-const IngameDraw: FunctionComponent<IDrawProps> = ({
-  playerBoxes,
-  phaseTimer,
-}) => {
+const IngameDraw: FunctionComponent = () => {
+  const roomState = useRoomState();
+  console.log(roomState?.submittedPlayers);
   return (
     <Box css={{ position: 'relative' }} fill>
-      <Box
-        css={{ position: 'absolute', zIndex: -1 }}
-        overflow="hidden"
-        fill
-        align="center"
-        justify="center"
-      >
-        <AllPlayersCircle />
-        {playerBoxes}
-      </Box>
+      <PlayerBackground />
       <Box flex align="center" justify="center">
         <Heading>Drawing Phase</Heading>
         <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
-        <Paragraph>Timer : {phaseTimer}</Paragraph>
+        <CuratorTimer />
         <LinkButton alignSelf="center" label="Go to Home" href="/home" />
       </Box>
     </Box>

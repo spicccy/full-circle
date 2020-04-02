@@ -2,26 +2,13 @@ import 'styled-components/macro';
 
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { AllPlayersCircle } from 'src/components/AllPlayersCircle';
 import { LinkButton } from 'src/components/Link/LinkButton';
+import { PlayerBackground } from 'src/components/PlayerBackground';
 
-interface IRevealProps {
-  playerBoxes: {};
-}
-
-const IngameReveal: FunctionComponent<IRevealProps> = ({ playerBoxes }) => {
+const IngameReveal: FunctionComponent = () => {
   return (
     <Box css={{ position: 'relative' }} fill>
-      <Box
-        css={{ position: 'absolute', zIndex: -1 }}
-        overflow="hidden"
-        fill
-        align="center"
-        justify="center"
-      >
-        <AllPlayersCircle />
-        {playerBoxes}
-      </Box>
+      <PlayerBackground />
       <Box flex align="center" justify="center">
         <Heading>Thats a wrap, bois.</Heading>
         <Paragraph>

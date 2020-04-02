@@ -48,4 +48,5 @@ export interface IRoomStateSynced {
   players: Record<string, IPlayer>;
   round: number;
   phase: IPhase;
+  submittedPlayers: Record<string, boolean>;
 }
