@@ -37,7 +37,14 @@ const DrawPage: FunctionComponent<IDrawPageProps> = ({
   };
 
   return (
-    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+    <Box
+      background="dark-1"
+      flex
+      height={{ min: '100vh' }}
+      align="center"
+      justify="center"
+      pad="medium"
+    >
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <PromptCard prompt={prompt} promptBy={promptBy} />
       </Box>
