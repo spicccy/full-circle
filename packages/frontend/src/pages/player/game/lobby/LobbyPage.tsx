@@ -24,7 +24,14 @@ const Lobby: FunctionComponent = () => {
   const { roomCode, leaveRoom } = useRoom();
 
   return (
-    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+    <Box
+      background="dark-1"
+      flex
+      height={{ min: '100vh' }}
+      align="center"
+      justify="center"
+      pad="medium"
+    >
       <Box width="medium">
         <Card
           css={{ position: 'relative' }}
