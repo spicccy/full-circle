@@ -12,13 +12,13 @@ import { BaseButton } from 'src/components/BaseButton';
 import { Canvas } from 'src/components/Canvas/Canvas';
 import { Card } from 'src/components/Card/Card';
 import { useEventListener } from 'src/hooks/useEventListener';
+import { ReactComponent as Delete } from 'src/icons/delete.svg';
+// import { ReactComponent as Redo } from 'src/icons/redo.svg';
+import { ReactComponent as Undo } from 'src/icons/undo.svg';
 import styled from 'styled-components/macro';
 
 import { BorderBottom } from '../components/BorderBottom';
 import { SubmitButton } from '../components/SubmitButton';
-import { ReactComponent as Delete } from '../icons/delete.svg';
-// import { ReactComponent as Redo } from '../icons/redo.svg';
-import { ReactComponent as Undo } from '../icons/undo.svg';
 
 const ButtonWrapper = styled(BaseButton)`
   padding: 4px;

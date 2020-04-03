@@ -1,70 +1,54 @@
-import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import { objectValues } from '@full-circle/shared/lib/helpers';
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
-import { Box, Button, Heading, Paragraph } from 'grommet';
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useMemo,
-} from 'react';
-import { Redirect } from 'react-router-dom';
+import { Colour } from '@full-circle/shared/lib/canvas';
+import { Box, Heading, Image } from 'grommet';
+import React, { FunctionComponent } from 'react';
+import { Card } from 'src/components/Card/Card';
+import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
-import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
-import { useRoomState } from 'src/hooks/useRoomState';
-import invariant from 'tiny-invariant';
+import { ReactComponent as Close } from 'src/icons/close.svg';
+import logo from 'src/images/fullcircle.png';
+import styled from 'styled-components/macro';
+
+const CloseButton = styled(LinkAnchor)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+
+  :hover,
+  :focus {
+    fill: ${Colour.RED};
+  }
+`;
 
 const Lobby: FunctionComponent = () => {
-  const { room } = useRoom();
-
-  const msTimer = usePhaseTimer();
-  const players = useRoomState()?.players;
-
-  const readyPlayer = useCallback(() => {
-    invariant(room, 'No valid room found!');
-    room.send(notifyPlayerReady());
-  }, [room]);
-
-  const userTiles = useMemo((): ReactNode => {
-    const users = players
-      ? objectValues(players).map((user: IPlayer) => user.username)
-      : null;
-
-    if (users) {
-      return users.map((name) => <div>{name}</div>);
-    }
-
-    return null;
-  }, [players]);
-
-  if (!room) {
-    return <Redirect to="/" />;
-  }
-
-  if (msTimer && msTimer < 0) {
-    readyPlayer();
-  }
+  const { roomCode, leaveRoom } = useRoom();
 
   return (
-    <Box background="light-2" fill>
-      <Box align="center" justify="start">
-        <Box width="medium" align="center">
-          <Heading>Timer Test Page</Heading>
-          <Box align="center">
-            <Paragraph>ID:{room.id}</Paragraph>
-            <Paragraph>Welcome to the Lobby ya filthy animal.</Paragraph>
-            <Paragraph>
-              For now, when the timer reaches 0, you will be automaticall
-              transferred to the game page. Click the button below to be
-              redirected early.
-            </Paragraph>
-            <Paragraph>{msTimer ?? 'Getting Room State'}</Paragraph>
-            <h1>Joined Users:</h1>
-            {userTiles}
-            <br />
-            <Button onClick={readyPlayer} label="Skip to the Game" />
-          </Box>
-        </Box>
+    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+      <Box width="medium">
+        <Card
+          css={{ position: 'relative' }}
+          height="medium"
+          align="center"
+          justify="center"
+        >
+          <CloseButton href="/" onClick={leaveRoom}>
+            <Close />
+          </CloseButton>
+          <Image
+            a11yTitle="Full Circle"
+            width={100}
+            height={100}
+            margin={{ right: 'small' }}
+            src={logo}
+          />
+          <Heading level="2" textAlign="center">
+            {roomCode ? `Joined room ${roomCode}` : `Joining room...`}
+          </Heading>
+          <Heading level="3" textAlign="center">
+            Waiting for players...
+          </Heading>
+        </Card>
       </Box>
     </Box>
   );

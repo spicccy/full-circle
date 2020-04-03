@@ -2,7 +2,6 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomMessage } from 'src/hooks/useRoomMessage';
-import { useRoomState } from 'src/hooks/useRoomState';
 import styled from 'styled-components';
 
 const Debug = styled.pre`
@@ -24,8 +23,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
 }) => {
   const [messages, setMessages] = useState<string[]>([]);
 
-  const { room, roomCode } = useRoom();
-  const roomState = useRoomState();
+  const { room, roomCode, syncedState } = useRoom();
 
   useEffect(() => {
     setMessages([]);
@@ -50,7 +48,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
         <br />
         Room state:
         <br />
-        {roomState && JSON.stringify(roomState, undefined, 2)}
+        {syncedState && JSON.stringify(syncedState, undefined, 2)}
         <br />
         Room messages:
         <br />

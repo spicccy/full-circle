@@ -15,21 +15,18 @@ import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
 
 const PlayerGamePage: FunctionComponent = () => {
-  const [currentPhase, setCurrentPhase] = useState<PhaseType>(PhaseType.DRAW);
   const [receivedDrawing, setReceivedDrawing] = useState<CanvasAction[]>([]);
   const [prompt, setPrompt] = useState<string>('Guess1');
 
-  const { room } = useRoom();
+  const { room, syncedState } = useRoom();
 
   useRoomMessage((message) => {
     switch (message.type) {
       case getType(displayDrawing): {
-        setCurrentPhase(PhaseType.GUESS);
         setReceivedDrawing(message.payload);
         return;
       }
       case getType(displayPrompt): {
-        setCurrentPhase(PhaseType.DRAW);
         setPrompt(message.payload);
         return;
       }
@@ -40,23 +37,21 @@ const PlayerGamePage: FunctionComponent = () => {
     return <Redirect to="/" />;
   }
 
-  switch (currentPhase) {
+  switch (syncedState?.phase.phaseType) {
     case PhaseType.LOBBY: {
       return <Lobby />;
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage room={room} prompt={prompt} promptBy="Skithy" />;
+      return <DrawPage prompt={prompt} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
-      return (
-        <GuessPage room={room} drawing={receivedDrawing} drawingBy="Skithy" />
-      );
+      return <GuessPage drawing={receivedDrawing} drawingBy="Skithy" />;
     }
 
     default: {
-      return null;
+      return <div>Loading...</div>;
     }
   }
 };
