@@ -29,7 +29,7 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
   }
 
   onJoin(client: IClient, options: IJoinOptions) {
-    console.log(`${client.sessionId} joined ${this.roomId}.`);
+    console.log(`${client.id} joined ${this.roomId}.`);
 
     this.state.onJoin(client, options);
   }
@@ -38,32 +38,33 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     switch (message.type) {
       case getType(submitDrawing): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
-        console.log(`[${client.sessionId}] submitted a drawing.`);
+        console.log(`[${client.id}] submitted a drawing.`);
         const canvasAction = message.payload;
         this.broadcast(displayDrawing(canvasAction));
+        this.state.addSubmittedPlayer(client.id);
         return;
       }
       case getType(submitGuess): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
-        console.log(`[${client.sessionId}] submitted a guess.`);
+        console.log(`[${client.id}] submitted a guess.`);
         const guess = message.payload;
         this.broadcast(displayPrompt(guess));
         return;
       }
       // Handle a client being ready to progress to the next phase
       case getType(notifyPlayerReady): {
-        this.state.onClientReady(client.sessionId);
+        this.state.onClientReady(client.id);
         return;
       }
 
       default: {
-        console.log(`[${client.sessionId}] ${JSON.stringify(message)}.`);
+        console.log(`[${client.id}] ${JSON.stringify(message)}.`);
       }
     }
   }
 
   onLeave(client: IClient, consented: boolean) {
-    console.log(`${client.sessionId} left ${this.roomId}.`);
+    console.log(`${client.id} left ${this.roomId}.`);
 
     this.state.onLeave(client, consented);
   }

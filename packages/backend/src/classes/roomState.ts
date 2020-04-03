@@ -58,6 +58,13 @@ export interface IRoomStateBackend {
   setRevealState: () => void;
   setEndState: () => void;
   setLobbyState: () => void;
+
+  //=====================================
+  // TODO:
+  // Hard-coded for the frontend to know
+  // if players has submitted a drawing
+  //=====================================
+  addSubmittedPlayer: (id: string) => void;
 }
 
 class RoomState extends Schema
@@ -78,6 +85,14 @@ class RoomState extends Schema
 
   @type({ map: Player })
   players = new MapSchema<Player>();
+
+  //=====================================
+  // TODO:
+  // Hard-coded for the frontend to know
+  // if players has submitted a drawing
+  //=====================================
+  @type({ map: 'boolean' })
+  submittedPlayers = new MapSchema<boolean>();
 
   @type('number')
   round = 0;
@@ -111,6 +126,15 @@ class RoomState extends Schema
 
   getPlayer = (id: string): IPlayer => {
     return this.players[id];
+  };
+
+  //=====================================
+  // TODO:
+  // Hard-coded for the frontend to know
+  // if players has submitted a drawing
+  //=====================================
+  addSubmittedPlayer = (id: string): void => {
+    this.submittedPlayers[id] = true;
   };
 
   get numPlayers() {
