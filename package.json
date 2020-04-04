@@ -51,5 +51,10 @@
     "prettier": "^2.0.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
-  }
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "packages/backend/node_modules",
+    "packages/frontend/node_modules"
+  ]
 }
