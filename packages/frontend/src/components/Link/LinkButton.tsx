@@ -1,6 +1,5 @@
 import { MaybePromise } from '@full-circle/shared/lib/interfaces';
 import React, { FunctionComponent, MouseEventHandler } from 'react';
-import Spinner from 'react-loader-spinner';
 import { useHistory } from 'react-router-dom';
 import {
   ILoadingButtonProps,

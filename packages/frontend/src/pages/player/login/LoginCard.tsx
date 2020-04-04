@@ -1,7 +1,8 @@
 import 'styled-components/macro';
 
-import { Box, Button, Heading, Image, Text, TextInput } from 'grommet';
+import { Box, Heading, Image, Text, TextInput } from 'grommet';
 import React, { FormEvent, FunctionComponent } from 'react';
+import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import logo from 'src/images/fullcircle.png';
 
@@ -70,7 +71,13 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
             onChange={(e) => setRoomCode(e.target.value)}
           />
         </Box>
-        <Button type="submit" size="large" alignSelf="center" label="JOIN" />
+        <LoadingButton
+          loading
+          type="submit"
+          size="large"
+          alignSelf="center"
+          label="JOIN"
+        />
       </Card>
     </form>
   );

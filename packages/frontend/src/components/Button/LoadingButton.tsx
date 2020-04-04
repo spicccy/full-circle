@@ -1,7 +1,7 @@
-import { Colour } from '@full-circle/shared/lib/canvas';
 import { Button, ButtonProps } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import Spinner from 'react-loader-spinner';
+
+import { LoadingIndicator } from './LoadingIndicator';
 export interface ILoadingButtonProps
   extends ButtonProps,
     Omit<JSX.IntrinsicElements['button'], 'color'> {
@@ -11,23 +11,7 @@ export interface ILoadingButtonProps
 const LoadingButton: FunctionComponent<ILoadingButtonProps> = (props) => {
   const { icon, loading, ...rest } = props;
 
-  return (
-    <Button
-      {...rest}
-      icon={
-        loading ? (
-          <Spinner
-            height={24}
-            width={24}
-            color={Colour.LIGHT_GRAY}
-            type="Rings"
-          />
-        ) : (
-          icon
-        )
-      }
-    />
-  );
+  return <Button {...rest} icon={loading ? <LoadingIndicator /> : icon} />;
 };
 
 export { LoadingButton };
