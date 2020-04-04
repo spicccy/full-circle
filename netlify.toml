@@ -1,0 +1,4 @@
+[build]
+    command = "yarn build:FE"
+    publish = "packages/frontend/build"
+    environment = { REACT_APP_BACKEND_URL="wss://full-circle-backend.herokuapp.com" }

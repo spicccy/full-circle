@@ -7,6 +7,8 @@
     "start": "lerna run start --parallel --no-bail",
     "start:FE": "lerna run start --scope @full-circle/frontend --stream",
     "start:BE": "lerna run start --scope @full-circle/backend --stream",
+    "start:BE:prod": "yarn run build:shared && lerna run start:prod --scope @full-circle/backend --stream",
+    "build:FE": "yarn run build:shared && lerna run build --scope @full-circle/frontend --stream",
     "build:shared": "lerna run build --scope @full-circle/shared --stream",
     "prettylint": "yarn build:shared && lerna run prettylint --parallel --no-bail",
     "test": "lerna run test --parallel --no-bail",
@@ -35,6 +37,7 @@
     "colyseus": "0.12.3",
     "colyseus.js": "0.12.1",
     "lodash-es": "^4.17.15",
+    "ts-node": "8.6.2",
     "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
@@ -48,8 +51,12 @@
     "jest": "24.9",
     "lerna": "^3.20.2",
     "prettier": "^2.0.2",
-    "ts-node": "8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
-  }
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "packages/backend/node_modules",
+    "packages/frontend/node_modules"
+  ]
 }

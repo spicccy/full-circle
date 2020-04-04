@@ -3,6 +3,7 @@
 We hope you enjoy your stay
 
 ![Unit test](https://github.com/unsw-cse-comp3900-9900/capstone-project-spicccy/workflows/Unit%20test/badge.svg)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5062a35f-322e-4389-b882-f11cdc9a92ce/deploy-status)](https://app.netlify.com/sites/full-circle/deploys)
 
 ## Prerequisites
 
