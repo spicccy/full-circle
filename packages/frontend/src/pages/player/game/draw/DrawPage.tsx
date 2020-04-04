@@ -6,25 +6,21 @@ import {
   PenThickness,
   PenType,
 } from '@full-circle/shared/lib/canvas';
-import { Room } from 'colyseus.js';
 import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
+import { useRoom } from 'src/contexts/RoomContext';
 
 import { CanvasCard } from './CanvasCard';
 import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
 interface IDrawPageProps {
-  room: Room;
   prompt: string;
   promptBy: string;
 }
 
-const DrawPage: FunctionComponent<IDrawPageProps> = ({
-  room,
-  prompt,
-  promptBy,
-}) => {
+const DrawPage: FunctionComponent<IDrawPageProps> = ({ prompt, promptBy }) => {
+  const { room } = useRoom();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [pen, setPen] = useState<Pen>({
     type: PenType.SOLID,
@@ -33,7 +29,7 @@ const DrawPage: FunctionComponent<IDrawPageProps> = ({
   });
 
   const handleSubmitDrawing = () => {
-    room.send(submitDrawing(canvasActions));
+    room?.send(submitDrawing(canvasActions));
   };
 
   return (

@@ -3,9 +3,8 @@ import { Box, defaultProps } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { BaseButton } from 'src/components/BaseButton';
 import { useEventListener } from 'src/hooks/useEventListener';
+import { ReactComponent as Eraser } from 'src/icons/eraser.svg';
 import styled from 'styled-components';
-
-import { ReactComponent as Eraser } from '../../icons/eraser.svg';
 
 const ColourBlock = styled(BaseButton)<{
   selected?: boolean;

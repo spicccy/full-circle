@@ -1,25 +1,25 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
-import { Room } from 'colyseus.js';
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
+import { useRoom } from 'src/contexts/RoomContext';
 
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 
 interface IGuessPageProps {
-  room: Room;
   drawing: CanvasAction[];
   drawingBy: string;
 }
 
 const GuessPage: FunctionComponent<IGuessPageProps> = ({
-  room,
   drawing,
   drawingBy,
 }) => {
+  const { room } = useRoom();
+
   const handleSubmit = (guess: string) => {
-    room.send(submitGuess(guess));
+    room?.send(submitGuess(guess));
   };
 
   return (

@@ -54,14 +54,14 @@ const defaultRoomState: RoomState = {
 };
 
 interface IRoomContext {
+  syncedState?: IRoomStateSynced;
   createAndJoinRoom(): Promise<IRoom | null>;
   joinRoomByCode(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
 }
 
 export const RoomContext = createContext<IRoomContext & RoomState>({
-  isLoading: false,
-  room: undefined,
+  ...defaultRoomState,
   createAndJoinRoom: async () => {
     throw new Error('Uninitialised room');
   },
@@ -71,8 +71,6 @@ export const RoomContext = createContext<IRoomContext & RoomState>({
   leaveRoom: () => {
     throw new Error('Uninitialised room');
   },
-  roomError: 'Unitialised Room',
-  roomCode: undefined,
 });
 
 export const useRoom = () => useContext(RoomContext);
@@ -80,6 +78,7 @@ export const useRoom = () => useContext(RoomContext);
 export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
   const [roomState, setRoomState] = useState<RoomState>(defaultRoomState);
+  const [syncedState, setSyncedState] = useState<IRoomStateSynced>();
 
   const createAndJoinRoom = useCallback(async (): Promise<IRoom | null> => {
     setRoomState({
@@ -174,11 +173,22 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    return () => roomState.room?.leave();
+    setSyncedState(roomState.room?.state?.toJSON());
+    if (roomState.room) {
+      const listener = roomState.room.onStateChange((newState) =>
+        setSyncedState(newState?.toJSON())
+      );
+
+      return () => {
+        listener.clear();
+        roomState.room?.leave();
+      };
+    }
   }, [roomState.room]);
 
   const context: IRoomContext & RoomState = {
     ...roomState,
+    syncedState,
     createAndJoinRoom,
     joinRoomByCode,
     leaveRoom,
