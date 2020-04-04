@@ -23,7 +23,14 @@ const GuessPage: FunctionComponent<IGuessPageProps> = ({
   };
 
   return (
-    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+    <Box
+      background="dark-1"
+      flex
+      height={{ min: '100vh' }}
+      align="center"
+      justify="center"
+      pad="medium"
+    >
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <DrawingCard drawing={drawing} drawingBy={drawingBy} />
       </Box>

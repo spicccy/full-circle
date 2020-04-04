@@ -26,7 +26,14 @@ const LoginPage: FunctionComponent = () => {
   };
 
   return (
-    <Box background="dark-1" fill align="center" justify="center" pad="medium">
+    <Box
+      background="dark-1"
+      flex
+      height={{ min: '100vh' }}
+      align="center"
+      justify="center"
+      pad="medium"
+    >
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <LoginCard attemptToJoinRoom={attemptToJoinRoom} />
       </Box>
