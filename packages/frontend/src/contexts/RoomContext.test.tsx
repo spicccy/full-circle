@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { Client, Room } from 'colyseus.js';
 import { RoomAvailable } from 'colyseus.js/lib/Room';
 import React, { useState } from 'react';
-import { mocked, partialMock } from 'src/testHelpers';
+import { mocked, mockRoom as baseMockRoom, partialMock } from 'src/testHelpers';
 
 import { useColyseus } from './ColyseusContext';
 import { RoomProvider, useRoom } from './RoomContext';
@@ -45,19 +45,28 @@ const TestConsumer: React.FunctionComponent = () => {
 };
 
 describe('RoomContext', () => {
-  const mockRoom = partialMock<Room>({ id: 'roomId', leave: jest.fn() });
-  const mockRoomWithMetada = partialMock<RoomAvailable<any>>({
-    roomId: 'roomId',
-    metadata: { roomCode: 'roomCode' },
-  });
-  const mockColyseus = partialMock<Client>({
-    create: () => Promise.resolve(mockRoom),
-    getAvailableRooms: () => Promise.resolve([mockRoomWithMetada]),
+  let mockRoomWithMetadata: RoomAvailable<any>;
+  let mockColyseus: Client;
+  let mockRoom: Room;
+
+  beforeEach(() => {
+    mockRoom = baseMockRoom;
+
+    mockRoomWithMetadata = partialMock<RoomAvailable<any>>({
+      roomId: 'roomId',
+      metadata: { roomCode: 'roomCode' },
+    });
+
+    mockColyseus = partialMock<Client>({
+      create: jest.fn().mockResolvedValue(mockRoom),
+      getAvailableRooms: jest.fn().mockResolvedValue([mockRoomWithMetadata]),
+      joinById: jest.fn(),
+    });
+
+    mocked(useColyseus).mockReturnValue(mockColyseus);
   });
 
   it('can create and joins a room', async () => {
-    mocked(useColyseus).mockReturnValue(mockColyseus);
-
     const { getByTestId } = render(
       <RoomProvider>
         <TestConsumer />
@@ -83,13 +92,14 @@ describe('RoomContext', () => {
   });
 
   it('can join a room by id', async () => {
-    const mockColyseus = partialMock<Client>({
-      joinById: (roomCode): Promise<Room<any>> =>
-        Promise.resolve(partialMock({ id: roomCode, leave: jest.fn() })),
-      getAvailableRooms: () => Promise.resolve([mockRoomWithMetada]),
-    });
-
-    mocked(useColyseus).mockReturnValue(mockColyseus);
+    mocked(mockColyseus.joinById).mockImplementation((roomCode) =>
+      Promise.resolve(
+        partialMock({
+          ...mockRoom,
+          id: roomCode,
+        })
+      )
+    );
 
     const { getByTestId } = render(
       <RoomProvider>
@@ -113,8 +123,6 @@ describe('RoomContext', () => {
   });
 
   it('can leave a room', async () => {
-    mocked(useColyseus).mockReturnValue(mockColyseus);
-
     const { getByTestId } = render(
       <RoomProvider>
         <TestConsumer />
@@ -133,21 +141,19 @@ describe('RoomContext', () => {
   });
 
   it('leaves a room when you join a new one', async () => {
-    const mockRoom2 = partialMock<Room>({ id: 'roomId2', leave: jest.fn() });
-    const mockRoomWithMetada2 = partialMock<RoomAvailable<any>>({
+    const mockRoom2 = partialMock<Room>({ ...mockRoom, id: 'roomId2' });
+    const mockRoomWithMetadata2 = partialMock<RoomAvailable<any>>({
       roomId: 'roomId2',
       metadata: { roomCode: 'roomCode2' },
     });
-    const mockColyseus = partialMock<Client>({
-      create: jest
-        .fn()
-        .mockResolvedValueOnce(mockRoom)
-        .mockResolvedValueOnce(mockRoom2),
-      getAvailableRooms: () =>
-        Promise.resolve([mockRoomWithMetada, mockRoomWithMetada2]),
-    });
 
-    mocked(useColyseus).mockReturnValue(mockColyseus);
+    mocked(mockColyseus.create)
+      .mockResolvedValueOnce(mockRoom)
+      .mockResolvedValueOnce(mockRoom2);
+    mocked(mockColyseus.getAvailableRooms).mockResolvedValue([
+      mockRoomWithMetadata,
+      mockRoomWithMetadata2,
+    ]);
 
     const { getByTestId } = render(
       <RoomProvider>
@@ -168,8 +174,6 @@ describe('RoomContext', () => {
   });
 
   it('leaves a room when component unmounts', async () => {
-    mocked(useColyseus).mockReturnValue(mockColyseus);
-
     const { getByTestId, unmount } = render(
       <RoomProvider>
         <TestConsumer />
@@ -187,13 +191,12 @@ describe('RoomContext', () => {
   });
 
   it('handles create room error', async () => {
-    const mockColyseus = partialMock<Client>({
-      create: () => Promise.reject(new Error('room create failed')),
-      getAvailableRooms: () =>
-        Promise.reject(new Error('get available rooms failed')),
-    });
-
-    mocked(useColyseus).mockReturnValue(mockColyseus);
+    mocked(mockColyseus.create).mockRejectedValue(
+      new Error('room create failed')
+    );
+    mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
+      new Error('get available rooms failed')
+    );
 
     const { getByTestId } = render(
       <RoomProvider>
@@ -210,13 +213,12 @@ describe('RoomContext', () => {
   });
 
   it('handles join room error', async () => {
-    const mockColyseus = partialMock<Client>({
-      joinById: () => Promise.reject(new Error('joinById failed')),
-      getAvailableRooms: () =>
-        Promise.reject(new Error('get available rooms failed')),
-    });
-
-    mocked(useColyseus).mockReturnValue(mockColyseus);
+    mocked(mockColyseus.joinById).mockRejectedValue(
+      new Error('joinById failed')
+    );
+    mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
+      new Error('get available rooms failed')
+    );
 
     const { getByTestId } = render(
       <RoomProvider>
