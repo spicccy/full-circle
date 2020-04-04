@@ -25,6 +25,7 @@ export const App: FunctionComponent = () => {
           <Switch>
             <Route exact path="/" component={LoginPage} />
             <Route exact path="/join" component={LoginPage} />
+            <Route exact path="/join/:roomCode" component={LoginPage} />
             <Route exact path="/home" component={HomePage} />
             <Route exact path="/play" component={PlayerGamePage} />
             <Route exact path="/game" component={CuratorGamePage} />
