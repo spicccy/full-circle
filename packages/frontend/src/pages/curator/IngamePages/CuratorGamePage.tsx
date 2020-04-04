@@ -4,7 +4,6 @@ import { FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomState } from 'src/hooks/useRoomState';
 
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
@@ -18,8 +17,7 @@ Lobby should only re-render when a new player has joined
 */
 
 const CuratorGamePage: FunctionComponent = () => {
-  const roomState = useRoomState();
-  const { room } = useRoom();
+  const { room, syncedState } = useRoom();
 
   if (!room) {
     return <Redirect to="/home" />;
@@ -27,7 +25,7 @@ const CuratorGamePage: FunctionComponent = () => {
 
   const startGame = () => room.send(notifyPlayerReady());
 
-  switch (roomState?.phase.phaseType) {
+  switch (syncedState?.phase.phaseType) {
     case PhaseType.LOBBY:
       return <Lobby startGame={startGame} />;
     case PhaseType.DRAW:
