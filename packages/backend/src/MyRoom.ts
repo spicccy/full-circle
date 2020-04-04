@@ -38,17 +38,18 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     switch (message.type) {
       case getType(submitDrawing): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
+        // store the canvas and get ready to send it to another player
+        // const canvasAction = message.payload;
         console.log(`[${client.id}] submitted a drawing.`);
-        const canvasAction = message.payload;
-        this.broadcast(displayDrawing(canvasAction));
-        this.state.addSubmittedPlayer(client.id);
+        this.state.onClientReady(client.id);
         return;
       }
       case getType(submitGuess): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
+        // store the guess and get ready to send it as a prompt
+        // const guess = message.payload;
         console.log(`[${client.id}] submitted a guess.`);
-        const guess = message.payload;
-        this.broadcast(displayPrompt(guess));
+        this.state.onClientReady(client.id);
         return;
       }
       // Handle a client being ready to progress to the next phase

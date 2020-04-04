@@ -28,7 +28,7 @@ export const App: FunctionComponent = () => {
             <Route exact path="/join/:roomCode" component={LoginPage} />
             <Route exact path="/create" component={CreatePage} />
             <Route exact path="/play" component={PlayerGamePage} />
-            <Route exact path="/game" component={CuratorGamePage} />
+            <Route exact path="/curator" component={CuratorGamePage} />
             <Route exact path="/instructions" component={Instructions} />
             <Route exact path="/team" component={Team} />
           </Switch>

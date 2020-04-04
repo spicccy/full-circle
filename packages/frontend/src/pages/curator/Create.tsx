@@ -37,7 +37,7 @@ const CreatePage: FunctionComponent = () => {
             alignSelf="center"
             label="Create"
             icon={<Add />}
-            href="/game"
+            href="/curator"
             onClick={createLobby}
           />
         </Box>
