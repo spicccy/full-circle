@@ -41,6 +41,12 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
         // store the canvas and get ready to send it to another player
         // const canvasAction = message.payload;
         console.log(`[${client.id}] submitted a drawing.`);
+        //TODO: these two below functions should be squashed into one functionality
+        // i.e. make the array that onClientReady be observable
+        // right now there is a separation of concerns
+        // addSubmittedPlayer adds to a map that is synced with the frontend (to show submitted status)
+        // onClientReady adds to an array that checks if all players are read (to progress to next phase)
+        this.state.addSubmittedPlayer(client.id);
         this.state.onClientReady(client.id);
         return;
       }
