@@ -1,11 +1,13 @@
 import { MaybePromise } from '@full-circle/shared/lib/interfaces';
 import { Button, ButtonProps } from 'grommet';
 import React, { FunctionComponent, MouseEventHandler } from 'react';
+import Spinner from 'react-loader-spinner';
 import { useHistory } from 'react-router-dom';
 
 interface ILinkButtonProps extends ButtonProps {
   href: string;
   onClick?(): MaybePromise<boolean | void>;
+  loading?: boolean;
 }
 
 const LinkButton: FunctionComponent<ILinkButtonProps> = (props) => {
@@ -19,7 +21,15 @@ const LinkButton: FunctionComponent<ILinkButtonProps> = (props) => {
     }
   };
 
-  return <Button {...props} onClick={overrideHref} />;
+  const { icon, loading, ...rest } = props;
+
+  return (
+    <Button
+      {...rest}
+      onClick={overrideHref}
+      icon={loading ? <Spinner type="Rings" /> : icon}
+    />
+  );
 };
 
 export { LinkButton };

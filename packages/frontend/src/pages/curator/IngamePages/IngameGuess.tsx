@@ -18,7 +18,7 @@ const IngameGuess: FunctionComponent = () => {
               <Paragraph>It's time to g-g-g-g-g-g-g-guess</Paragraph>
               <CuratorTimer />
             </Box>
-            <LinkButton alignSelf="center" label="Go to Home" href="/home" />
+            <LinkButton alignSelf="center" label="Go to Home" href="/" />
           </Box>
         </Box>
       </Box>

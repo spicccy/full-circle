@@ -20,7 +20,7 @@ const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
   if (!room) {
-    return <Redirect to="/home" />;
+    return <Redirect to="/create" />;
   }
 
   const startGame = () => room.send(notifyPlayerReady());
