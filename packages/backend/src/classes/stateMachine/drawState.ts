@@ -1,15 +1,16 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { Delayed } from 'colyseus';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend, IState } from '../roomState';
+import { IRoomStateBackend, IState } from '../roomState';
+import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
 
 class DrawState implements IState {
-  private room: IRoomStateBackend;
   private readyPlayers = new Set<string>();
+  private timerHandle: Delayed | undefined;
 
-  constructor(room: RoomState) {
-    this.room = room;
-  }
+  constructor(private room: IRoomStateBackend) {}
 
   onJoin = () => {
     throw new Error('Game has already started');
@@ -31,7 +32,20 @@ class DrawState implements IState {
     }
   };
 
-  advanceState = () => {
+  onStateStart = () => {
+    this.room.setPhase(new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH));
+    this.readyPlayers.clear();
+    this.timerHandle = this.room.clock.setTimeout(
+      this.advanceState,
+      DEFAULT_DRAW_PHASE_LENGTH
+    );
+  };
+
+  onStateEnd = () => {
+    this.timerHandle?.clear();
+  };
+
+  private advanceState = () => {
     if (this.room.gameIsOver) {
       this.room.setRevealState();
       return;

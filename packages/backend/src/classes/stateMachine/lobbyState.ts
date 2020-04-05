@@ -1,17 +1,15 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend, IState } from '../roomState';
+import { IRoomStateBackend, IState } from '../roomState';
+import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
 
 class LobbyState implements IState {
-  private room: IRoomStateBackend;
-
-  constructor(room: RoomState) {
-    this.room = room;
-  }
+  constructor(private room: IRoomStateBackend) {}
 
   onJoin = (client: IClient, options: IJoinOptions) => {
     const username = options.username;
@@ -50,7 +48,15 @@ class LobbyState implements IState {
     }
   };
 
-  advanceState = () => {
+  onStateStart = () => {
+    this.room.setPhase(new Phase(PhaseType.LOBBY));
+  };
+
+  onStateEnd = () => {
+    return;
+  };
+
+  private advanceState = () => {
     this.room.incrementRound();
     this.room.setDrawState();
   };
