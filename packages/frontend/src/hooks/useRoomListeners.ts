@@ -17,3 +17,19 @@ export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
     }
   }, [room]);
 };
+
+export const useRoomLeave = (msgHandler: (code: number) => void) => {
+  const { room } = useRoom();
+  const handlerRef = useRef(msgHandler);
+
+  useEffect(() => {
+    handlerRef.current = msgHandler;
+  }, [msgHandler]);
+
+  useEffect(() => {
+    if (room) {
+      const listener = room.onLeave((code) => handlerRef.current(code));
+      return () => listener.clear();
+    }
+  }, [room]);
+};

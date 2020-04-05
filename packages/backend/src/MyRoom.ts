@@ -72,8 +72,11 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   onLeave(client: IClient, consented: boolean) {
     console.log(`${client.id} left ${this.roomId}.`);
-
-    this.state.onLeave(client, consented);
+    if (client.id === this.state.curator) {
+      this.disconnect();
+    } else {
+      this.state.onLeave(client, consented);
+    }
   }
 
   onDispose() {
