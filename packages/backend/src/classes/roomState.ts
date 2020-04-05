@@ -95,7 +95,7 @@ class RoomState extends Schema
   submittedPlayers = new MapSchema<boolean>();
 
   @type('number')
-  round = 0;
+  round = 10;
 
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
