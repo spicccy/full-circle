@@ -14,7 +14,7 @@ const IngameReveal: FunctionComponent = () => {
         <Paragraph>
           Each player will be able to control their own viewing of their chain
         </Paragraph>
-        <LinkButton alignSelf="center" label="Go to Home" href="/" />
+        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
       </Box>
     </Box>
   );
