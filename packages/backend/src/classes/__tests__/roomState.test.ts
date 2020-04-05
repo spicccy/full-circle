@@ -93,21 +93,21 @@ describe('Room state', () => {
       const chains = room.currChains;
       const chain1 = chains[0];
       expect(chain1.id).toBe('a');
-      expect(chain1.links[0].image.id).toBe('a');
-      expect(chain1.links[0].prompt.id).toBe('');
-      expect(chain1.links[1].image.id).toBe('c');
-      expect(chain1.links[1].prompt.id).toBe('b');
-      expect(chain1.links[2].image.id).toBe('e');
-      expect(chain1.links[2].prompt.id).toBe('d');
+      expect(chain1.links[0].image.playerId).toBe('a');
+      expect(chain1.links[0].prompt.playerId).toBe('');
+      expect(chain1.links[1].image.playerId).toBe('c');
+      expect(chain1.links[1].prompt.playerId).toBe('b');
+      expect(chain1.links[2].image.playerId).toBe('e');
+      expect(chain1.links[2].prompt.playerId).toBe('d');
 
       const chain2 = chains[1];
       expect(chain2.id).toBe('e');
-      expect(chain2.links[0].image.id).toBe('e');
-      expect(chain2.links[0].prompt.id).toBe('');
-      expect(chain2.links[1].image.id).toBe('b');
-      expect(chain2.links[1].prompt.id).toBe('d');
-      expect(chain2.links[2].image.id).toBe('c');
-      expect(chain2.links[2].prompt.id).toBe('a');
+      expect(chain2.links[0].image.playerId).toBe('e');
+      expect(chain2.links[0].prompt.playerId).toBe('');
+      expect(chain2.links[1].image.playerId).toBe('b');
+      expect(chain2.links[1].prompt.playerId).toBe('d');
+      expect(chain2.links[2].image.playerId).toBe('c');
+      expect(chain2.links[2].prompt.playerId).toBe('a');
     });
   });
 
