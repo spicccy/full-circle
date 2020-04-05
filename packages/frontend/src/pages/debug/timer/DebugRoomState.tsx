@@ -25,9 +25,13 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
 
   const { room, roomCode, syncedState } = useRoom();
 
-  useEffect(() => setMessages([]), [room]);
+  useEffect(() => {
+    setMessages([]);
+  }, [room]);
 
-  useRoomMessage((message) => setMessages([...messages, message.type]));
+  useRoomMessage((message) => {
+    setMessages([...messages, message.type]);
+  });
 
   if (!debug) {
     return null;
