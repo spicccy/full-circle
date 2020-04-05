@@ -1,5 +1,4 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 
 import { IClient } from '../../interfaces';
 import RoomState, { IRoomStateBackend, IState } from '../roomState';
@@ -12,8 +11,8 @@ class GuessState implements IState {
     this.room = room;
   }
 
-  onJoin = (client: IClient, options: IJoinOptions) => {
-    console.log(client, options);
+  onJoin = () => {
+    throw new Error('Game has already started');
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
