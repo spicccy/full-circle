@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-
-import { useRoomState } from './useRoomState';
+import { useRoom } from 'src/contexts/RoomContext';
 
 const nearestSecond = (ms: number) => Math.round(ms / 1000);
 
@@ -8,10 +7,10 @@ const nearestSecond = (ms: number) => Math.round(ms / 1000);
  * Custom hook that returns a timer countdown for the current phase
  */
 export const usePhaseTimer = (): number | undefined => {
-  const roomState = useRoomState();
+  const { syncedState } = useRoom();
   const [value, setValue] = useState<number>();
 
-  const phaseEnd = roomState?.phase.phaseEnd;
+  const phaseEnd = syncedState?.phase.phaseEnd;
 
   useEffect(() => {
     if (phaseEnd) {
