@@ -35,11 +35,11 @@ gameServer.define(ROOM_NAME, MyRoom);
 // register colyseus monitor AFTER registering your room handlers
 app.use('/colyseus', monitor());
 
-app.get('/ping', (req, res) => {
+app.get('/ping', (_req, res) => {
   return res.send('pong');
 });
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   return res.sendFile(
     path.join(__dirname, '../../frontend/build', 'index.html')
   );
