@@ -5,6 +5,9 @@ import { Delayed } from 'colyseus';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
+import { IRoomStateBackend, IState } from '../roomState';
+import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { getType } from 'typesafe-actions';
 
 class DrawState implements IState {
   private readyPlayers = new Set<string>();
@@ -21,8 +24,14 @@ class DrawState implements IState {
     this.room.removePlayer(client.id);
   };
 
-  onReceive = (message: ClientAction) => {
-    console.log(message);
+  onReceive = (client: IClient, message: ClientAction) => {
+    if (message.type !== getType(submitDrawing)) return;
+    const drawing = message.payload;
+    const id = client.id;
+    if (!this.room.storeDrawing(id, drawing)) {
+      return;
+    }
+    this.onClientReady(id);
   };
 
   onClientReady = (clientId: string) => {

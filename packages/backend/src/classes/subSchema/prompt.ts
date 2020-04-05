@@ -3,9 +3,6 @@ import { IPrompt } from '@full-circle/shared/lib/roomState/interfaces';
 
 class Prompt extends Schema implements IPrompt {
   @type('string')
-  id = '';
-
-  @type('string')
   text = '';
 
   @type('string')
@@ -13,7 +10,15 @@ class Prompt extends Schema implements IPrompt {
 
   constructor(id: string) {
     super();
-    this.id = id;
+    this.playerId = id;
+  }
+
+  setText = (text: string) => {
+    this.text = text;
+  };
+
+  get getPlayerId() {
+    return this.playerId;
   }
 }
 

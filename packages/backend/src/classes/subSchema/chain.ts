@@ -18,6 +18,10 @@ class Chain extends Schema implements IChain {
   addLink = (newLink: Link) => {
     this.links.push(newLink);
   };
+
+  get getLinks() {
+    return this.links;
+  }
 }
 
 export default Chain;

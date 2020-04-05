@@ -1,19 +1,16 @@
 import { PhaseType } from './constants';
 
 export interface IPrompt {
-  id: string;
   text: string;
   playerId: string;
 }
 
 export interface IImage {
-  id: string;
   imageData: string;
   playerId: string;
 }
 
 export interface ILink {
-  id: string;
   prompt: IPrompt;
   image: IImage;
 }

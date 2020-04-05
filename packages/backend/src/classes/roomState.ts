@@ -19,13 +19,14 @@ import Chain from './subSchema/chain';
 import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 
 /**
  * These are functions that each specific state will need to implement.
  * The behaviour of these functions changes depending on which state we are in.
  */
 export interface IState {
-  onReceive: (message: ClientAction) => void;
+  onReceive: (client: IClient, message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
   onLeave: (client: IClient, consented: boolean) => void;
   onClientReady: (clientId: string) => void;
@@ -54,6 +55,9 @@ export interface IRoomStateBackend {
 
   allocate: () => void;
   readonly currChains: ArraySchema<Chain>;
+
+  storeGuess: (id: string, guess: string) => boolean;
+  storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -187,6 +191,32 @@ class RoomState extends Schema
     }
   };
 
+  storeGuess = (id: string, guess: string): boolean => {
+    const round = this.round;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const prompt = chain.getLinks[round].getPrompt;
+      if (prompt.playerId === id) {
+        prompt.setText(guess);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  storeDrawing = (id: string, drawing: CanvasAction[]): boolean => {
+    const round = this.round;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const image = chain.getLinks[round - 1].getImage;
+      if (image.getPlayerId === id) {
+        image.setImage(JSON.stringify(drawing));
+        return true;
+      }
+    }
+    return false;
+  };
+
   get gameIsOver() {
     // TODO: implement checking of the room's configured round length
     let phasesElapsed = this.round * 2;
@@ -239,8 +269,8 @@ class RoomState extends Schema
     this.currState.onClientReady(clientId);
   };
 
-  onReceive = (message: ClientAction) => {
-    this.currState.onReceive(message);
+  onReceive = (client: IClient, message: ClientAction) => {
+    this.currState.onReceive(client, message);
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {

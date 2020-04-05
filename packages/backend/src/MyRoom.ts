@@ -7,7 +7,6 @@ import {
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus';
-import { getType } from 'typesafe-actions';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
 import RoomState from './classes/roomState';
@@ -30,39 +29,8 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
   }
 
   onMessage(client: IClient, message: ClientAction) {
-    switch (message.type) {
-      case getType(submitDrawing): {
-        // TODO: delegate the submission to the distribution algorithm implemented in the state
-        // store the canvas and get ready to send it to another player
-        // const canvasAction = message.payload;
-        console.log(`[${client.id}] submitted a drawing.`);
-        //TODO: these two below functions should be squashed into one functionality
-        // i.e. make the array that onClientReady be observable
-        // right now there is a separation of concerns
-        // addSubmittedPlayer adds to a map that is synced with the frontend (to show submitted status)
-        // onClientReady adds to an array that checks if all players are read (to progress to next phase)
-        this.state.addSubmittedPlayer(client.id);
-        this.state.onClientReady(client.id);
-        return;
-      }
-      case getType(submitGuess): {
-        // TODO: delegate the submission to the distribution algorithm implemented in the state
-        // store the guess and get ready to send it as a prompt
-        // const guess = message.payload;
-        console.log(`[${client.id}] submitted a guess.`);
-        this.state.onClientReady(client.id);
-        return;
-      }
-      // Handle a client being ready to progress to the next phase
-      case getType(notifyPlayerReady): {
-        this.state.onClientReady(client.id);
-        return;
-      }
-
-      default: {
-        console.log(`[${client.id}] ${JSON.stringify(message)}.`);
-      }
-    }
+    this.state.onReceive(client, message);
+    console.log(`[${client.id}] ${JSON.stringify(message)}.`);
   }
 
   onLeave(client: IClient, consented: boolean) {
