@@ -1,16 +1,14 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { objectValues } from '@full-circle/shared/lib/helpers';
-import { MaybePromise } from '@full-circle/shared/lib/interfaces';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
   IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
-import { Clock } from 'colyseus';
 
-import { IClient } from '../interfaces';
+import { IClient, IClock } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -31,15 +29,17 @@ export interface IState {
   onJoin: (client: IClient, options: IJoinOptions) => void;
   onLeave: (client: IClient, consented: boolean) => void;
   onClientReady: (clientId: string) => void;
-  onStateStart: () => MaybePromise<void>;
-  onStateEnd: () => MaybePromise<void>;
+  onStateStart: () => void;
+  onStateEnd: () => void;
+  // public for tests
+  advanceState: () => void;
 }
 
 /**
  * How specific states should interact with the roomState.
  */
 export interface IRoomStateBackend {
-  readonly clock: Clock;
+  readonly clock: IClock;
   setCurator: (id: string) => void;
   getCurator: () => string;
 
@@ -73,7 +73,7 @@ class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
 
-  constructor(public clock: Clock) {
+  constructor(public clock: IClock) {
     super();
   }
 
@@ -201,34 +201,34 @@ class RoomState extends Schema
   }
 
   // State-transition helpers
-  setDrawState = async () => {
-    await this.onStateEnd();
+  setDrawState = () => {
+    this.onStateEnd();
     this.currState = new DrawState(this);
-    await this.onStateStart();
+    this.onStateStart();
   };
 
-  setGuessState = async () => {
-    await this.onStateEnd();
+  setGuessState = () => {
+    this.onStateEnd();
     this.currState = new GuessState(this);
-    await this.onStateStart();
+    this.onStateStart();
   };
 
-  setEndState = async () => {
-    await this.onStateEnd();
+  setEndState = () => {
+    this.onStateEnd();
     this.currState = new EndState(this);
-    await this.onStateStart();
+    this.onStateStart();
   };
 
-  setRevealState = async () => {
-    await this.onStateEnd();
+  setRevealState = () => {
+    this.onStateEnd();
     this.currState = new RevealState(this);
-    await this.onStateStart();
+    this.onStateStart();
   };
 
-  setLobbyState = async () => {
-    await this.onStateEnd();
+  setLobbyState = () => {
+    this.onStateEnd();
     this.currState = new LobbyState(this);
-    await this.onStateStart();
+    this.onStateStart();
   };
 
   // ===========================================================================
@@ -251,12 +251,16 @@ class RoomState extends Schema
     this.currState.onLeave(client, consented);
   };
 
-  onStateStart = async () => {
-    await this.currState.onStateStart();
+  onStateStart = () => {
+    this.currState.onStateStart();
   };
 
-  onStateEnd = async () => {
-    await this.currState.onStateEnd();
+  onStateEnd = () => {
+    this.currState.onStateEnd();
+  };
+
+  advanceState = () => {
+    this.currState.advanceState();
   };
 }
 

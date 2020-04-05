@@ -3,23 +3,18 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { MAX_PLAYERS } from '../../../constants';
 import { IClient } from '../../../interfaces';
+import { mockClient, mockClock } from '../../helpers/testHelper';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
 
 export const testCurator: IClient = {
+  ...mockClient,
   id: 'curator',
-  sessionId: '',
-  close: () => {
-    return;
-  },
 };
 
 export const testPlayer: IClient = {
+  ...mockClient,
   id: 'player',
-  sessionId: '',
-  close: () => {
-    return;
-  },
 };
 
 describe('Lobby State', () => {
@@ -27,7 +22,7 @@ describe('Lobby State', () => {
   let lobbyState: IState;
 
   beforeEach(() => {
-    room = new RoomState();
+    room = new RoomState(mockClock);
     lobbyState = room.currState;
   });
 
@@ -66,7 +61,7 @@ describe('Lobby State', () => {
   });
 
   it('will not allow more than MAX players to join', () => {
-    const room = new RoomState();
+    const room = new RoomState(mockClock);
     room.setCurator('curatorId');
 
     const mockCloseJoinedPlayers = jest.fn();

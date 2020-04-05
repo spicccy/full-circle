@@ -56,7 +56,7 @@ class LobbyState implements IState {
     return;
   };
 
-  private advanceState = () => {
+  advanceState = () => {
     this.room.incrementRound();
     this.room.setDrawState();
   };

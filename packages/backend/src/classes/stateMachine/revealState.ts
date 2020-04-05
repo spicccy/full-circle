@@ -34,7 +34,7 @@ class RevealState implements IState {
     return;
   };
 
-  private advanceState = () => {
+  advanceState = () => {
     this.room.setEndState();
   };
 }

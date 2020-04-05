@@ -34,7 +34,7 @@ class EndState implements IState {
     return;
   };
 
-  private advanceState = () => {
+  advanceState = () => {
     return;
   };
 }

@@ -45,7 +45,7 @@ class DrawState implements IState {
     this.timerHandle?.clear();
   };
 
-  private advanceState = () => {
+  advanceState = () => {
     if (this.room.gameIsOver) {
       this.room.setRevealState();
       return;
