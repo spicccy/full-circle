@@ -43,7 +43,7 @@ app.get('/ping', (_req, res) => {
   return res.send('pong');
 });
 
-app.get('/', (_req, res) => {
+app.get('*', (_req, res) => {
   return res.sendFile(
     path.join(__dirname, '..', '..', 'frontend', 'build', 'index.html')
   );
