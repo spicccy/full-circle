@@ -29,7 +29,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
           <Box align="center">
-            <Paragraph>Room ID : {roomCode}</Paragraph>
+            <Paragraph data-testid="roomID">Room ID : {roomCode}</Paragraph>
           </Box>
           <Button
             alignSelf="center"

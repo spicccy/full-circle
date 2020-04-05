@@ -30,6 +30,7 @@ const HomePage: FunctionComponent = () => {
             </Paragraph>
           </Box>
           <LinkButton
+            data-testid="createGame"
             alignSelf="center"
             label="Create"
             icon={<Add />}
