@@ -4,6 +4,7 @@ import { Server } from 'colyseus';
 import cors from 'cors';
 import express from 'express';
 import http from 'http';
+import path from 'path';
 
 // import socialRoutes from "@colyseus/social/express"
 import { MyRoom } from './MyRoom';
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
 
 const server = http.createServer(app);
 const gameServer = new Server({
@@ -32,6 +34,16 @@ gameServer.define(ROOM_NAME, MyRoom);
 
 // register colyseus monitor AFTER registering your room handlers
 app.use('/colyseus', monitor());
+
+app.get('/ping', (req, res) => {
+  return res.send('pong');
+});
+
+app.get('/', (req, res) => {
+  return res.sendFile(
+    path.join(__dirname, '../../frontend/build', 'index.html')
+  );
+});
 
 gameServer.listen(port);
 console.log(`Listening on ws://localhost:${port}`);
