@@ -179,12 +179,15 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         setSyncedState(newState?.toJSON())
       );
 
+      const leaveListener = roomState.room.onLeave(leaveRoom);
+
       return () => {
         listener.clear();
+        leaveListener.clear();
         roomState.room?.leave();
       };
     }
-  }, [roomState.room]);
+  }, [leaveRoom, roomState.room]);
 
   const context: IRoomContext & RoomState = {
     ...roomState,
