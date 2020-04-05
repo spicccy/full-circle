@@ -66,7 +66,7 @@ describe('RoomContext', () => {
     mocked(useColyseus).mockReturnValue(mockColyseus);
   });
 
-  it('can create and joins a room', async () => {
+  it('can create and join a room', async () => {
     const { getByTestId } = render(
       <RoomProvider>
         <TestConsumer />
@@ -75,7 +75,7 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toHaveTextContent('Uninitialised room');
+    expect(getByTestId('roomError')).toBeEmpty();
 
     userEvent.click(getByTestId('createAndJoinRoom'));
 
@@ -191,11 +191,9 @@ describe('RoomContext', () => {
   });
 
   it('handles create room error', async () => {
-    mocked(mockColyseus.create).mockRejectedValue(
-      new Error('room create failed')
-    );
+    mocked(mockColyseus.create).mockRejectedValue('room create failed');
     mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
-      new Error('get available rooms failed')
+      'get available rooms failed'
     );
 
     const { getByTestId } = render(
@@ -213,11 +211,9 @@ describe('RoomContext', () => {
   });
 
   it('handles join room error', async () => {
-    mocked(mockColyseus.joinById).mockRejectedValue(
-      new Error('joinById failed')
-    );
+    mocked(mockColyseus.joinById).mockRejectedValue('joinById failed');
     mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
-      new Error('get available rooms failed')
+      'get available rooms failed'
     );
 
     const { getByTestId } = render(
