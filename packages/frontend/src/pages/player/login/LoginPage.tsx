@@ -1,16 +1,24 @@
 import { Box, Text } from 'grommet';
-import React, { FunctionComponent } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { FunctionComponent, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { LoginCard } from './LoginCard';
 
+interface ILoginPageParams {
+  roomCode?: string;
+}
+
 const LoginPage: FunctionComponent = () => {
   const { joinRoomByCode } = useRoom();
   const history = useHistory();
+  const params = useParams<ILoginPageParams>();
 
-  const attemptToJoinRoom = async (name: string, roomCode: string) => {
+  const [name, setName] = useState('');
+  const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
+
+  const attemptToJoinRoom = async () => {
     const options = {
       username: name,
     };
@@ -35,7 +43,13 @@ const LoginPage: FunctionComponent = () => {
       pad="medium"
     >
       <Box width="medium" margin={{ bottom: 'medium' }}>
-        <LoginCard attemptToJoinRoom={attemptToJoinRoom} />
+        <LoginCard
+          name={name}
+          setName={setName}
+          roomCode={roomCode}
+          setRoomCode={setRoomCode}
+          attemptToJoinRoom={attemptToJoinRoom}
+        />
       </Box>
       <Text>
         OR create a new game <LinkAnchor href="/home">here</LinkAnchor>

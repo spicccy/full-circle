@@ -1,6 +1,6 @@
 import 'styled-components/macro';
 
-import { Box, Button, Form, Heading, Image, Text, TextInput } from 'grommet';
+import { Box, Button, Heading, Image, Text, TextInput } from 'grommet';
 import React, { FormEvent, FunctionComponent } from 'react';
 import { Card } from 'src/components/Card/Card';
 import logo from 'src/images/fullcircle.png';
@@ -20,42 +20,59 @@ const Header: FunctionComponent = () => (
   </Box>
 );
 
-interface IFormValues {
-  username: string;
-  roomId: string;
-}
-
 interface ILoginCardProps {
-  attemptToJoinRoom(name: string, roomId: string): void;
+  name: string;
+  roomCode: string;
+  setName(name: string): void;
+  setRoomCode(roomCode: string): void;
+  attemptToJoinRoom(): void;
 }
 
 const LoginCard: FunctionComponent<ILoginCardProps> = ({
+  name,
+  roomCode,
+  setName,
+  setRoomCode,
   attemptToJoinRoom,
 }) => {
   const handleSubmit = (e: FormEvent) => {
-    const formValues: IFormValues = (e as any).value;
-    attemptToJoinRoom(formValues.username, formValues.roomId);
+    e.preventDefault();
+    attemptToJoinRoom();
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <Card pad="large">
         <Header />
         <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
           <Text size="xlarge" margin={{ right: 'small' }}>
             Name:
           </Text>
-          <TextInput size="medium" name="username" id="username" />
+          <TextInput
+            size="medium"
+            id="username"
+            required
+            maxLength={12}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </Box>
         <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
           <Text size="xlarge" margin={{ right: 'small' }}>
             Room:
           </Text>
-          <TextInput size="medium" id="roomId" name="roomId" maxLength={4} />
+          <TextInput
+            size="medium"
+            id="roomCode"
+            required
+            maxLength={4}
+            value={roomCode}
+            onChange={(e) => setRoomCode(e.target.value)}
+          />
         </Box>
         <Button type="submit" size="large" alignSelf="center" label="JOIN" />
       </Card>
-    </Form>
+    </form>
   );
 };
 
