@@ -13,7 +13,7 @@
     "prettier": "prettier --write src/**/*.ts",
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
-  "homepage": "https://full-circle-express-ser-ag6pwt.herokuapp.com",
+  "homepage": "https://full-circle-express-ser-ag6pwt.herokuapp.com/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^9.5.0",
