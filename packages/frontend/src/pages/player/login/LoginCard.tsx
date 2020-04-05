@@ -1,7 +1,8 @@
 import 'styled-components/macro';
 
-import { Box, Button, Heading, Image, Text, TextInput } from 'grommet';
-import React, { FormEvent, FunctionComponent } from 'react';
+import { Box, Heading, Image, Text, TextInput } from 'grommet';
+import React, { FormEvent, FunctionComponent, useState } from 'react';
+import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import logo from 'src/images/fullcircle.png';
 
@@ -36,9 +37,13 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   attemptToJoinRoom,
 }) => {
   const handleSubmit = (e: FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     attemptToJoinRoom();
+    setLoading(false);
   };
+
+  const [loading, setLoading] = useState(false);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -70,7 +75,13 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
             onChange={(e) => setRoomCode(e.target.value)}
           />
         </Box>
-        <Button type="submit" size="large" alignSelf="center" label="JOIN" />
+        <LoadingButton
+          loading={loading}
+          type="submit"
+          size="large"
+          alignSelf="center"
+          label="JOIN"
+        />
       </Card>
     </form>
   );

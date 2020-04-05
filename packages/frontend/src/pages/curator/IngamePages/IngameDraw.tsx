@@ -22,7 +22,7 @@ const IngameDraw: FunctionComponent = () => {
         <Heading>Drawing Phase</Heading>
         <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
         <CuratorTimer />
-        <LinkButton alignSelf="center" label="Go to Home" href="/home" />
+        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
       </Box>
     </Box>
   );
