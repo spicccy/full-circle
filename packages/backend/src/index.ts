@@ -14,7 +14,11 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../../frontend/build')));
+app.use(
+  express.static(
+    path.join(__dirname, '..', '..', 'frontend', 'build', 'index.html')
+  )
+);
 
 const server = http.createServer(app);
 const gameServer = new Server({
@@ -41,7 +45,7 @@ app.get('/ping', (_req, res) => {
 
 app.get('/', (_req, res) => {
   return res.sendFile(
-    path.join(__dirname, '../../frontend/build', 'index.html')
+    path.join(__dirname, '..', '..', 'frontend', 'build', 'index.html')
   );
 });
 
