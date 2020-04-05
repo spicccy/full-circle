@@ -36,10 +36,10 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   setRoomCode,
   attemptToJoinRoom,
 }) => {
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
     e.preventDefault();
-    attemptToJoinRoom();
+    await attemptToJoinRoom();
     setLoading(false);
   };
 

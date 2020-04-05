@@ -4,10 +4,6 @@ import {
   submitDrawing,
   submitGuess,
 } from '@full-circle/shared/lib/actions/client';
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus';
@@ -30,7 +26,6 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   onJoin(client: IClient, options: IJoinOptions) {
     console.log(`${client.id} joined ${this.roomId}.`);
-
     this.state.onJoin(client, options);
   }
 
