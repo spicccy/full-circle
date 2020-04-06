@@ -2,27 +2,27 @@ import { Schema, type } from '@colyseus/schema';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { IPhase } from '@full-circle/shared/lib/roomState/interfaces';
 
-export const DEFAULT_DRAW_PHASE_LENGTH = 60;
-export const DEFAULT_GUESS_PHASE_LENGTH = 30;
+export const DEFAULT_DRAW_PHASE_LENGTH = 60000;
+export const DEFAULT_GUESS_PHASE_LENGTH = 30000;
 
 class Phase extends Schema implements IPhase {
   @type('number')
-  phaseStart = 0;
+  phaseStart: number;
 
   @type('number')
-  phaseEnd: number | undefined = undefined;
+  phaseEnd: number | undefined;
 
   @type('string')
   phaseType: PhaseType;
 
   /**
    *
-   * @param duration in seconds
+   * @param duration in milliseconds
    */
-  constructor(phaseType: PhaseType, duration?: number) {
+  constructor(phaseType: PhaseType, durationMs?: number) {
     super();
     this.phaseStart = Date.now();
-    this.phaseEnd = duration ? this.phaseStart + duration * 1000 : undefined;
+    this.phaseEnd = durationMs ? this.phaseStart + durationMs : undefined;
     this.phaseType = phaseType;
   }
 }

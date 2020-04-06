@@ -8,7 +8,7 @@ import {
   IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
-import { IClient } from '../interfaces';
+import { IClient, IClock } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -17,10 +17,7 @@ import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Chain from './subSchema/chain';
 import Link from './subSchema/link';
-import Phase, {
-  DEFAULT_DRAW_PHASE_LENGTH,
-  DEFAULT_GUESS_PHASE_LENGTH,
-} from './subSchema/phase';
+import Phase from './subSchema/phase';
 import Player from './subSchema/player';
 
 /**
@@ -31,14 +28,18 @@ export interface IState {
   onReceive: (message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
   onLeave: (client: IClient, consented: boolean) => void;
-  advanceState: () => void;
   onClientReady: (clientId: string) => void;
+  onStateStart: () => void;
+  onStateEnd: () => void;
+  // public for tests
+  advanceState: () => void;
 }
 
 /**
  * How specific states should interact with the roomState.
  */
 export interface IRoomStateBackend {
+  readonly clock: IClock;
   setCurator: (id: string) => void;
   getCurator: () => string;
 
@@ -47,6 +48,7 @@ export interface IRoomStateBackend {
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
 
+  setPhase: (phase: Phase) => void;
   incrementRound: () => void;
   getRound: () => number;
 
@@ -70,6 +72,10 @@ export interface IRoomStateBackend {
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
+
+  constructor(public clock: IClock) {
+    super();
+  }
 
   //==================================================================================
   // IRoomStateSynced API
@@ -149,6 +155,10 @@ class RoomState extends Schema
     return this.round;
   };
 
+  setPhase = (phase: Phase) => {
+    this.phase = phase;
+  };
+
   get currChains() {
     return this.chains;
   }
@@ -191,35 +201,34 @@ class RoomState extends Schema
   }
 
   // State-transition helpers
-  setDrawState = (duration?: number) => {
-    this.phase = new Phase(
-      PhaseType.DRAW,
-      duration ?? DEFAULT_DRAW_PHASE_LENGTH
-    );
+  setDrawState = () => {
+    this.onStateEnd();
     this.currState = new DrawState(this);
+    this.onStateStart();
   };
 
-  setGuessState = (duration?: number) => {
-    this.phase = new Phase(
-      PhaseType.GUESS,
-      duration ?? DEFAULT_GUESS_PHASE_LENGTH
-    );
+  setGuessState = () => {
+    this.onStateEnd();
     this.currState = new GuessState(this);
+    this.onStateStart();
   };
 
   setEndState = () => {
-    this.phase = new Phase(PhaseType.END);
+    this.onStateEnd();
     this.currState = new EndState(this);
+    this.onStateStart();
   };
 
   setRevealState = () => {
-    this.phase = new Phase(PhaseType.REVEAL);
+    this.onStateEnd();
     this.currState = new RevealState(this);
+    this.onStateStart();
   };
 
   setLobbyState = () => {
-    this.phase = new Phase(PhaseType.LOBBY);
+    this.onStateEnd();
     this.currState = new LobbyState(this);
+    this.onStateStart();
   };
 
   // ===========================================================================
@@ -240,6 +249,14 @@ class RoomState extends Schema
 
   onLeave = (client: IClient, consented: boolean) => {
     this.currState.onLeave(client, consented);
+  };
+
+  onStateStart = () => {
+    this.currState.onStateStart();
+  };
+
+  onStateEnd = () => {
+    this.currState.onStateEnd();
   };
 
   advanceState = () => {

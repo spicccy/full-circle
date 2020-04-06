@@ -1,14 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend, IState } from '../roomState';
+import { IRoomStateBackend, IState } from '../roomState';
+import Phase from '../subSchema/phase';
 
 class RevealState implements IState {
-  private room: IRoomStateBackend;
-
-  constructor(room: RoomState) {
-    this.room = room;
-  }
+  constructor(private room: IRoomStateBackend) {}
 
   onJoin = () => {
     throw new Error('Game has already started');
@@ -26,6 +24,14 @@ class RevealState implements IState {
     if (clientId === this.room.getCurator()) {
       this.advanceState();
     }
+  };
+
+  onStateStart = () => {
+    this.room.setPhase(new Phase(PhaseType.REVEAL));
+  };
+
+  onStateEnd = () => {
+    return;
   };
 
   advanceState = () => {
