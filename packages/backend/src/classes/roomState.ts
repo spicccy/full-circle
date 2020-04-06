@@ -7,6 +7,7 @@ import {
   IPlayer,
   IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
+import { isThrowStatement } from 'typescript';
 
 import { IClient, IClock } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
@@ -19,7 +20,6 @@ import Chain from './subSchema/chain';
 import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-import { isThrowStatement } from 'typescript';
 
 /**
  * These are functions that each specific state will need to implement.
