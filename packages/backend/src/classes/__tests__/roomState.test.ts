@@ -156,30 +156,32 @@ describe('Room state', () => {
 
     beforeEach(() => {
       roomState = new RoomState(mockClock);
+      const mockedVal = [
+        ['a', 'b', 'c', 'd', 'e'],
+        ['e', 'd', 'b', 'a', 'c'],
+      ];
+      mocked(getAllocation).mockReturnValue(() => {
+        return mockedVal;
+      });
     });
 
     it('the image in the correct link', () => {
-      addPlayers(roomState, 3);
-      expect(roomState.phase.phaseType).toBe(PhaseType.LOBBY);
-      roomState.advanceState(); // LOBBY => DRAW
-      expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
-      roomState.advanceState(); // Player one draws: DRAW => GUESS
-      expect(roomState.phase.phaseType).toBe(PhaseType.GUESS);
-      roomState.advanceState(); // Player two guesses: GUESS => DRAW
-      expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
-      roomState.advanceState(); // Player three draws: DRAW => REVEAL
-      expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
+      roomState.allocate();
+      roomState.incrementRound();
+      roomState.storeGuess('b', 'hello');
+      expect(roomState.currChains[0].getLinks[1].getPrompt.text).toEqual(
+        'hello'
+      );
     });
 
     it('the prompt in the correct link', () => {
-      addPlayers(roomState, 4);
-      roomState.advanceState(); // LOBBY => DRAW
-      roomState.advanceState(); // Player one draws: DRAW => GUESS
-      roomState.advanceState(); // Player two guesses: GUESS => DRAW
-      roomState.advanceState(); // Player three draws: DRAW => GUESS
-      roomState.advanceState(); // Player four guesses: GUESS => REVEAL
-
-      expect(roomState.phase.phaseType).toBe(PhaseType.REVEAL);
+      roomState.allocate();
+      roomState.incrementRound();
+      const val: any = { data: 'hello' };
+      roomState.storeDrawing('a', val);
+      expect(roomState.currChains[0].getLinks[0].getImage.imageData).toEqual(
+        JSON.stringify({ data: 'hello' })
+      );
     });
   });
 });
