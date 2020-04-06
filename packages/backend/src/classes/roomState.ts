@@ -195,7 +195,7 @@ class RoomState extends Schema
     const round = this.round;
     const chains = this.chains;
     for (const chain of chains) {
-      const prompt = chain.getLinks[round].getPrompt;
+      const prompt = chain.getLinks[round].prompt;
       if (prompt.playerId === id) {
         prompt.setText(guess);
         return true;
@@ -208,8 +208,8 @@ class RoomState extends Schema
     const round = this.round;
     const chains = this.chains;
     for (const chain of chains) {
-      const image = chain.getLinks[round - 1].getImage;
-      if (image.getPlayerId === id) {
+      const image = chain.getLinks[round - 1].image;
+      if (image.playerId === id) {
         image.setImage(JSON.stringify(drawing));
         return true;
       }

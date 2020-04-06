@@ -3,22 +3,26 @@ import { IImage } from '@full-circle/shared/lib/roomState/interfaces';
 
 class Image extends Schema implements IImage {
   @type('string')
-  imageData = '';
+  _imageData = '';
 
   @type('string')
-  playerId = '';
+  _playerId = '';
 
   constructor(id: string) {
     super();
-    this.playerId = id;
+    this._playerId = id;
   }
 
   setImage = (data: string) => {
-    this.imageData = data;
+    this._imageData = data;
   };
 
-  get getPlayerId() {
-    return this.playerId;
+  get playerId() {
+    return this._playerId;
+  }
+
+  get imageData() {
+    return this._imageData;
   }
 }
 

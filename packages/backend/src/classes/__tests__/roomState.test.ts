@@ -169,9 +169,7 @@ describe('Room state', () => {
       roomState.allocate();
       roomState.incrementRound();
       roomState.storeGuess('b', 'hello');
-      expect(roomState.currChains[0].getLinks[1].getPrompt.text).toEqual(
-        'hello'
-      );
+      expect(roomState.currChains[0].getLinks[1].prompt.text).toEqual('hello');
     });
 
     it('the prompt in the correct link', () => {
@@ -179,7 +177,7 @@ describe('Room state', () => {
       roomState.incrementRound();
       const val: any = { data: 'hello' };
       roomState.storeDrawing('a', val);
-      expect(roomState.currChains[0].getLinks[0].getImage.imageData).toEqual(
+      expect(roomState.currChains[0].getLinks[0].image.imageData).toEqual(
         JSON.stringify({ data: 'hello' })
       );
     });
