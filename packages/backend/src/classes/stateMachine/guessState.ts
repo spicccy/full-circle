@@ -39,6 +39,7 @@ class GuessState implements IState {
       this.advanceState,
       DEFAULT_GUESS_PHASE_LENGTH
     );
+    this.room.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {

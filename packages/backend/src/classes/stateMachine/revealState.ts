@@ -28,6 +28,7 @@ class RevealState implements IState {
 
   onStateStart = () => {
     this.room.setPhase(new Phase(PhaseType.REVEAL));
+    this.room.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {

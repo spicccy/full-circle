@@ -28,6 +28,7 @@ class EndState implements IState {
 
   onStateStart = () => {
     this.room.setPhase(new Phase(PhaseType.END));
+    this.room.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {
