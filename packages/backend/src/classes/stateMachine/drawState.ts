@@ -28,9 +28,7 @@ class DrawState implements IState {
     if (message.type !== getType(submitDrawing)) return;
     const drawing = message.payload;
     const id = client.id;
-    if (!this.room.storeDrawing(id, drawing)) {
-      return;
-    }
+    this.room.storeDrawing(id, drawing);
     this.onClientReady(id);
   };
 
