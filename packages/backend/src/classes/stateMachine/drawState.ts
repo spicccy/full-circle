@@ -25,11 +25,15 @@ class DrawState implements IState {
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
-    if (message.type !== getType(submitDrawing)) return;
-    const drawing = message.payload;
-    const id = client.id;
-    this.room.storeDrawing(id, drawing);
-    this.onClientReady(id);
+    switch (message.type) {
+      case getType(submitDrawing): {
+        const drawing = message.payload;
+        const id = client.id;
+        this.room.storeDrawing(id, drawing);
+        this.onClientReady(id);
+        return;
+      }
+    }
   };
 
   onClientReady = (clientId: string) => {

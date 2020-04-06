@@ -24,11 +24,15 @@ class GuessState implements IState {
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
-    if (message.type !== getType(submitGuess)) return;
-    const guess = message.payload;
-    const id = client.id;
-    this.room.storeGuess(id, guess);
-    this.onClientReady(id);
+    switch (message.type) {
+      case getType(submitGuess): {
+        const guess = message.payload;
+        const id = client.id;
+        this.room.storeGuess(id, guess);
+        this.onClientReady(id);
+        return;
+      }
+    }
   };
 
   onClientReady = (clientId: string) => {
