@@ -10,17 +10,11 @@ const IngameGuess: FunctionComponent = () => {
   return (
     <Box css={{ position: 'relative' }} fill>
       <PlayerBackground />
-      <Box background="light-2" fill>
-        <Box flex align="center" justify="center">
-          <Box width="medium" align="center">
-            <Heading>Guessing Phase</Heading>
-            <Box align="center">
-              <Paragraph>It's time to g-g-g-g-g-g-g-guess</Paragraph>
-              <CuratorTimer />
-            </Box>
-            <LinkButton alignSelf="center" label="Go to Home" href="/create" />
-          </Box>
-        </Box>
+      <Box flex align="center" justify="center">
+        <Heading>Guessing Phase</Heading>
+        <Paragraph>It's time to g-g-g-g-g-g-g-guess</Paragraph>
+        <CuratorTimer />
+        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
       </Box>
     </Box>
   );
