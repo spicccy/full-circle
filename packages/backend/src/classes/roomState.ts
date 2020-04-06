@@ -1,5 +1,6 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
@@ -19,7 +20,6 @@ import Chain from './subSchema/chain';
 import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-import { CanvasAction } from '@full-circle/shared/lib/canvas';
 
 /**
  * These are functions that each specific state will need to implement.

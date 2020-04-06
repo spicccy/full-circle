@@ -1,11 +1,15 @@
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { mocked } from 'ts-jest/utils';
 
 import { MAX_PLAYERS } from '../../../constants';
 import { IClient } from '../../../interfaces';
 import { mockClient, mockClock } from '../../helpers/testHelper';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
+import { getAllocation } from './../../../util/sortPlayers/sortPlayers';
+
+jest.mock('./../../../util/sortPlayers/sortPlayers');
 
 export const testCurator: IClient = {
   ...mockClient,
@@ -24,6 +28,13 @@ describe('Lobby State', () => {
   beforeEach(() => {
     room = new RoomState(mockClock);
     lobbyState = room.currState;
+    const mockedVal = [
+      ['a', 'b', 'c', 'd', 'e'],
+      ['e', 'd', 'b', 'a', 'c'],
+    ];
+    mocked(getAllocation).mockReturnValue(() => {
+      return mockedVal;
+    });
   });
 
   it('has a matching phaseType', () => {

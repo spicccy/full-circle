@@ -1,9 +1,4 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import {
-  notifyPlayerReady,
-  submitDrawing,
-  submitGuess,
-} from '@full-circle/shared/lib/actions/client';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus';
