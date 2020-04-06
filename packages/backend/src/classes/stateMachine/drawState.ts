@@ -5,7 +5,6 @@ import { Delayed } from 'colyseus';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
-import { IRoomStateBackend, IState } from '../roomState';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { getType } from 'typesafe-actions';
 
