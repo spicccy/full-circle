@@ -1,29 +1,29 @@
+const joinGame = async (playerName, roomCode, newPage, path1, path2) => {
+  await newPage.goto('localhost:3000/');
+  await newPage.waitForSelector('[data-testid=playerNameInput]');
+  await newPage.click('input[data-testid=playerNameInput]');
+  await newPage.type('input[data-testid=playerNameInput]', playerName);
+  await newPage.click('input[data-testid=roomCodeInput]');
+  await newPage.type('input[data-testid=roomCodeInput]', roomCode);
+  await newPage.screenshot({
+    path: 'screenshots/create_and_join_game/'.concat(path1),
+  });
+  await Promise.all([
+    newPage.click('[data-testid=joinRoom]'),
+    newPage.waitForNavigation({ waitUntil: 'networkidle0' }),
+  ]);
+  await newPage.screenshot({
+    path: 'screenshots/create_and_join_game/'.concat(path2),
+  });
+  await expect(newPage).toMatch('Joined room');
+};
+
 describe('Full Circle', () => {
   beforeAll(async () => {
     jest.setTimeout(20000);
     page.setDefaultTimeout(5000);
     await page.goto('localhost:3000/');
   });
-
-  const joinGame = async (playerName, roomCode, newPage, path1, path2) => {
-    await newPage.goto('localhost:3000/');
-    await newPage.waitForSelector('[data-testid=playerNameInput]');
-    await newPage.click('input[data-testid=playerNameInput]');
-    await newPage.type('input[data-testid=playerNameInput]', playerName);
-    await newPage.click('input[data-testid=roomCodeInput]');
-    await newPage.type('input[data-testid=roomCodeInput]', roomCode);
-    await newPage.screenshot({
-      path: 'screenshots/create_and_join_game/'.concat(path1),
-    });
-    await Promise.all([
-      newPage.click('[data-testid=joinRoom]'),
-      newPage.waitForNavigation({ waitUntil: 'networkidle0' }),
-    ]);
-    await newPage.screenshot({
-      path: 'screenshots/create_and_join_game/'.concat(path2),
-    });
-    await expect(newPage).toMatch('Joined room');
-  };
 
   it('should display the login page with links to join/create a room', async () => {
     await page.screenshot({
