@@ -27,6 +27,7 @@ class LobbyState implements IState {
 
     const player = new Player(clientId, username);
     this.room.addPlayer(player);
+    this.room.addSubmittedPlayer(player.id);
 
     // TODO: TESTS CHAIN ALLOCATION DELETE THIS
     if (this.room.numPlayers == 5) {
@@ -50,6 +51,7 @@ class LobbyState implements IState {
 
   onStateStart = () => {
     this.room.setPhase(new Phase(PhaseType.LOBBY));
+    this.room.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {

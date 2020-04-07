@@ -7,6 +7,7 @@ import {
   IPlayer,
   IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
+import { isThrowStatement } from 'typescript';
 
 import { IClient, IClock } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
@@ -61,12 +62,8 @@ export interface IRoomStateBackend {
   setEndState: () => void;
   setLobbyState: () => void;
 
-  //=====================================
-  // TODO:
-  // Hard-coded for the frontend to know
-  // if players has submitted a drawing
-  //=====================================
   addSubmittedPlayer: (id: string) => void;
+  clearSubmittedPlayers: () => void;
 }
 
 class RoomState extends Schema
@@ -92,11 +89,6 @@ class RoomState extends Schema
   @type({ map: Player })
   players = new MapSchema<Player>();
 
-  //=====================================
-  // TODO:
-  // Hard-coded for the frontend to know
-  // if players has submitted a drawing
-  //=====================================
   @type({ map: 'boolean' })
   submittedPlayers = new MapSchema<boolean>();
 
@@ -134,13 +126,14 @@ class RoomState extends Schema
     return this.players[id];
   };
 
-  //=====================================
-  // TODO:
-  // Hard-coded for the frontend to know
-  // if players has submitted a drawing
-  //=====================================
   addSubmittedPlayer = (id: string): void => {
     this.submittedPlayers[id] = true;
+  };
+
+  clearSubmittedPlayers = (): void => {
+    for (const playerId in this.submittedPlayers) {
+      this.submittedPlayers[playerId] = false;
+    }
   };
 
   get numPlayers() {

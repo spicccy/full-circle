@@ -39,6 +39,7 @@ class DrawState implements IState {
       this.advanceState,
       DEFAULT_DRAW_PHASE_LENGTH
     );
+    this.room.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {
