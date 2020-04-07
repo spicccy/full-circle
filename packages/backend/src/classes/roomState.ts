@@ -232,8 +232,8 @@ class RoomState extends Schema
     const round = this.round - 1;
     const chains = this.chains;
     for (const chain of chains) {
-      const data = chain.getLinks[round - 1].image.imageData;
-      const id = chain.getLinks[round].prompt.playerId;
+      const data = chain.getLinks[round].image.imageData;
+      const id = chain.getLinks[round + 1].prompt.playerId;
       this.roundData.push(new RoundData(id, data));
     }
   };
