@@ -30,6 +30,9 @@ const PlayerGamePage: FunctionComponent = () => {
     return '';
   }, [id, roundData]);
 
+  // TODO: make this work
+  // invariant(data,'data is null');
+
   useRoomLeave(() => {
     alert('You have been disconnected');
   });
