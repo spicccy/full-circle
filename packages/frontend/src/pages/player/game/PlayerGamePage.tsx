@@ -4,7 +4,7 @@ import {
 } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useMemo } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomLeave, useRoomMessage } from 'src/hooks/useRoomListeners';
@@ -19,6 +19,20 @@ const PlayerGamePage: FunctionComponent = () => {
   const [prompt, setPrompt] = useState<string>('Guess1');
 
   const { room, syncedState } = useRoom();
+
+  const id = room?.sessionId;
+  const roundData = syncedState?.roundData;
+
+  const data = useMemo((): string => {
+    if (id && roundData) {
+      for (const link of roundData) {
+        if (link.id === id) {
+          return link.data;
+        }
+      }
+    }
+    return '';
+  }, [id, roundData]);
 
   useRoomLeave(() => {
     alert('You have been disconnected');
@@ -47,11 +61,11 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage prompt={prompt} promptBy="Skithy" />;
+      return <DrawPage prompt={data} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={receivedDrawing} drawingBy="Skithy" />;
+      return <GuessPage drawing={JSON.parse(data)} drawingBy="Skithy" />;
     }
 
     default: {
