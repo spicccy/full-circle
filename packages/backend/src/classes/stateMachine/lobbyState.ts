@@ -41,10 +41,12 @@ class LobbyState implements IState {
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
-    if (message.type !== getType(notifyPlayerReady)) {
-      return;
+    switch (message.type) {
+      case getType(notifyPlayerReady): {
+        this.onClientReady(client.id);
+        return;
+      }
     }
-    this.onClientReady(client.id);
   };
 
   onClientReady = (clientId: string) => {
