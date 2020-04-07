@@ -15,9 +15,6 @@ import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
 
 const PlayerGamePage: FunctionComponent = () => {
-  const [receivedDrawing, setReceivedDrawing] = useState<CanvasAction[]>([]);
-  const [prompt, setPrompt] = useState<string>('Guess1');
-
   const { room, syncedState } = useRoom();
 
   const id = room?.sessionId;
@@ -36,19 +33,6 @@ const PlayerGamePage: FunctionComponent = () => {
 
   useRoomLeave(() => {
     alert('You have been disconnected');
-  });
-
-  useRoomMessage((message) => {
-    switch (message.type) {
-      case getType(displayDrawing): {
-        setReceivedDrawing(message.payload);
-        return;
-      }
-      case getType(displayPrompt): {
-        setPrompt(message.payload);
-        return;
-      }
-    }
   });
 
   if (!room) {
