@@ -20,7 +20,9 @@ export const App: FunctionComponent = () => {
   try {
     return (
       <RoomProvider>
-        <DebugRoomState debug={true} />
+        <DebugRoomState
+          debug={!(process.env.REACT_APP_HIDE_DEBUG === 'hide')}
+        />
         <Grommet theme={theme} full>
           <Switch>
             <Route exact path="/" component={LoginPage} />
