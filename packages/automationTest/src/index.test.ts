@@ -40,11 +40,11 @@ describe('Full Circle', () => {
   it('should be able to join the room with another browser instance', async () => {
     await page.waitForXPath("//p[@data-testid='roomID']");
     const [element] = await page.$x("//p[@data-testid='roomID']");
-    var codeString = await page.evaluate(
+    const codeString = await page.evaluate(
       (element) => element.textContent,
       element
     );
-    var roomCode = codeString.replace('Room ID : ', '');
+    const roomCode = codeString.replace('Room ID : ', '');
     const playerPage = await browser.newPage();
     await playerPage.goto('localhost:3000/');
     await playerPage.waitForSelector('[data-testid=playerNameInput]');
