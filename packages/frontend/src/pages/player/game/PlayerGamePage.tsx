@@ -20,7 +20,7 @@ const PlayerGamePage: FunctionComponent = () => {
   const id = room?.sessionId;
   const roundData = syncedState?.roundData;
 
-  const data = useMemo((): string => {
+  const data = useMemo((): string | null => {
     if (id && roundData) {
       for (const link of roundData) {
         if (link.id === id) {
@@ -28,7 +28,7 @@ const PlayerGamePage: FunctionComponent = () => {
         }
       }
     }
-    return '';
+    return null;
   }, [id, roundData]);
 
   useRoomLeave(() => {
@@ -45,11 +45,11 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage prompt={data} promptBy="Skithy" />;
+      return <DrawPage prompt={data || ''} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={JSON.parse(data)} drawingBy="Skithy" />;
+      return <GuessPage drawing={JSON.parse(data || '')} drawingBy="Skithy" />;
     }
 
     default: {
