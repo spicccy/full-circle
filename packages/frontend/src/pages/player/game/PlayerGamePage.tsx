@@ -9,24 +9,26 @@ import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
 
+export const returnData = (input: any) => {
+  return input;
+};
+
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
   const id = room?.sessionId;
   const roundData = syncedState?.roundData;
 
-  const data = useMemo((): string | null => {
+  const data = useMemo((): string => {
     if (id && roundData) {
       for (const link of roundData) {
         if (link.id === id) {
-          return link.data;
+          return returnData(link.data);
         }
       }
     }
-    return null;
+    return '';
   }, [id, roundData]);
-
-  invariant(data, 'data is null');
 
   useRoomLeave(() => {
     alert('You have been disconnected');
