@@ -15,9 +15,7 @@
   },
   "homepage": ".",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.1.1",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^10.0.0",
+    "@full-circle/shared": "^1.0.0",
     "grommet": "^2.11.1",
     "grommet-icons": "^4.4.0",
     "normalize.css": "^8.0.1",
@@ -31,6 +29,8 @@
     "tiny-invariant": "^1.1.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^10.0.0",
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.0",
