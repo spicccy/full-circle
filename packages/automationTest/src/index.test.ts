@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-var imgCounter = 0;
+let imgCounter = 0;
 
 function screenshotName(name: string) {
   imgCounter += 1;
@@ -95,10 +95,8 @@ describe('Full Circle', () => {
     await page.screenshot({
       path: screenshotName('lobby_with_player.png'),
     });
-    Promise.all([
-      expect(page).toMatch('Player 1'),
-      expect(page).toMatch('Player 2'),
-      expect(page).toMatch('Player 3'),
-    ]);
+    await expect(page).toMatch('Player 1');
+    await expect(page).toMatch('Player 2');
+    await expect(page).toMatch('Player 3');
   });
 });
