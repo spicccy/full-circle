@@ -3,8 +3,10 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Delayed } from 'colyseus';
 
 import { IClient } from '../../interfaces';
-import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
+import { IRoomStateBackend, IState } from '../roomState';
+import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { getType } from 'typesafe-actions';
 
 class GuessState implements IState {
   private readyPlayers = new Set<string>();
@@ -21,8 +23,16 @@ class GuessState implements IState {
     this.room.removePlayer(client.id);
   };
 
-  onReceive = (message: ClientAction) => {
-    console.log(message);
+  onReceive = (client: IClient, message: ClientAction) => {
+    switch (message.type) {
+      case getType(submitGuess): {
+        const guess = message.payload;
+        const id = client.id;
+        this.room.storeGuess(id, guess);
+        this.onClientReady(id);
+        return;
+      }
+    }
   };
 
   onClientReady = (clientId: string) => {

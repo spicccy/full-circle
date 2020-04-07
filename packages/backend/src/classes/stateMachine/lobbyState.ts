@@ -1,12 +1,14 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
+import { getType } from 'typesafe-actions';
 
 class LobbyState implements IState {
   constructor(private room: IRoomStateBackend) {}
@@ -39,8 +41,13 @@ class LobbyState implements IState {
     this.room.removePlayer(client.id);
   };
 
-  onReceive = (message: ClientAction) => {
-    console.log(message);
+  onReceive = (client: IClient, message: ClientAction) => {
+    switch (message.type) {
+      case getType(notifyPlayerReady): {
+        this.onClientReady(client.id);
+        return;
+      }
+    }
   };
 
   onClientReady = (clientId: string) => {
@@ -59,6 +66,7 @@ class LobbyState implements IState {
   };
 
   advanceState = () => {
+    this.room.allocate();
     this.room.incrementRound();
     this.room.setDrawState();
   };

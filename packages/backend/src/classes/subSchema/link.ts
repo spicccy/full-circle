@@ -5,19 +5,24 @@ import Image from './image';
 import Prompt from './prompt';
 
 class Link extends Schema implements ILink {
-  @type('string')
-  id = '';
-
   @type(Prompt)
-  prompt: Prompt;
+  _prompt: Prompt;
 
   @type(Image)
-  image: Image;
+  _image: Image;
 
   constructor(drawId: string, guessId: string) {
     super();
-    this.prompt = new Prompt(guessId);
-    this.image = new Image(drawId);
+    this._prompt = new Prompt(guessId);
+    this._image = new Image(drawId);
+  }
+
+  get prompt() {
+    return this._prompt;
+  }
+
+  get image() {
+    return this._image;
   }
 }
 

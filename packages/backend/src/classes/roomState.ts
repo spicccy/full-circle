@@ -1,5 +1,6 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
@@ -26,7 +27,7 @@ import Player from './subSchema/player';
  * The behaviour of these functions changes depending on which state we are in.
  */
 export interface IState {
-  onReceive: (message: ClientAction) => void;
+  onReceive: (client: IClient, message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
   onLeave: (client: IClient, consented: boolean) => void;
   onClientReady: (clientId: string) => void;
@@ -55,6 +56,9 @@ export interface IRoomStateBackend {
 
   allocate: () => void;
   readonly currChains: ArraySchema<Chain>;
+
+  storeGuess: (id: string, guess: string) => boolean;
+  storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -180,6 +184,32 @@ class RoomState extends Schema
     }
   };
 
+  storeGuess = (id: string, guess: string): boolean => {
+    const round = this.round;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const prompt = chain.getLinks[round].prompt;
+      if (prompt.playerId === id) {
+        prompt.setText(guess);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  storeDrawing = (id: string, drawing: CanvasAction[]): boolean => {
+    const round = this.round;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const image = chain.getLinks[round - 1].image;
+      if (image.playerId === id) {
+        image.setImage(JSON.stringify(drawing));
+        return true;
+      }
+    }
+    return false;
+  };
+
   get gameIsOver() {
     // TODO: implement checking of the room's configured round length
     let phasesElapsed = this.round * 2;
@@ -232,8 +262,8 @@ class RoomState extends Schema
     this.currState.onClientReady(clientId);
   };
 
-  onReceive = (message: ClientAction) => {
-    this.currState.onReceive(message);
+  onReceive = (client: IClient, message: ClientAction) => {
+    this.currState.onReceive(client, message);
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {
