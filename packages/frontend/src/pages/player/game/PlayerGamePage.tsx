@@ -1,14 +1,9 @@
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
-import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent, useState, useMemo } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomLeave, useRoomMessage } from 'src/hooks/useRoomListeners';
-import { getType } from 'typesafe-actions';
+import invariant from 'tiny-invariant';
 
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
@@ -31,6 +26,8 @@ const PlayerGamePage: FunctionComponent = () => {
     return null;
   }, [id, roundData]);
 
+  invariant(data, 'data is null');
+
   useRoomLeave(() => {
     alert('You have been disconnected');
   });
@@ -45,11 +42,11 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage prompt={data || ''} promptBy="Skithy" />;
+      return <DrawPage prompt={data} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={JSON.parse(data || '')} drawingBy="Skithy" />;
+      return <GuessPage drawing={JSON.parse(data)} drawingBy="Skithy" />;
     }
 
     default: {
