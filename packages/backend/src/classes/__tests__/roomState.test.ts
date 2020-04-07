@@ -182,4 +182,46 @@ describe('Room state', () => {
       );
     });
   });
+
+  describe('should send the correct round', () => {
+    let roomState: RoomState;
+
+    beforeEach(() => {
+      roomState = new RoomState(mockClock);
+      const mockedVal = [
+        ['a', 'b', 'c', 'd', 'e'],
+        ['e', 'd', 'b', 'a', 'c'],
+      ];
+      mocked(getAllocation).mockReturnValue(() => {
+        return mockedVal;
+      });
+      const testData1: any = { lol: 'iunno' };
+
+      roomState.allocate();
+      roomState.incrementRound();
+      roomState.storeDrawing('a', testData1);
+      roomState.storeDrawing('e', testData1);
+      roomState.storeGuess('b', 'prompt1');
+      roomState.storeGuess('d', 'prompt1');
+    });
+
+    it('image data', () => {
+      roomState.round = 1;
+      roomState.setCurrDrawings();
+      expect(roomState.roundData[0].id).toBe('b');
+      expect(roomState.roundData[1].id).toBe('d');
+      expect(roomState.roundData[0].data).toBe('{"lol":"iunno"}');
+      expect(roomState.roundData[1].data).toBe('{"lol":"iunno"}');
+    });
+
+    it('prompt data', () => {
+      roomState.round = 1;
+      roomState.incrementRound();
+      roomState.setCurrPrompts();
+      expect(roomState.roundData[0].id).toBe('c');
+      expect(roomState.roundData[1].id).toBe('b');
+      expect(roomState.roundData[0].data).toBe('prompt1');
+      expect(roomState.roundData[1].data).toBe('prompt1');
+    });
+  });
 });
