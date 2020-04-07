@@ -25,7 +25,6 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   onMessage(client: IClient, message: ClientAction) {
     this.state.onReceive(client, message);
-    console.log(`[${client.id}] ${JSON.stringify(message)}.`);
   }
 
   onLeave(client: IClient, consented: boolean) {
