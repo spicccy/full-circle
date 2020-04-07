@@ -6,8 +6,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { RoomProvider } from './contexts/RoomContext';
 import {
+  CreatePage,
   CuratorGamePage,
-  HomePage,
   Instructions,
   LoginPage,
   PlayerGamePage,
@@ -26,9 +26,9 @@ export const App: FunctionComponent = () => {
             <Route exact path="/" component={LoginPage} />
             <Route exact path="/join" component={LoginPage} />
             <Route exact path="/join/:roomCode" component={LoginPage} />
-            <Route exact path="/home" component={HomePage} />
+            <Route exact path="/create" component={CreatePage} />
             <Route exact path="/play" component={PlayerGamePage} />
-            <Route exact path="/game" component={CuratorGamePage} />
+            <Route exact path="/curator" component={CuratorGamePage} />
             <Route exact path="/instructions" component={Instructions} />
             <Route exact path="/team" component={Team} />
           </Switch>

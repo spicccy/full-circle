@@ -1,5 +1,5 @@
 export { CuratorGamePage } from './curator/IngamePages/CuratorGamePage';
-export { HomePage } from './curator/Home';
+export { CreatePage } from './curator/Create';
 export { Instructions } from './curator/Instructions';
 export { LoginPage } from './player/login/LoginPage';
 export { PlayerGamePage } from './player/game/PlayerGamePage';

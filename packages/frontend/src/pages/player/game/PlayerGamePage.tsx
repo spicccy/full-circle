@@ -7,7 +7,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomMessage } from 'src/hooks/useRoomMessage';
+import { useRoomLeave, useRoomMessage } from 'src/hooks/useRoomListeners';
 import { getType } from 'typesafe-actions';
 
 import { DrawPage } from './draw/DrawPage';
@@ -19,6 +19,10 @@ const PlayerGamePage: FunctionComponent = () => {
   const [prompt, setPrompt] = useState<string>('Guess1');
 
   const { room, syncedState } = useRoom();
+
+  useRoomLeave(() => {
+    alert('You have been disconnected');
+  });
 
   useRoomMessage((message) => {
     switch (message.type) {

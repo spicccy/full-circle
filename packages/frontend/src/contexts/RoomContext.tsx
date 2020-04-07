@@ -30,9 +30,16 @@ interface IRoomLoadingState {
   roomCode: undefined;
 }
 
+interface IRoomEmptyState {
+  isLoading: false;
+  room: undefined;
+  roomError: undefined;
+  roomCode: undefined;
+}
+
 interface IRoomSuccessState {
   isLoading: false;
-  room?: IRoom;
+  room: IRoom;
   roomError: undefined;
   roomCode: string;
 }
@@ -44,14 +51,42 @@ interface IRoomFailureState {
   roomCode: undefined;
 }
 
-type RoomState = IRoomLoadingState | IRoomSuccessState | IRoomFailureState;
+type RoomState =
+  | IRoomLoadingState
+  | IRoomEmptyState
+  | IRoomSuccessState
+  | IRoomFailureState;
 
-const defaultRoomState: RoomState = {
+const getRoomEmptyState = (): IRoomEmptyState => ({
   isLoading: false,
   room: undefined,
-  roomError: 'Uninitialised room',
   roomCode: undefined,
-};
+  roomError: undefined,
+});
+
+const getRoomLoadingState = (): IRoomLoadingState => ({
+  isLoading: true,
+  room: undefined,
+  roomCode: undefined,
+  roomError: undefined,
+});
+
+const getRoomSuccessState = (
+  room: IRoom,
+  roomCode: string
+): IRoomSuccessState => ({
+  isLoading: false,
+  room,
+  roomCode,
+  roomError: undefined,
+});
+
+const getRoomFailureState = (roomError: string): IRoomFailureState => ({
+  isLoading: false,
+  room: undefined,
+  roomCode: undefined,
+  roomError,
+});
 
 interface IRoomContext {
   syncedState?: IRoomStateSynced;
@@ -61,7 +96,7 @@ interface IRoomContext {
 }
 
 export const RoomContext = createContext<IRoomContext & RoomState>({
-  ...defaultRoomState,
+  ...getRoomEmptyState(),
   createAndJoinRoom: async () => {
     throw new Error('Uninitialised room');
   },
@@ -77,16 +112,11 @@ export const useRoom = () => useContext(RoomContext);
 
 export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
-  const [roomState, setRoomState] = useState<RoomState>(defaultRoomState);
+  const [roomState, setRoomState] = useState<RoomState>(getRoomEmptyState());
   const [syncedState, setSyncedState] = useState<IRoomStateSynced>();
 
   const createAndJoinRoom = useCallback(async (): Promise<IRoom | null> => {
-    setRoomState({
-      isLoading: true,
-      room: undefined,
-      roomError: undefined,
-      roomCode: undefined,
-    });
+    setRoomState(getRoomLoadingState());
 
     try {
       const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME);
@@ -94,20 +124,12 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
       invariant(roomWithMetadata, 'Unable to find the room we just created');
 
-      setRoomState({
-        isLoading: false,
-        room,
-        roomError: undefined,
-        roomCode: roomWithMetadata.metadata.roomCode,
-      });
+      setRoomState(
+        getRoomSuccessState(room, roomWithMetadata.metadata.roomCode)
+      );
       return room;
     } catch (e) {
-      setRoomState({
-        isLoading: false,
-        room: undefined,
-        roomError: e.message,
-        roomCode: undefined,
-      });
+      setRoomState(getRoomFailureState(e));
       return null;
     }
   }, [colyseus]);
@@ -130,12 +152,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         );
 
         if (!matchingRoom) {
-          setRoomState({
-            isLoading: false,
-            room: undefined,
-            roomError: 'Failed to find a room with a matching code',
-            roomCode: undefined,
-          });
+          setRoomState(
+            getRoomFailureState('Failed to find a room with a matching code')
+          );
           return null;
         }
 
@@ -143,20 +162,10 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
         const room = await colyseus.joinById<RoomStateWithFn>(roomId, options);
 
-        setRoomState({
-          isLoading: false,
-          room,
-          roomError: undefined,
-          roomCode,
-        });
+        setRoomState(getRoomSuccessState(room, roomCode));
         return room;
       } catch (e) {
-        setRoomState({
-          isLoading: false,
-          room: undefined,
-          roomError: e.message,
-          roomCode: undefined,
-        });
+        setRoomState(getRoomFailureState(e));
         return null;
       }
     },
@@ -179,12 +188,15 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         setSyncedState(newState?.toJSON())
       );
 
+      const leaveListener = roomState.room.onLeave(leaveRoom);
+
       return () => {
         listener.clear();
+        leaveListener.clear();
         roomState.room?.leave();
       };
     }
-  }, [roomState.room]);
+  }, [leaveRoom, roomState.room]);
 
   const context: IRoomContext & RoomState = {
     ...roomState,

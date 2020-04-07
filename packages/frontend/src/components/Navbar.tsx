@@ -19,7 +19,7 @@ export const Navbar: FunctionComponent = () => {
   return (
     <Header background="light-2" pad="medium">
       <Box direction="row" align="center">
-        <Link to="/home">
+        <Link to="/">
           <img alt="Full Circle" width={50} height={50} src={logo} />
         </Link>
         {size !== 'small' && (

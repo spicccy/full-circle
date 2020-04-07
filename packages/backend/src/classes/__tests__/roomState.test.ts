@@ -1,8 +1,7 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { mocked } from 'ts-jest/utils';
 
-import { MyRoom } from '../../MyRoom';
-import { addPlayers } from '../helpers/testHelper';
+import { addPlayers, mockClock } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import { getAllocation } from './../../util/sortPlayers/sortPlayers';
 
@@ -13,7 +12,7 @@ describe('Room state', () => {
     let state: RoomState;
 
     beforeEach(() => {
-      state = new RoomState();
+      state = new RoomState(mockClock);
       addPlayers(state, 10);
     });
 
@@ -81,7 +80,7 @@ describe('Room state', () => {
 
   describe('chain allocation', () => {
     it('can generate chain correctly', () => {
-      const room = new RoomState();
+      const room = new RoomState(mockClock);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],
@@ -116,7 +115,7 @@ describe('Room state', () => {
     let roomState: RoomState;
 
     beforeEach(() => {
-      roomState = new RoomState();
+      roomState = new RoomState(mockClock);
     });
 
     it('ends the game loop correctly when there are three players', () => {

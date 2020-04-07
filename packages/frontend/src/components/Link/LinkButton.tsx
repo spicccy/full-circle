@@ -1,9 +1,12 @@
 import { MaybePromise } from '@full-circle/shared/lib/interfaces';
-import { Button, ButtonProps } from 'grommet';
 import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { useHistory } from 'react-router-dom';
+import {
+  ILoadingButtonProps,
+  LoadingButton,
+} from 'src/components/Button/LoadingButton';
 
-interface ILinkButtonProps extends ButtonProps {
+interface ILinkButtonProps extends ILoadingButtonProps {
   href: string;
   onClick?(): MaybePromise<boolean | void>;
 }
@@ -19,7 +22,7 @@ const LinkButton: FunctionComponent<ILinkButtonProps> = (props) => {
     }
   };
 
-  return <Button {...props} onClick={overrideHref} />;
+  return <LoadingButton {...props} onClick={overrideHref} />;
 };
 
 export { LinkButton };

@@ -4,10 +4,6 @@ import {
   submitDrawing,
   submitGuess,
 } from '@full-circle/shared/lib/actions/client';
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus';
@@ -25,12 +21,11 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     console.log(`MyRoom ${this.roomId} created with code ${roomCode}.`);
 
     // Create a new state instance
-    this.setState(new RoomState());
+    this.setState(new RoomState(this.clock));
   }
 
   onJoin(client: IClient, options: IJoinOptions) {
     console.log(`${client.id} joined ${this.roomId}.`);
-
     this.state.onJoin(client, options);
   }
 
@@ -38,17 +33,24 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     switch (message.type) {
       case getType(submitDrawing): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
+        // store the canvas and get ready to send it to another player
+        // const canvasAction = message.payload;
         console.log(`[${client.id}] submitted a drawing.`);
-        const canvasAction = message.payload;
-        this.broadcast(displayDrawing(canvasAction));
+        //TODO: these two below functions should be squashed into one functionality
+        // i.e. make the array that onClientReady be observable
+        // right now there is a separation of concerns
+        // addSubmittedPlayer adds to a map that is synced with the frontend (to show submitted status)
+        // onClientReady adds to an array that checks if all players are read (to progress to next phase)
         this.state.addSubmittedPlayer(client.id);
+        this.state.onClientReady(client.id);
         return;
       }
       case getType(submitGuess): {
         // TODO: delegate the submission to the distribution algorithm implemented in the state
+        // store the guess and get ready to send it as a prompt
+        // const guess = message.payload;
         console.log(`[${client.id}] submitted a guess.`);
-        const guess = message.payload;
-        this.broadcast(displayPrompt(guess));
+        this.state.onClientReady(client.id);
         return;
       }
       // Handle a client being ready to progress to the next phase
@@ -65,8 +67,11 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   onLeave(client: IClient, consented: boolean) {
     console.log(`${client.id} left ${this.roomId}.`);
-
-    this.state.onLeave(client, consented);
+    if (client.id === this.state.curator) {
+      this.disconnect();
+    } else {
+      this.state.onLeave(client, consented);
+    }
   }
 
   onDispose() {

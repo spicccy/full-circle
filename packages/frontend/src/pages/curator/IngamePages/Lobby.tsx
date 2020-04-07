@@ -21,7 +21,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
       <LinkButton
         alignSelf="start"
         label="Back"
-        href="/home"
+        href="/create"
         onClick={leaveRoom}
       />
       <Box flex align="center" justify="center">

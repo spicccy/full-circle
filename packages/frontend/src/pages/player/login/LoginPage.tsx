@@ -1,6 +1,6 @@
 import { Box, Text } from 'grommet';
-import React, { FunctionComponent, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { Redirect, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 
@@ -11,27 +11,25 @@ interface ILoginPageParams {
 }
 
 const LoginPage: FunctionComponent = () => {
-  const { joinRoomByCode } = useRoom();
-  const history = useHistory();
+  const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
 
   const [name, setName] = useState('');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
 
   const attemptToJoinRoom = async () => {
-    const options = {
-      username: name,
-    };
-
-    const joinedRoom = await joinRoomByCode(roomCode, options);
-
-    if (joinedRoom) {
-      history.push('/play');
-    } else {
-      //TODO: implement precise error states
-      alert('Failed to join room');
-    }
+    await joinRoomByCode(roomCode, { username: name });
   };
+
+  useEffect(() => {
+    if (roomError) {
+      alert(roomError);
+    }
+  }, [roomError]);
+
+  if (room) {
+    return <Redirect to="/play" />;
+  }
 
   return (
     <Box
@@ -53,7 +51,7 @@ const LoginPage: FunctionComponent = () => {
       </Box>
       <Text>
         OR create a new game{' '}
-        <LinkAnchor data-testid="newGame" href="/home">
+        <LinkAnchor data-testid="newGame" href="/create">
           here
         </LinkAnchor>
       </Text>

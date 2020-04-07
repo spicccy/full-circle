@@ -1,18 +1,15 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
 import { IClient } from '../../interfaces';
-import RoomState, { IRoomStateBackend, IState } from '../roomState';
+import { IRoomStateBackend, IState } from '../roomState';
+import Phase from '../subSchema/phase';
 
 class RevealState implements IState {
-  private room: IRoomStateBackend;
+  constructor(private room: IRoomStateBackend) {}
 
-  constructor(room: RoomState) {
-    this.room = room;
-  }
-
-  onJoin = (client: IClient, options: IJoinOptions) => {
-    console.log(client, options);
+  onJoin = () => {
+    throw new Error('Game has already started');
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
@@ -27,6 +24,15 @@ class RevealState implements IState {
     if (clientId === this.room.getCurator()) {
       this.advanceState();
     }
+  };
+
+  onStateStart = () => {
+    this.room.setPhase(new Phase(PhaseType.REVEAL));
+    this.room.clearSubmittedPlayers();
+  };
+
+  onStateEnd = () => {
+    return;
   };
 
   advanceState = () => {

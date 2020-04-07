@@ -66,6 +66,6 @@ describe('Full Circle', () => {
     await page.screenshot({
       path: 'screenshots/create_and_join_game/06_lobby_with_player.png',
     });
-    await expect(page).toMatch('Test Player has joined');
+    await expect(page).toMatch('Test Player');
   });
 });

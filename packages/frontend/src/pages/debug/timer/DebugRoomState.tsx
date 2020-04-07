@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomMessage } from 'src/hooks/useRoomMessage';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
 import styled from 'styled-components';
 
 const Debug = styled.pre`
