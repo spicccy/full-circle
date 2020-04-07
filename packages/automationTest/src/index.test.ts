@@ -1,4 +1,10 @@
-const joinGame = async (playerName, roomCode, newPage, path1, path2) => {
+const joinGame = async (
+  playerName: string,
+  roomCode: string,
+  newPage: any,
+  path1: string,
+  path2: string
+) => {
   await newPage.goto('localhost:3000/');
   await newPage.waitForSelector('[data-testid=playerNameInput]');
   await newPage.click('input[data-testid=playerNameInput]');

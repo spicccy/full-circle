@@ -10,6 +10,7 @@
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.9.0",
     "jest-puppeteer": "^4.4.0",
     "puppeteer": "^2.1.1"
   },
