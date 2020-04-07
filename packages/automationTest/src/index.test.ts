@@ -1,9 +1,20 @@
+import { Page } from 'puppeteer';
+var imgCounter = 0;
+
+function screenshotName(name: string) {
+  imgCounter += 1;
+  return 'screenshots/create_and_join_game/'
+    .concat(imgCounter.toString(10))
+    .concat('_')
+    .concat(name)
+    .concat('.png');
+}
+
 const joinGame = async (
   playerName: string,
   roomCode: string,
-  newPage: any,
-  path1: string,
-  path2: string
+  newPage: Page,
+  isScreenshot: Boolean
 ) => {
   await newPage.goto('localhost:3000/');
   await newPage.waitForSelector('[data-testid=playerNameInput]');
@@ -11,16 +22,20 @@ const joinGame = async (
   await newPage.type('input[data-testid=playerNameInput]', playerName);
   await newPage.click('input[data-testid=roomCodeInput]');
   await newPage.type('input[data-testid=roomCodeInput]', roomCode);
-  await newPage.screenshot({
-    path: 'screenshots/create_and_join_game/'.concat(path1),
-  });
+  if (isScreenshot) {
+    await newPage.screenshot({
+      path: screenshotName('player_login'),
+    });
+  }
   await Promise.all([
     newPage.click('[data-testid=joinRoom]'),
     newPage.waitForNavigation({ waitUntil: 'networkidle0' }),
   ]);
-  await newPage.screenshot({
-    path: 'screenshots/create_and_join_game/'.concat(path2),
-  });
+  if (isScreenshot) {
+    await newPage.screenshot({
+      path: screenshotName('player_joined_room.png'),
+    });
+  }
   await expect(newPage).toMatch('Joined room');
 };
 
@@ -33,7 +48,7 @@ describe('Full Circle', () => {
 
   it('should display the login page with links to join/create a room', async () => {
     await page.screenshot({
-      path: 'screenshots/create_and_join_game/01_login_page.png',
+      path: screenshotName('login_page.png'),
     });
     await expect(page).toMatch('Full Circle');
     await expect(page).toMatch('OR create a new game here');
@@ -46,7 +61,7 @@ describe('Full Circle', () => {
       page.waitForNavigation(),
     ]);
     await page.screenshot({
-      path: 'screenshots/create_and_join_game/02_home_page.png',
+      path: screenshotName('home_page.png'),
     });
     await expect(page).toMatch('Create a Room');
   });
@@ -58,7 +73,7 @@ describe('Full Circle', () => {
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
     await page.screenshot({
-      path: 'screenshots/create_and_join_game/03_lobby_no_players.png',
+      path: screenshotName('lobby_no_players.png'),
     });
     await expect(page).toMatch('Room ID');
   });
@@ -72,34 +87,18 @@ describe('Full Circle', () => {
     );
     const roomCode = codeString.replace('Room ID : ', '');
     const playerPage1 = await browser.newPage();
-    await joinGame(
-      'Player 1',
-      roomCode,
-      playerPage1,
-      '04_player_1_login.png',
-      '05_player_1_joined.png'
-    );
+    await joinGame('Player 1', roomCode, playerPage1, true);
     const playerPage2 = await browser.newPage();
-    await joinGame(
-      'Player 2',
-      roomCode,
-      playerPage2,
-      '06_player_2_login.png',
-      '07_player_2_joined.png'
-    );
+    await joinGame('Player 2', roomCode, playerPage2, false);
     const playerPage3 = await browser.newPage();
-    await joinGame(
-      'Player 3',
-      roomCode,
-      playerPage3,
-      '08_player_3_login.png',
-      '09_player_3_joined.png'
-    );
+    await joinGame('Player 3', roomCode, playerPage3, false);
     await page.screenshot({
-      path: 'screenshots/create_and_join_game/10_lobby_with_player.png',
+      path: screenshotName('lobby_with_player.png'),
     });
-    await expect(page).toMatch('Player 1');
-    await expect(page).toMatch('Player 2');
-    await expect(page).toMatch('Player 3');
+    Promise.all([
+      expect(page).toMatch('Player 1'),
+      expect(page).toMatch('Player 2'),
+      expect(page).toMatch('Player 3'),
+    ]);
   });
 });
