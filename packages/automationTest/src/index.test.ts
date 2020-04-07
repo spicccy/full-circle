@@ -5,29 +5,24 @@ describe('Full Circle', () => {
     await page.goto('localhost:3000/');
   });
 
-  const joinGame = async (playerName, roomCode) => {
-    const playerPage = await browser.newPage();
-    await playerPage.goto('localhost:3000/');
-    await playerPage.waitForSelector('[data-testid=playerNameInput]');
-    await playerPage.click('input[data-testid=playerNameInput]');
-    await playerPage.type('input[data-testid=playerNameInput]', playerName);
-    await playerPage.click('input[data-testid=roomCodeInput]');
-    await playerPage.type('input[data-testid=roomCodeInput]', roomCode);
-    await playerPage.screenshot({
-      path: 'screenshots/create_and_join_game/04_login_page_with_details.png',
+  const joinGame = async (playerName, roomCode, newPage, path1, path2) => {
+    await newPage.goto('localhost:3000/');
+    await newPage.waitForSelector('[data-testid=playerNameInput]');
+    await newPage.click('input[data-testid=playerNameInput]');
+    await newPage.type('input[data-testid=playerNameInput]', playerName);
+    await newPage.click('input[data-testid=roomCodeInput]');
+    await newPage.type('input[data-testid=roomCodeInput]', roomCode);
+    await newPage.screenshot({
+      path: 'screenshots/create_and_join_game/'.concat(path1),
     });
     await Promise.all([
-      playerPage.click('[data-testid=joinRoom]'),
-      playerPage.waitForNavigation({ waitUntil: 'networkidle0' }),
+      newPage.click('[data-testid=joinRoom]'),
+      newPage.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
-    await playerPage.screenshot({
-      path: 'screenshots/create_and_join_game/05_player_joined.png',
+    await newPage.screenshot({
+      path: 'screenshots/create_and_join_game/'.concat(path2),
     });
-    await expect(playerPage).toMatch('Joined room');
-    await page.screenshot({
-      path: 'screenshots/create_and_join_game/06_lobby_with_player.png',
-    });
-    await expect(page).toMatch(playerName);
+    await expect(newPage).toMatch('Joined room');
   };
 
   it('should display the login page with links to join/create a room', async () => {
@@ -70,8 +65,35 @@ describe('Full Circle', () => {
       element
     );
     const roomCode = codeString.replace('Room ID : ', '');
-    await joinGame('Player 1', roomCode);
-    await joinGame('Player 2', roomCode);
-    await joinGame('Player 3', roomCode);
+    const playerPage1 = await browser.newPage();
+    await joinGame(
+      'Player 1',
+      roomCode,
+      playerPage1,
+      '04_player_1_login.png',
+      '05_player_1_joined.png'
+    );
+    const playerPage2 = await browser.newPage();
+    await joinGame(
+      'Player 2',
+      roomCode,
+      playerPage2,
+      '06_player_2_login.png',
+      '07_player_2_joined.png'
+    );
+    const playerPage3 = await browser.newPage();
+    await joinGame(
+      'Player 3',
+      roomCode,
+      playerPage3,
+      '08_player_3_login.png',
+      '09_player_3_joined.png'
+    );
+    await page.screenshot({
+      path: 'screenshots/create_and_join_game/10_lobby_with_player.png',
+    });
+    await expect(page).toMatch('Player 1');
+    await expect(page).toMatch('Player 2');
+    await expect(page).toMatch('Player 3');
   });
 });
