@@ -62,6 +62,7 @@ class GuessState implements IState {
       return;
     }
     this.room.incrementRound();
+    this.room.setCurrPrompts();
     this.room.setDrawState();
   };
 }

@@ -8,7 +8,6 @@ import {
   IPlayer,
   IRoomStateSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
-import { isThrowStatement } from 'typescript';
 
 import { IClient, IClock } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
@@ -21,6 +20,7 @@ import Chain from './subSchema/chain';
 import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
+import RoundData from './subSchema/roundData';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -59,6 +59,9 @@ export interface IRoomStateBackend {
 
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
+
+  setCurrDrawings: () => void;
+  setCurrPrompts: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -101,6 +104,9 @@ class RoomState extends Schema
 
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
+
+  @type([RoundData])
+  roundData = new ArraySchema<RoundData>();
 
   // =====================================
   // IRoomStateBackend Api
@@ -208,6 +214,28 @@ class RoomState extends Schema
       }
     }
     return false;
+  };
+
+  setCurrPrompts = () => {
+    this.roundData = new ArraySchema<RoundData>();
+    const round = this.round - 1;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const data = chain.getLinks[round].prompt.text;
+      const id = chain.getLinks[round].image.playerId;
+      this.roundData.push(new RoundData(id, data));
+    }
+  };
+
+  setCurrDrawings = () => {
+    this.roundData = new ArraySchema<RoundData>();
+    const round = this.round - 1;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const data = chain.getLinks[round - 1].image.imageData;
+      const id = chain.getLinks[round].prompt.playerId;
+      this.roundData.push(new RoundData(id, data));
+    }
   };
 
   get gameIsOver() {

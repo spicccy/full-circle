@@ -61,6 +61,7 @@ class DrawState implements IState {
       this.room.setRevealState();
       return;
     }
+    this.room.setCurrDrawings();
     this.room.setGuessState();
   };
 }
