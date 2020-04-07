@@ -56,6 +56,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           <TextInput
             size="medium"
             id="username"
+            data-testid="playerNameInput"
             required
             maxLength={12}
             value={name}
@@ -69,13 +70,16 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           <TextInput
             size="medium"
             id="roomCode"
+            data-testid="roomCodeInput"
             required
             maxLength={4}
             value={roomCode}
             onChange={(e) => setRoomCode(e.target.value)}
           />
         </Box>
+
         <LoadingButton
+          data-testid="joinRoom"
           loading={loading}
           type="submit"
           size="large"

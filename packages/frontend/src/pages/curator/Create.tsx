@@ -33,6 +33,7 @@ const CreatePage: FunctionComponent = () => {
             </Paragraph>
           </Box>
           <LinkButton
+            data-testid="createGame"
             loading={loading}
             alignSelf="center"
             label="Create"
