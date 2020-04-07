@@ -50,7 +50,7 @@ const LoginPage: FunctionComponent = () => {
         />
       </Box>
       <Text>
-        OR create a new game
+        OR create a new game{' '}
         <LinkAnchor data-testid="newGame" href="/create">
           here
         </LinkAnchor>
