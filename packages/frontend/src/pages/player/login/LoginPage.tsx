@@ -14,10 +14,11 @@ const LoginPage: FunctionComponent = () => {
   const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState(localStorage.getItem('username') ?? '');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
 
   const attemptToJoinRoom = async () => {
+    localStorage.setItem('username', name);
     await joinRoomByCode(roomCode, { username: name });
   };
 
