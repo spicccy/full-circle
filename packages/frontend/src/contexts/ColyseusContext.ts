@@ -3,7 +3,7 @@ import * as Colyseus from 'colyseus.js';
 import { createContext, useContext } from 'react';
 
 const client =
-  process.env.BACKEND_LOCALHOST === 'true'
+  process.env.REACT_APP_BACKEND_LOCALHOST === 'true'
     ? new Colyseus.Client(`ws://localhost:${BACKEND_PORT}`)
     : new Colyseus.Client(process.env.REACT_APP_BACKEND_URL);
 export const ColyseusContext = createContext(client);
