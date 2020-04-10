@@ -1,12 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { submitGuess } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Delayed } from 'colyseus';
+import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 import { IRoomStateBackend, IState } from '../roomState';
-import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { getType } from 'typesafe-actions';
+import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 
 class GuessState implements IState {
   private readyPlayers = new Set<string>();

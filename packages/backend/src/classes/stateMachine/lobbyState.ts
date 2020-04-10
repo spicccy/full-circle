@@ -1,14 +1,14 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import { getType } from 'typesafe-actions';
 
 import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
-import { getType } from 'typesafe-actions';
 
 class LobbyState implements IState {
   constructor(private room: IRoomStateBackend) {}
