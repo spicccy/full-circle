@@ -8,6 +8,7 @@ import {
 } from '@full-circle/shared/lib/canvas';
 import React, {
   FunctionComponent,
+  useCallback,
   useLayoutEffect,
   useRef,
   useState,
@@ -15,7 +16,12 @@ import React, {
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
 
-import { getPointerPosition, handleHover, redrawCanvas } from './helpers';
+import {
+  getMousePosition,
+  getTouchPosition,
+  handleHover,
+  redrawCanvas,
+} from './helpers';
 
 const CanvasContainer = styled.div`
   position: relative;
@@ -48,39 +54,56 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
   const hoverCanvasRef = useRef<HTMLCanvasElement>(null);
 
+  const drawingCtx = drawingCanvasRef.current?.getContext('2d');
+  const hoverCtx = hoverCanvasRef.current?.getContext('2d');
+
   const currentPath = useRef<ICoord[]>([]);
 
   const [isDrawing, setIsDrawing] = useState(false);
 
-  useEventListener(canvasContainerRef, 'pointerdown', (e) => {
-    const drawingCtx = drawingCanvasRef.current?.getContext('2d');
-    if (!drawingCtx) return;
+  const redrawDrawingCanvas = useCallback(
+    (canvasActions: CanvasAction[]) => {
+      if (drawingCtx) {
+        redrawCanvas(drawingCtx, canvasActions);
+      }
+    },
+    [drawingCtx]
+  );
 
-    currentPath.current.push(getPointerPosition(e, drawingCtx));
+  const handleHoverCanvas = useCallback(
+    (pen: Pen, coord?: ICoord) => {
+      if (hoverCtx) {
+        handleHover(hoverCtx, pen, coord);
+      }
+    },
+    [hoverCtx]
+  );
 
-    redrawCanvas(drawingCtx, [
+  useLayoutEffect(() => {
+    redrawDrawingCanvas(canvasActions);
+  }, [canvasActions, redrawDrawingCanvas]);
+
+  // Mouse events
+  useEventListener(canvasContainerRef, 'mousedown', (e) => {
+    setIsDrawing(true);
+    currentPath.current.push(getMousePosition(e, drawingCanvasRef.current));
+    redrawDrawingCanvas([
       ...canvasActions,
       drawStroke({ pen, points: currentPath.current }),
     ]);
-
-    setIsDrawing(true);
   });
 
-  useEventListener(document, 'pointermove', (e) => {
+  useEventListener(document, 'mousemove', (e) => {
     if (isDrawing) {
-      const drawingCtx = drawingCanvasRef.current?.getContext('2d');
-      if (!drawingCtx) return;
-
-      currentPath.current.push(getPointerPosition(e, drawingCtx));
-
-      redrawCanvas(drawingCtx, [
+      currentPath.current.push(getMousePosition(e, drawingCanvasRef.current));
+      redrawDrawingCanvas([
         ...canvasActions,
         drawStroke({ pen, points: currentPath.current }),
       ]);
     }
   });
 
-  useEventListener(document, 'pointerup', () => {
+  useEventListener(document, 'mouseup', () => {
     if (isDrawing) {
       setIsDrawing(false);
       setCanvasActions([
@@ -91,27 +114,45 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     }
   });
 
-  // cursor
-  useEventListener(canvasContainerRef, 'pointermove', (e) => {
-    const hoverCtx = hoverCanvasRef.current?.getContext('2d');
-    if (!hoverCtx) return;
-
-    handleHover(hoverCtx, pen, getPointerPosition(e, hoverCtx));
+  // Mouse cursor
+  useEventListener(canvasContainerRef, 'mousemove', (e) => {
+    handleHoverCanvas(pen, getMousePosition(e, hoverCanvasRef.current));
   });
 
-  useEventListener(canvasContainerRef, 'pointerleave', () => {
-    const hoverCtx = hoverCanvasRef.current?.getContext('2d');
-    if (!hoverCtx) return;
-
-    handleHover(hoverCtx, pen);
+  useEventListener(canvasContainerRef, 'mouseleave', () => {
+    handleHoverCanvas(pen);
   });
 
-  useLayoutEffect(() => {
-    const drawingCtx = drawingCanvasRef.current?.getContext('2d');
-    if (!drawingCtx) return;
+  // Touch events
+  useEventListener(canvasContainerRef, 'touchstart', (e) => {
+    setIsDrawing(true);
+    currentPath.current.push(getTouchPosition(e, drawingCanvasRef.current));
+    redrawDrawingCanvas([
+      ...canvasActions,
+      drawStroke({ pen, points: currentPath.current }),
+    ]);
+  });
 
-    redrawCanvas(drawingCtx, canvasActions);
-  }, [canvasActions]);
+  useEventListener(document, 'touchmove', (e) => {
+    if (isDrawing) {
+      currentPath.current.push(getTouchPosition(e, drawingCanvasRef.current));
+      redrawDrawingCanvas([
+        ...canvasActions,
+        drawStroke({ pen, points: currentPath.current }),
+      ]);
+    }
+  });
+
+  useEventListener(document, 'touchend', () => {
+    if (isDrawing) {
+      setIsDrawing(false);
+      setCanvasActions([
+        ...canvasActions,
+        drawStroke({ pen, points: currentPath.current }),
+      ]);
+      currentPath.current = [];
+    }
+  });
 
   return (
     <CanvasContainer ref={canvasContainerRef}>
