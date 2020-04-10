@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prestart": "yarn run build:shared",
+    "postinstall": "yarn run build:shared",
     "start": "lerna run start --parallel --no-bail",
     "start:FE": "lerna run start --scope @full-circle/frontend --stream",
     "start:BE": "lerna run start --scope @full-circle/backend --stream",

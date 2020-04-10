@@ -1,12 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Delayed } from 'colyseus';
+import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
-import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { getType } from 'typesafe-actions';
 
 class DrawState implements IState {
   private readyPlayers = new Set<string>();
