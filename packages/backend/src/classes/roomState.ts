@@ -12,7 +12,7 @@ import {
 } from '@full-circle/shared/lib/roomState/interfaces';
 import invariant from 'tiny-invariant';
 
-import { IClient, IClock } from '../interfaces';
+import { IClient, IClock, IRoom } from '../interfaces';
 import { MyRoom } from '../MyRoom';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
@@ -87,10 +87,11 @@ export interface IRoomStateBackend {
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
+  clock: IClock;
 
-  constructor(private room: MyRoom, public clock: IClock) {
+  constructor(private room: IRoom) {
     super();
-    this.room = room;
+    this.clock = room.clock;
   }
 
   //==================================================================================
