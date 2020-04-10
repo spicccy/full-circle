@@ -1,6 +1,7 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { mocked } from 'ts-jest/utils';
 
+import { MyRoom } from '../../MyRoom';
 import { addPlayers, mockClock } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import { getAllocation } from './../../util/sortPlayers/sortPlayers';
@@ -10,9 +11,10 @@ jest.mock('./../../util/sortPlayers/sortPlayers');
 describe('Room state', () => {
   describe('transitions', () => {
     let state: RoomState;
+    let room: MyRoom;
 
     beforeEach(() => {
-      state = new RoomState(mockClock);
+      state = new RoomState(room, mockClock);
       addPlayers(state, 10);
 
       const mockedVal = [
@@ -87,8 +89,9 @@ describe('Room state', () => {
   });
 
   describe('chain allocation', () => {
+    let room: MyRoom;
     it('can generate chain correctly', () => {
-      const room = new RoomState(mockClock);
+      const roomState = new RoomState(room, mockClock);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],
@@ -97,8 +100,8 @@ describe('Room state', () => {
         return mockedVal;
       });
 
-      room.allocate();
-      const chains = room.currChains;
+      roomState.allocate();
+      const chains = roomState.currChains;
       const chain1 = chains[0];
       expect(chain1.id).toBe('a');
       expect(chain1.links[0].image.playerId).toBe('a');
@@ -121,9 +124,10 @@ describe('Room state', () => {
 
   describe('it should automatically end the game loop', () => {
     let roomState: RoomState;
+    let room: MyRoom;
 
     beforeEach(() => {
-      roomState = new RoomState(mockClock);
+      roomState = new RoomState(room, mockClock);
     });
 
     it('ends the game loop correctly when there are three players', () => {
@@ -153,9 +157,10 @@ describe('Room state', () => {
 
   describe('it should store', () => {
     let roomState: RoomState;
+    let room: MyRoom;
 
     beforeEach(() => {
-      roomState = new RoomState(mockClock);
+      roomState = new RoomState(room, mockClock);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],
@@ -185,9 +190,10 @@ describe('Room state', () => {
 
   describe('should send the correct round', () => {
     let roomState: RoomState;
+    let room: MyRoom;
 
     beforeEach(() => {
-      roomState = new RoomState(mockClock);
+      roomState = new RoomState(room, mockClock);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],

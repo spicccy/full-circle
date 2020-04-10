@@ -1,28 +1,30 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
+import { MyRoom } from '../../../MyRoom';
 import { addPlayers, mockClock } from '../../helpers/testHelper';
 import RoomState from '../../roomState';
 
 describe('Draw State', () => {
-  let room: RoomState;
+  let roomState: RoomState;
+  let room: MyRoom;
 
   beforeEach(() => {
-    room = new RoomState(mockClock);
-    addPlayers(room, 8);
-    room.advanceState();
+    roomState = new RoomState(room, mockClock);
+    addPlayers(roomState, 8);
+    roomState.advanceState();
   });
 
   it('has a matching phaseType', () => {
-    expect(room.phase.phaseType).toBe(PhaseType.DRAW);
+    expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
   });
 
   it('has a timer', () => {
-    expect(room.phase.phaseEnd).toBeGreaterThan(0);
+    expect(roomState.phase.phaseEnd).toBeGreaterThan(0);
   });
 
   it('advances to guess phase', () => {
-    room.advanceState();
-    expect(room.phase.phaseType).toBe(PhaseType.GUESS);
-    expect(room.round).toBe(1);
+    roomState.advanceState();
+    expect(roomState.phase.phaseType).toBe(PhaseType.GUESS);
+    expect(roomState.round).toBe(1);
   });
 });

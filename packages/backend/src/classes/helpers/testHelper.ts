@@ -1,4 +1,5 @@
 import { IClient, IClock } from '../../interfaces';
+import { partialMock } from '../../util/test/helpers';
 import RoomState from '../roomState';
 
 export const mockClock: IClock = {
@@ -7,13 +8,13 @@ export const mockClock: IClock = {
   }),
 };
 
-export const mockClient: IClient = {
+export const mockClient: IClient = partialMock<IClient>({
   id: '',
   sessionId: '',
   close: () => {
     return;
   },
-};
+});
 
 export const addPlayers = (roomState: RoomState, nPlayers: number) => {
   for (let i = 0; i < nPlayers; i++) {

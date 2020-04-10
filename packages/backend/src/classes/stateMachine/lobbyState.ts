@@ -18,8 +18,6 @@ class LobbyState implements IState {
     const username = options.username;
     const clientId = client.id;
 
-    this.roomState.addClient(client);
-
     if (this.roomState.numPlayers >= MAX_PLAYERS) {
       throw new Error(Warning.TOO_MANY_PLAYERS);
     }
@@ -32,10 +30,10 @@ class LobbyState implements IState {
     const player = new Player(clientId, username);
     const error = this.roomState.addPlayer(player);
     if (error) {
-      this.roomState.sendWarning(this.roomState.getCurator(), error);
       throw new Error(error);
     }
 
+    this.roomState.addClient(client);
     this.roomState.addSubmittedPlayer(player.id);
   };
 
