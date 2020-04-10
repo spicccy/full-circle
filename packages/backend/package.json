@@ -7,7 +7,7 @@
     "start:prod": "ts-node src/index.ts",
     "loadtest": "colyseus-loadtest src/loadtest/example.ts --room my_room --numClients 2",
     "test": "jest",
-    "lint": "eslint --fix src/**/*.ts",
+    "lint": "eslint src/**/*.ts --fix",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier --write src/**/*.ts",
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"

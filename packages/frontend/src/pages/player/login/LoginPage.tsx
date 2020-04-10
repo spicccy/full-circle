@@ -4,6 +4,7 @@ import { Redirect, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 
+import { useRoomLeave } from '../../../hooks/useRoomListeners';
 import { LoginCard } from './LoginCard';
 
 interface ILoginPageParams {
@@ -16,6 +17,16 @@ const LoginPage: FunctionComponent = () => {
 
   const [name, setName] = useState(localStorage.getItem('username') ?? '');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
+
+  useRoomLeave((code: number) => {
+    switch (code) {
+      case 1:
+        alert('Someone else has already chosen that username');
+        break;
+      default:
+        alert('Unknown error');
+    }
+  });
 
   const attemptToJoinRoom = async () => {
     localStorage.setItem('username', name);

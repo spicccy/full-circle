@@ -52,4 +52,10 @@ export interface IRoomStateSynced {
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
   roundData: IRoundData[];
+  warnings: Record<string, string>;
+}
+
+export enum Warning {
+  CONFLICTING_USERNAMES = 'conflicting_usernames',
+  NOT_ENOUGH_PLAYERS = 'not_enough_players',
 }

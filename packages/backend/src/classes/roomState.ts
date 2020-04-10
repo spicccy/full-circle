@@ -7,9 +7,12 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
   IRoomStateSynced,
+  Warning,
 } from '@full-circle/shared/lib/roomState/interfaces';
+import invariant from 'tiny-invariant';
 
 import { IClient, IClock } from '../interfaces';
+import { MyRoom } from '../MyRoom';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -45,10 +48,19 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: IPlayer) => void;
+  addClient: (client: IClient) => void;
+  removeClient: (clientId: string) => void;
+  getClient: (clientId: string) => IClient;
+
+  addPlayer: (player: IPlayer) => boolean;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
+
+  sendWarning: (clientID: string, message: string) => void;
+  addWarning: (warning: Warning, message: string) => void;
+  clearWarning: (warning: Warning) => void;
+  readonly hasConflictingUsernames: boolean;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -77,8 +89,9 @@ class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
 
-  constructor(public clock: IClock) {
+  constructor(private room: MyRoom, public clock: IClock) {
     super();
+    this.room = room;
   }
 
   //==================================================================================
@@ -108,6 +121,11 @@ class RoomState extends Schema
   @type([RoundData])
   roundData = new ArraySchema<RoundData>();
 
+  @type({ map: 'string' })
+  warnings = new MapSchema<string>();
+
+  clients = new Map<string, IClient>();
+
   // =====================================
   // IRoomStateBackend Api
   // =====================================
@@ -119,9 +137,47 @@ class RoomState extends Schema
     return this.curator;
   };
 
-  addPlayer = (player: IPlayer): void => {
+  addClient = (client: IClient) => {
+    this.clients.set(client.id, client);
+  };
+
+  removeClient = (clientId: string) => {
+    this.clients.delete(clientId);
+  };
+
+  getClient = (clientId: string): IClient => {
+    const maybeClient = this.clients.get(clientId);
+    if (maybeClient) return maybeClient;
+
+    // if we can't find a particular client, fallback to messaging the curator
+    const maybeCurator = this.clients.get(this.curator);
+    invariant(
+      maybeCurator,
+      "There's no players or curator clients in this room"
+    );
+    return maybeCurator;
+  };
+
+  addWarning = (warning: Warning, message: string): void => {
+    this.warnings[warning] = message;
+  };
+
+  clearWarning = (warning: Warning) => {
+    delete this.warnings[warning];
+  };
+
+  addPlayer = (player: IPlayer): boolean => {
+    let retVal = true;
+    for (const id in this.players) {
+      const existingPlayer: Player = this.players[id];
+      if (player.username === existingPlayer.username) {
+        retVal = false;
+      }
+    }
+
     const { id } = player;
     this.players[id] = player;
+    return retVal;
   };
 
   removePlayer = (playerId: string) => {
@@ -149,6 +205,23 @@ class RoomState extends Schema
   get numPlayers() {
     return Object.keys(this.players).length;
   }
+
+  get hasConflictingUsernames() {
+    const usedNames: string[] = [];
+    for (const playerId in this.players) {
+      const player: Player = this.players[playerId];
+      if (usedNames.includes(player.username)) {
+        return true;
+      }
+      usedNames.push(player.username);
+    }
+    return false;
+  }
+
+  sendWarning = (clientId: string, warning: string) => {
+    const client = this.getClient(clientId);
+    this.room.send(client, warn(warning));
+  };
 
   incrementRound = () => {
     this.round += 1;
@@ -295,6 +368,7 @@ class RoomState extends Schema
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {
+    this.clients.set(client.id, client);
     this.currState.onJoin(client, options);
   };
 
