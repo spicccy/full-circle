@@ -1,6 +1,7 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { mocked } from 'ts-jest/utils';
 
+import { IRoom } from '../../interfaces';
 import { MyRoom } from '../../MyRoom';
 import { addPlayers, mockClock } from '../helpers/testHelper';
 import RoomState from '../roomState';
@@ -89,9 +90,9 @@ describe('Room state', () => {
   });
 
   describe('chain allocation', () => {
-    let room: MyRoom;
+    let room: IRoom;
     it('can generate chain correctly', () => {
-      const roomState = new RoomState(room, mockClock);
+      const roomState = new RoomState(room);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],

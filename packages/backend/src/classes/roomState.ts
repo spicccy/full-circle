@@ -59,7 +59,6 @@ export interface IRoomStateBackend {
   readonly gameIsOver: boolean;
 
   sendWarning: (clientID: string, warning: Warning) => void;
-  readonly hasConflictingUsernames: boolean;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -195,18 +194,6 @@ class RoomState extends Schema
 
   get numPlayers() {
     return Object.keys(this.players).length;
-  }
-
-  get hasConflictingUsernames() {
-    const usedNames: string[] = [];
-    for (const playerId in this.players) {
-      const player: Player = this.players[playerId];
-      if (usedNames.includes(player.username)) {
-        return true;
-      }
-      usedNames.push(player.username);
-    }
-    return false;
   }
 
   sendWarning = (clientId: string, warning: Warning) => {
