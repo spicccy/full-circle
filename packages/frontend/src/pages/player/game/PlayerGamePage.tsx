@@ -1,40 +1,40 @@
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
-import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useMemo } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomLeave, useRoomMessage } from 'src/hooks/useRoomListeners';
-import { getType } from 'typesafe-actions';
+import invariant from 'tiny-invariant';
 
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
 
-const PlayerGamePage: FunctionComponent = () => {
-  const [receivedDrawing, setReceivedDrawing] = useState<CanvasAction[]>([]);
-  const [prompt, setPrompt] = useState<string>('Guess1');
+export const returnData = (input: any) => {
+  return input;
+};
 
+const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
+
+  const id = room?.sessionId;
+  const roundData = syncedState?.roundData;
+
+  const data = useMemo((): string => {
+    if (id && roundData) {
+      for (const link of roundData) {
+        if (link.id === id) {
+          return returnData(link.data);
+        }
+      }
+    }
+    return '';
+  }, [id, roundData]);
+
+  // TODO: make this work
+  // invariant(data,'data is null');
 
   useRoomLeave(() => {
     alert('You have been disconnected');
-  });
-
-  useRoomMessage((message) => {
-    switch (message.type) {
-      case getType(displayDrawing): {
-        setReceivedDrawing(message.payload);
-        return;
-      }
-      case getType(displayPrompt): {
-        setPrompt(message.payload);
-        return;
-      }
-    }
   });
 
   if (!room) {
@@ -47,11 +47,11 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage prompt={prompt} promptBy="Skithy" />;
+      return <DrawPage prompt={data} promptBy="Skithy" />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={receivedDrawing} drawingBy="Skithy" />;
+      return <GuessPage drawing={JSON.parse(data)} drawingBy="Skithy" />;
     }
 
     default: {

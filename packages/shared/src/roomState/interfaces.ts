@@ -39,6 +39,11 @@ export interface IRoomMetadata {
   roomCode: string;
 }
 
+export interface IRoundData {
+  id: string;
+  data: string;
+}
+
 export interface IRoomStateSynced {
   curator: string;
   chains: IChain[];
@@ -46,4 +51,5 @@ export interface IRoomStateSynced {
   round: number;
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
+  roundData: IRoundData[];
 }
