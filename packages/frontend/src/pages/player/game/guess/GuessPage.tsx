@@ -1,5 +1,4 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -7,16 +6,13 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 
-interface IGuessPageProps {
-  drawing: CanvasAction[];
-  drawingBy: string;
-}
+const GuessPage: FunctionComponent = () => {
+  const { room, syncedState } = useRoom();
 
-const GuessPage: FunctionComponent<IGuessPageProps> = ({
-  drawing,
-  drawingBy,
-}) => {
-  const { room } = useRoom();
+  const id = room?.sessionId;
+  const roundData = syncedState?.roundData;
+  const drawingString = roundData?.find((link) => link.id === id)?.data;
+  const drawing = drawingString ? JSON.parse(drawingString) : [];
 
   const handleSubmit = (guess: string) => {
     room?.send(submitGuess(guess));
@@ -32,7 +28,7 @@ const GuessPage: FunctionComponent<IGuessPageProps> = ({
       pad="medium"
     >
       <Box width="medium" margin={{ bottom: 'medium' }}>
-        <DrawingCard drawing={drawing} drawingBy={drawingBy} />
+        <DrawingCard drawing={drawing} />
       </Box>
       <Box width="medium">
         <GuessCard onSubmitGuess={handleSubmit} />
