@@ -18,9 +18,10 @@ class LobbyState implements IState {
     const username = options.username;
     const clientId = client.id;
 
+    this.roomState.addClient(client);
+
     if (this.roomState.numPlayers >= MAX_PLAYERS) {
-      client.close();
-      return;
+      throw new Error(Warning.TOO_MANY_PLAYERS);
     }
 
     if (!this.roomState.getCurator()) {
@@ -29,17 +30,13 @@ class LobbyState implements IState {
     }
 
     const player = new Player(clientId, username);
-    if (!this.roomState.addPlayer(player)) {
-      // message the user that their name is invalid
-      return;
+    const error = this.roomState.addPlayer(player);
+    if (error) {
+      this.roomState.sendWarning(this.roomState.getCurator(), error);
+      throw new Error(error);
     }
 
     this.roomState.addSubmittedPlayer(player.id);
-
-    // TODO: TESTS CHAIN ALLOCATION DELETE THIS
-    if (this.roomState.numPlayers == 5) {
-      this.roomState.allocate();
-    }
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
@@ -73,22 +70,11 @@ class LobbyState implements IState {
   validateLobby = (): boolean => {
     let retval = true;
     if (this.roomState.numPlayers < 3) {
-      this.roomState.addWarning(
-        Warning.NOT_ENOUGH_PLAYERS,
-        'You need at least three players to start a game'
+      this.roomState.sendWarning(
+        this.roomState.getCurator(),
+        Warning.NOT_ENOUGH_PLAYERS
       );
       retval = false;
-    } else {
-      this.roomState.clearWarning(Warning.NOT_ENOUGH_PLAYERS);
-    }
-    if (this.roomState.hasConflictingUsernames) {
-      this.roomState.addWarning(
-        Warning.CONFLICTING_USERNAMES,
-        'Some players have conflicting usernames'
-      );
-      retval = false;
-    } else {
-      this.roomState.clearWarning(Warning.CONFLICTING_USERNAMES);
     }
 
     return retval;

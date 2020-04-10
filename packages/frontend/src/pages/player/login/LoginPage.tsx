@@ -1,32 +1,26 @@
+import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 
-import { useRoomLeave } from '../../../hooks/useRoomListeners';
 import { LoginCard } from './LoginCard';
 
 interface ILoginPageParams {
   roomCode?: string;
 }
 
-const LoginPage: FunctionComponent = () => {
+const LoginPage: React.FC = () => {
   const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
 
   const [name, setName] = useState(localStorage.getItem('username') ?? '');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
 
-  useRoomLeave((code: number) => {
-    switch (code) {
-      case 1:
-        alert('Someone else has already chosen that username');
-        break;
-      default:
-        alert('Unknown error');
-    }
-  });
+  const [error, setError] = useState<'username' | 'roomCode' | undefined>(
+    undefined
+  );
 
   const attemptToJoinRoom = async () => {
     localStorage.setItem('username', name);
@@ -35,7 +29,20 @@ const LoginPage: FunctionComponent = () => {
 
   useEffect(() => {
     if (roomError) {
-      alert(roomError);
+      if (roomError === Warning.CONFLICTING_USERNAMES) {
+        localStorage.removeItem('username');
+        setName('');
+        setError('username');
+      }
+
+      // TODO: fix this raf hack
+      // need to wait 2af on chrome+firefox in order for the border to show up before the alert
+      // this can probably be removed once we move away from alerts to a popup method
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          alert(roomError);
+        });
+      });
     }
   }, [roomError]);
 
@@ -59,6 +66,7 @@ const LoginPage: FunctionComponent = () => {
           roomCode={roomCode}
           setRoomCode={setRoomCode}
           attemptToJoinRoom={attemptToJoinRoom}
+          error={error}
         />
       </Box>
       <Text>

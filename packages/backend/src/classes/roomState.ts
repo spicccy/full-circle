@@ -1,5 +1,6 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -52,14 +53,12 @@ export interface IRoomStateBackend {
   removeClient: (clientId: string) => void;
   getClient: (clientId: string) => IClient;
 
-  addPlayer: (player: IPlayer) => boolean;
+  addPlayer: (player: IPlayer) => Warning | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
 
-  sendWarning: (clientID: string, message: string) => void;
-  addWarning: (warning: Warning, message: string) => void;
-  clearWarning: (warning: Warning) => void;
+  sendWarning: (clientID: string, warning: Warning) => void;
   readonly hasConflictingUsernames: boolean;
 
   setPhase: (phase: Phase) => void;
@@ -158,26 +157,17 @@ class RoomState extends Schema
     return maybeCurator;
   };
 
-  addWarning = (warning: Warning, message: string): void => {
-    this.warnings[warning] = message;
-  };
-
-  clearWarning = (warning: Warning) => {
-    delete this.warnings[warning];
-  };
-
-  addPlayer = (player: IPlayer): boolean => {
-    let retVal = true;
+  addPlayer = (player: IPlayer): Warning | null => {
     for (const id in this.players) {
       const existingPlayer: Player = this.players[id];
       if (player.username === existingPlayer.username) {
-        retVal = false;
+        return Warning.CONFLICTING_USERNAMES;
       }
     }
 
     const { id } = player;
     this.players[id] = player;
-    return retVal;
+    return null;
   };
 
   removePlayer = (playerId: string) => {
@@ -218,7 +208,7 @@ class RoomState extends Schema
     return false;
   }
 
-  sendWarning = (clientId: string, warning: string) => {
+  sendWarning = (clientId: string, warning: Warning) => {
     const client = this.getClient(clientId);
     this.room.send(client, warn(warning));
   };

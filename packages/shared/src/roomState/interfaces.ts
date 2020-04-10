@@ -56,6 +56,7 @@ export interface IRoomStateSynced {
 }
 
 export enum Warning {
-  CONFLICTING_USERNAMES = 'conflicting_usernames',
-  NOT_ENOUGH_PLAYERS = 'not_enough_players',
+  GAME_ALREADY_STARTED = 'The game has already started',
+  CONFLICTING_USERNAMES = 'That username has already been taken for this room',
+  NOT_ENOUGH_PLAYERS = 'You need at least three players to join this room',
 }

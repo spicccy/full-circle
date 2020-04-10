@@ -1,6 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
@@ -15,7 +16,7 @@ class DrawState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = () => {
-    throw new Error('Game has already started');
+    throw new Error(Warning.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
