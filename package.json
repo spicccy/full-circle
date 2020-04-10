@@ -7,8 +7,8 @@
     "start": "lerna run start --parallel --no-bail",
     "start:FE": "lerna run start --scope @full-circle/frontend --stream",
     "start:BE": "lerna run start --scope @full-circle/backend --stream",
-    "start:BE:prod": "yarn run build:shared && lerna run start:prod --scope @full-circle/backend --stream",
-    "build:FE": "yarn run build:shared && lerna run build --scope @full-circle/frontend --stream",
+    "start:prod": "lerna run start:prod --scope @full-circle/backend --stream",
+    "build": "lerna run build --stream",
     "build:shared": "lerna run build --scope @full-circle/shared --stream",
     "prettylint": "yarn build:shared && lerna run prettylint --parallel --no-bail",
     "test": "lerna run test --parallel --no-bail",
@@ -36,6 +36,7 @@
     "@colyseus/social": "0.11.6",
     "colyseus": "0.12.3",
     "colyseus.js": "0.12.1",
+    "lerna": "^3.20.2",
     "lodash-es": "^4.17.15",
     "ts-node": "8.6.2",
     "typesafe-actions": "^5.1.0"
@@ -49,7 +50,6 @@
     "eslint-plugin-simple-import-sort": "^5.0.2",
     "husky": "^4.2.3",
     "jest": "24.9",
-    "lerna": "^3.20.2",
     "prettier": "^2.0.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
