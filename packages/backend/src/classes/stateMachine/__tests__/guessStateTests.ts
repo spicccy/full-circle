@@ -1,15 +1,16 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
-import { MyRoom } from '../../../MyRoom';
-import { addPlayers, mockClock } from '../../helpers/testHelper';
+import { IRoom } from '../../../interfaces';
+import { addPlayers, mockRoom } from '../../helpers/testHelper';
 import RoomState from '../../roomState';
 
 describe('Guess State', () => {
   let roomState: RoomState;
-  let room: MyRoom;
+  let room: IRoom;
 
   beforeEach(() => {
-    roomState = new RoomState(room, mockClock);
+    room = mockRoom;
+    roomState = new RoomState(room);
     addPlayers(roomState, 8);
     roomState.advanceState();
     roomState.advanceState();

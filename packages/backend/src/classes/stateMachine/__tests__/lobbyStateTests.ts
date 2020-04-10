@@ -4,10 +4,10 @@ import { IPlayer, Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { mocked } from 'ts-jest/utils';
 
 import { MAX_PLAYERS } from '../../../constants';
-import { IClient } from '../../../interfaces';
+import { IClient, IRoom } from '../../../interfaces';
 import { MyRoom } from '../../../MyRoom';
 import { partialMock } from '../../../util/test/helpers';
-import { mockClient, mockClock } from '../../helpers/testHelper';
+import { mockClient, mockClock, mockRoom } from '../../helpers/testHelper';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
 import { getAllocation } from './../../../util/sortPlayers/sortPlayers';
@@ -32,13 +32,13 @@ const createTestPlayer = (num: number): IPlayer => {
 };
 
 describe('Lobby State', () => {
-  let room: MyRoom;
+  let room: IRoom;
   let roomState: RoomState;
   let lobbyState: IState;
 
   beforeEach(() => {
-    room = new MyRoom();
-    roomState = new RoomState(room, mockClock);
+    room = mockRoom;
+    roomState = new RoomState(room);
     roomState.setCurator('curator');
 
     for (let i = 0; i < 3; i++) {
@@ -91,7 +91,7 @@ describe('Lobby State', () => {
   });
 
   it('will not allow more than MAX players to join', () => {
-    const roomState = new RoomState(room, mockClock);
+    const roomState = new RoomState(room);
     roomState.setCurator('curatorId');
 
     const mockCloseJoinedPlayers = jest.fn();
@@ -124,7 +124,7 @@ describe('Lobby State', () => {
   });
 
   it('will not allow duplicate players to join', () => {
-    const roomState = new RoomState(room, mockClock);
+    const roomState = new RoomState(room);
 
     const lobbyState = new LobbyState(roomState);
 
