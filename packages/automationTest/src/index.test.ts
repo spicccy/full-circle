@@ -1,6 +1,6 @@
 import { drawImage } from './drawingAutomation';
-import { joinGame, screenshotName, changeDir } from './lobbyAutomation';
 import { makeGuess } from './guessingAutomation';
+import { changeDir, joinGame, screenshotName } from './lobbyAutomation';
 
 describe('Full Circle', () => {
   beforeAll(async () => {

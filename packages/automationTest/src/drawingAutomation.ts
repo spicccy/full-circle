@@ -1,4 +1,5 @@
 import { BoundingBox, Page } from 'puppeteer';
+
 import { screenshotName } from './lobbyAutomation';
 
 const drawLine = async (

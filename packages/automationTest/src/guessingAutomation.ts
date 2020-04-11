@@ -1,4 +1,5 @@
 import { Page } from 'puppeteer';
+
 import { screenshotName } from './lobbyAutomation';
 
 export const makeGuess = async (
