@@ -1,13 +1,7 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import {
-  Fragment,
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Fragment, FunctionComponent, useCallback, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -27,8 +21,6 @@ Lobby should only re-render when a new player has joined
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
-  const messages = useRoomMessage();
-
   const [popup, _setPopup] = useState<React.ReactNode>(null);
 
   // TODO: ALEX expand this in upcoming PR
@@ -43,12 +35,7 @@ const CuratorGamePage: FunctionComponent = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const nMsgs = messages.length;
-    if (nMsgs > 0) {
-      curatorMessageHandler(messages[nMsgs - 1]);
-    }
-  }, [curatorMessageHandler, messages]);
+  useRoomMessage(curatorMessageHandler);
 
   if (!room) {
     return <Redirect to="/create" />;

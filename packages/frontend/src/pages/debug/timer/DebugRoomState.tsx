@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
@@ -22,8 +22,15 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
   debug,
 }) => {
   const { room, roomCode, syncedState } = useRoom();
+  const [messages, setMessages] = useState<string[]>([]);
 
-  const messages = useRoomMessage();
+  useEffect(() => {
+    setMessages([]);
+  }, [room]);
+
+  useRoomMessage((message) => {
+    setMessages([...messages, message.type]);
+  });
 
   if (!debug) {
     return null;
