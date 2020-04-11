@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
 export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
-  const { room } = useRoom();
+  const { room, addMessageListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 
   useEffect(() => {
@@ -12,14 +12,16 @@ export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
 
   useEffect(() => {
     if (room) {
-      const listener = room.onMessage((message) => handlerRef.current(message));
-      return () => listener.clear();
+      const clearListener = addMessageListener((message) =>
+        handlerRef.current(message)
+      );
+      return clearListener;
     }
-  }, [room]);
+  }, [addMessageListener, room]);
 };
 
 export const useRoomLeave = (msgHandler: (code: number) => void) => {
-  const { room } = useRoom();
+  const { room, addLeaveListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 
   useEffect(() => {
@@ -28,8 +30,10 @@ export const useRoomLeave = (msgHandler: (code: number) => void) => {
 
   useEffect(() => {
     if (room) {
-      const listener = room.onLeave((code) => handlerRef.current(code));
-      return () => listener.clear();
+      const clearListener = addLeaveListener((code) =>
+        handlerRef.current(code)
+      );
+      return clearListener;
     }
-  }, [room]);
+  }, [addLeaveListener, room]);
 };
