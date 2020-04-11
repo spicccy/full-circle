@@ -119,6 +119,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
         height={CANVAS_HEIGHT}
         width={CANVAS_WIDTH}
         ref={drawingCanvasRef}
+        data-testid="drawCanvas"
       />
       <canvas
         height={CANVAS_HEIGHT}

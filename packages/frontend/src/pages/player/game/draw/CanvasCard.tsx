@@ -133,6 +133,7 @@ const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
           disabled={isEmpty}
           onClick={onSubmitDrawing}
           label="Submit"
+          data-testid="submitDrawing"
         />
       </Box>
     </Card>

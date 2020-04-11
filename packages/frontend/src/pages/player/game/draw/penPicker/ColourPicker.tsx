@@ -117,6 +117,7 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
             colour={colour}
             selected={colour === currentColour}
             onClick={() => setColour(colour)}
+            data-testid={title}
           />
         ))}
       </ColourRow>
@@ -128,6 +129,7 @@ const ColourPicker: FunctionComponent<IColourPickerProps> = ({
             colour={colour}
             selected={colour === currentColour}
             onClick={() => setColour(colour)}
+            data-testid={title}
           />
         ))}
         <EraserBlock

@@ -36,6 +36,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
           disabled={!guess}
           onClick={handleSubmitGuess}
           label="Submit"
+          data-testid="submitGuess"
         />
       </Box>
     </Card>

@@ -8,5 +8,5 @@ export const CuratorTimer: FunctionComponent = () => {
     return null;
   }
 
-  return <Text> Timer: {phaseTimer}</Text>;
+  return <Text data-testid="curatorTimer"> Timer: {phaseTimer}</Text>;
 };

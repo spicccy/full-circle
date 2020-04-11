@@ -36,6 +36,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
             label="Start Game"
             icon={<Add />}
             onClick={startGame}
+            data-testid="startGame"
           />
         </Box>
       </Box>
