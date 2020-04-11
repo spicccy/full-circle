@@ -1,16 +1,19 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
+import { BUFFER_MS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
 
 class DrawState implements IState {
   private timerHandle: Delayed | undefined;
+  private bufferHandle: Delayed | undefined;
 
   constructor(private roomState: IRoomStateBackend) {}
 
@@ -37,7 +40,7 @@ class DrawState implements IState {
   onClientReady = (clientId: string) => {
     this.roomState.addSubmittedPlayer(clientId);
     if (this.roomState.allPlayersSubmitted) {
-      this.advanceState();
+      this.startBuffer();
     }
   };
 
@@ -46,7 +49,7 @@ class DrawState implements IState {
       new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH)
     );
     this.timerHandle = this.roomState.clock.setTimeout(
-      this.advanceState,
+      this.startBuffer,
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
@@ -54,7 +57,19 @@ class DrawState implements IState {
 
   onStateEnd = () => {
     this.timerHandle?.clear();
+    this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
+  };
+
+  startBuffer = () => {
+    this.roomState.unsubmittedPlayerIds.forEach((id) => {
+      this.roomState.sendAction(id, forceSubmit());
+    });
+
+    this.bufferHandle = this.roomState.clock.setTimeout(
+      this.advanceState,
+      BUFFER_MS
+    );
   };
 
   advanceState = () => {

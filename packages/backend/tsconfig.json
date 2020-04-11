@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "lib",
     "module": "commonjs",
-    "skipLibCheck": true,
-    "baseUrl": "."
+    "skipLibCheck": true
   }
 }
