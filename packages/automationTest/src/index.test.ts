@@ -74,5 +74,13 @@ describe('Full Circle', () => {
     await makeGuess(playerPage1, 'guess_player_1.', 'Guess 1_1');
     await makeGuess(playerPage2, 'guess_player_2.', 'Guess 2_1');
     await makeGuess(playerPage3, 'guess_player_3.', 'Guess 3_1');
+
+    changeDir('draw_guess_round_2');
+    await drawImage(playerPage1, 'drawing_player_1', 'green (t)');
+    await drawImage(playerPage2, 'drawing_player_2', 'purple (y)');
+    await drawImage(playerPage3, 'drawing_player_3', 'orange (d)');
+
+    changeDir('end_game');
+    await page.waitForSelector("[data-testid='endMessage']");
   });
 });
