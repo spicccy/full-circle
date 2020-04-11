@@ -82,5 +82,8 @@ describe('Full Circle', () => {
 
     changeDir('end_game');
     await page.waitForSelector("[data-testid='endMessage']");
+    await page.screenshot({
+      path: screenshotName('game_over'),
+    });
   });
 });
