@@ -15,6 +15,7 @@ import {
   PlayerGamePage,
   Team,
 } from './pages';
+import { IngameReveal } from './pages/curator/IngamePages/IngameReveal';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { theme } from './styles/theme';
 
@@ -36,6 +37,7 @@ export const App: FunctionComponent = () => {
               <Route exact path="/curator" component={CuratorGamePage} />
               <Route exact path="/instructions" component={Instructions} />
               <Route exact path="/team" component={Team} />
+              <Route exact path="/revealtest" component={IngameReveal} />
               <Route path="/" component={Error404} />
             </Switch>
           </ToastProvider>
