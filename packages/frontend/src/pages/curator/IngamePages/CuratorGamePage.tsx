@@ -1,7 +1,7 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Fragment, FunctionComponent, useCallback, useState } from 'react';
+import { Fragment, FunctionComponent, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -24,7 +24,7 @@ const CuratorGamePage: FunctionComponent = () => {
   const [popup, _setPopup] = useState<React.ReactNode>(null);
 
   // TODO: ALEX expand this in upcoming PR
-  const curatorMessageHandler = useCallback((msg: ServerAction) => {
+  const curatorMessageHandler = (msg: ServerAction) => {
     switch (msg.type) {
       case '@server/warn':
         // TODO: find a nice popup or toast library
@@ -33,7 +33,7 @@ const CuratorGamePage: FunctionComponent = () => {
         break;
       default:
     }
-  }, []);
+  };
 
   useRoomMessage(curatorMessageHandler);
 
