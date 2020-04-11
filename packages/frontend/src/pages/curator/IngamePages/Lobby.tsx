@@ -2,6 +2,7 @@ import 'styled-components/macro';
 
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
+import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { PlayerBackground } from 'src/components/PlayerBackground';
@@ -30,8 +31,15 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
         <Box width="medium" align="center">
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
-          <Box align="center">
-            <Paragraph data-testid="roomID">Room ID : {roomCode}</Paragraph>
+          <Box align="center" margin="medium">
+            <Heading level="3" data-testid="roomID">
+              Room: {roomCode}
+            </Heading>
+            <Paragraph>Quick join QR code</Paragraph>
+            <QR
+              value={`${process.env.REACT_APP_BACKEND_URL}/join/${roomCode}`}
+              about={`Join room ${roomCode}`}
+            ></QR>
           </Box>
           <Button
             alignSelf="center"
