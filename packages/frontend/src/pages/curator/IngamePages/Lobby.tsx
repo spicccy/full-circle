@@ -13,7 +13,9 @@ interface ILobbyProps {
 }
 
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
-  const { roomCode, leaveRoom } = useRoom();
+  const { syncedState, roomCode, leaveRoom } = useRoom();
+
+  const nPlayers = Object.keys(syncedState?.players ?? {}).length;
 
   return (
     <Box css={{ position: 'relative' }} fill>
@@ -37,6 +39,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
             icon={<Add />}
             onClick={startGame}
             data-testid="startGame"
+            disabled={nPlayers < 3}
           />
         </Box>
       </Box>

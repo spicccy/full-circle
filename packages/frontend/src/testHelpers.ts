@@ -1,3 +1,4 @@
+import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { Room } from 'colyseus.js';
 
 export const mocked = <T extends (...args: any[]) => any>(
@@ -9,13 +10,12 @@ export const mocked = <T extends (...args: any[]) => any>(
   return f;
 };
 
-export const partialMock = <R, T extends R = R>(mock: Partial<T>): R => {
-  return mock as R;
-};
-
 export const mockRoom = partialMock<Room>({
   id: 'roomId',
   onStateChange: jest.fn().mockReturnValue({
+    clear: jest.fn(),
+  }) as any,
+  onMessage: jest.fn().mockReturnValue({
     clear: jest.fn(),
   }) as any,
   onLeave: jest.fn().mockReturnValue({

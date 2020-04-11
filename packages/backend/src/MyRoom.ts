@@ -15,7 +15,7 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     console.log(`MyRoom ${this.roomId} created with code ${roomCode}.`);
 
     // Create a new state instance
-    this.setState(new RoomState(this.clock));
+    this.setState(new RoomState(this));
   }
 
   onJoin(client: IClient, options: IJoinOptions) {
@@ -25,7 +25,6 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   onMessage(client: IClient, message: ClientAction) {
     this.state.onReceive(client, message);
-    console.log(`[${client.id}] ${JSON.stringify(message)}.`);
   }
 
   onLeave(client: IClient, consented: boolean) {

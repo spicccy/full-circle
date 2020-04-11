@@ -21,9 +21,8 @@ const Debug = styled.pre`
 export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
   debug,
 }) => {
-  const [messages, setMessages] = useState<string[]>([]);
-
   const { room, roomCode, syncedState } = useRoom();
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     setMessages([]);

@@ -1,3 +1,4 @@
+import { ServerAction } from '@full-circle/shared/lib/actions';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import {
@@ -11,6 +12,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import invariant from 'tiny-invariant';
@@ -88,25 +90,20 @@ const getRoomFailureState = (roomError: string): IRoomFailureState => ({
   roomError,
 });
 
+type MessageListener = (message: ServerAction) => void;
+type LeaveListener = (code: number) => void;
+type RemoveListener = () => void;
+
 interface IRoomContext {
   syncedState?: IRoomStateSynced;
   createAndJoinRoom(): Promise<IRoom | null>;
   joinRoomByCode(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
   leaveRoom(): void;
+  addMessageListener(listener: MessageListener): RemoveListener;
+  addLeaveListener(listener: LeaveListener): RemoveListener;
 }
 
-export const RoomContext = createContext<IRoomContext & RoomState>({
-  ...getRoomEmptyState(),
-  createAndJoinRoom: async () => {
-    throw new Error('Uninitialised room');
-  },
-  joinRoomByCode: async (_roomId: string) => {
-    throw new Error('Uninitialised room');
-  },
-  leaveRoom: () => {
-    throw new Error('Uninitialised room');
-  },
-});
+export const RoomContext = createContext<IRoomContext & RoomState>(null as any);
 
 export const useRoom = () => useContext(RoomContext);
 
@@ -114,6 +111,8 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   const colyseus = useColyseus();
   const [roomState, setRoomState] = useState<RoomState>(getRoomEmptyState());
   const [syncedState, setSyncedState] = useState<IRoomStateSynced>();
+  const onMessageListeners = useRef(new Set<MessageListener>());
+  const onLeaveListeners = useRef(new Set<LeaveListener>());
 
   const createAndJoinRoom = useCallback(async (): Promise<IRoom | null> => {
     setRoomState(getRoomLoadingState());
@@ -181,19 +180,43 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     });
   }, []);
 
+  const addMessageListener = useCallback(
+    (listener: MessageListener): RemoveListener => {
+      onMessageListeners.current.add(listener);
+      return () => onMessageListeners.current.delete(listener);
+    },
+    []
+  );
+
+  const addLeaveListener = useCallback(
+    (listener: LeaveListener): RemoveListener => {
+      onLeaveListeners.current.add(listener);
+      return () => onLeaveListeners.current.delete(listener);
+    },
+    []
+  );
+
   useEffect(() => {
     setSyncedState(roomState.room?.state?.toJSON());
     if (roomState.room) {
-      const listener = roomState.room.onStateChange((newState) =>
-        setSyncedState(newState?.toJSON())
-      );
+      const stateListener = roomState.room.onStateChange((newState) => {
+        setSyncedState(newState?.toJSON());
+      });
 
-      const leaveListener = roomState.room.onLeave(leaveRoom);
+      const messageListener = roomState.room.onMessage((message) => {
+        onMessageListeners.current.forEach((listener) => listener(message));
+      });
+
+      const leaveListener = roomState.room.onLeave((message) => {
+        onLeaveListeners.current.forEach((listener) => listener(message));
+        leaveRoom();
+      });
 
       return () => {
-        listener.clear();
+        stateListener.clear();
+        messageListener.clear();
         leaveListener.clear();
-        roomState.room?.leave();
+        roomState.room.leave();
       };
     }
   }, [leaveRoom, roomState.room]);
@@ -204,6 +227,8 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     createAndJoinRoom,
     joinRoomByCode,
     leaveRoom,
+    addMessageListener,
+    addLeaveListener,
   };
 
   return (

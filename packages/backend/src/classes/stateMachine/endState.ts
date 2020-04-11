@@ -1,19 +1,20 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 
 class EndState implements IState {
-  constructor(private room: IRoomStateBackend) {}
+  constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = () => {
-    throw new Error('Game has already started');
+    throw new Error(Warning.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.room.removePlayer(client.id);
+    this.roomState.removePlayer(client.id);
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
@@ -21,14 +22,14 @@ class EndState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    if (clientId === this.room.getCurator()) {
+    if (clientId === this.roomState.getCurator()) {
       this.advanceState();
     }
   };
 
   onStateStart = () => {
-    this.room.setPhase(new Phase(PhaseType.END));
-    this.room.clearSubmittedPlayers();
+    this.roomState.setPhase(new Phase(PhaseType.END));
+    this.roomState.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {

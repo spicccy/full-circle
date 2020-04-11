@@ -1,4 +1,5 @@
 [build]
-    command = "yarn build:FE"
+    command = "lerna run build --stream"
     publish = "packages/frontend/build"
-    environment = { REACT_APP_BACKEND_URL="wss://full-circle-backend.herokuapp.com" }
+    environment = { REACT_APP_BACKEND_URL="wss://full-circle-backend.herokuapp.com", REACT_APP_HIDE_DEBUG="hide", REACT_APP_BACKEND_LOCALHOST="false" }
+

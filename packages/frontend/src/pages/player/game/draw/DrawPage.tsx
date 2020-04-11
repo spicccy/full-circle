@@ -14,19 +14,18 @@ import { CanvasCard } from './CanvasCard';
 import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
-interface IDrawPageProps {
-  prompt: string;
-  promptBy: string;
-}
-
-const DrawPage: FunctionComponent<IDrawPageProps> = ({ prompt, promptBy }) => {
-  const { room } = useRoom();
+const DrawPage: FunctionComponent = () => {
+  const { room, syncedState } = useRoom();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [pen, setPen] = useState<Pen>({
     type: PenType.SOLID,
     penColour: Colour.BLACK,
     penThickness: PenThickness.MEDIUM,
   });
+
+  const id = room?.sessionId;
+  const roundData = syncedState?.roundData;
+  const prompt = roundData?.find((link) => link.id === id)?.data ?? '';
 
   const handleSubmitDrawing = () => {
     room?.send(submitDrawing(canvasActions));
@@ -42,7 +41,7 @@ const DrawPage: FunctionComponent<IDrawPageProps> = ({ prompt, promptBy }) => {
       pad="medium"
     >
       <Box width="medium" margin={{ bottom: 'medium' }}>
-        <PromptCard prompt={prompt} promptBy={promptBy} />
+        <PromptCard prompt={prompt} />
       </Box>
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <CanvasCard

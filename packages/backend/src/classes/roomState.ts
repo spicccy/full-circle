@@ -1,5 +1,6 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -7,10 +8,12 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
   IRoomStateSynced,
+  Warning,
 } from '@full-circle/shared/lib/roomState/interfaces';
-import { isThrowStatement } from 'typescript';
+import { Client } from 'colyseus';
 
-import { IClient, IClock } from '../interfaces';
+import { MAX_PLAYERS } from '../constants';
+import { IClient, IClock, IRoom } from '../interfaces';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -21,6 +24,7 @@ import Chain from './subSchema/chain';
 import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
+import RoundData from './subSchema/roundData';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -45,10 +49,12 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: IPlayer) => void;
+  addPlayer: (player: IPlayer) => Warning | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
+
+  sendWarning: (clientID: string, warning: Warning) => void;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -60,12 +66,16 @@ export interface IRoomStateBackend {
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
 
+  setCurrDrawings: () => void;
+  setCurrPrompts: () => void;
+
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
   setRevealState: () => void;
   setEndState: () => void;
   setLobbyState: () => void;
 
+  readonly allPlayersSubmitted: boolean;
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
 }
@@ -73,9 +83,11 @@ export interface IRoomStateBackend {
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
+  clock: IClock;
 
-  constructor(public clock: IClock) {
+  constructor(private room: IRoom) {
     super();
+    this.clock = room.clock;
   }
 
   //==================================================================================
@@ -102,6 +114,12 @@ class RoomState extends Schema
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
 
+  @type([RoundData])
+  roundData = new ArraySchema<RoundData>();
+
+  @type({ map: 'string' })
+  warnings = new MapSchema<string>();
+
   // =====================================
   // IRoomStateBackend Api
   // =====================================
@@ -113,9 +131,26 @@ class RoomState extends Schema
     return this.curator;
   };
 
-  addPlayer = (player: IPlayer): void => {
+  getClient = (clientId: string): Client | undefined => {
+    return this.room.clients.find((client) => client.id === clientId);
+  };
+
+  addPlayer = (player: IPlayer): Warning | null => {
+    if (this.numPlayers >= MAX_PLAYERS) {
+      return Warning.TOO_MANY_PLAYERS;
+    }
+
+    for (const id in this.players) {
+      const existingPlayer: Player = this.players[id];
+      if (player.username === existingPlayer.username) {
+        return Warning.CONFLICTING_USERNAMES;
+      }
+    }
+
     const { id } = player;
     this.players[id] = player;
+    this.submittedPlayers[id] = false;
+    return null;
   };
 
   removePlayer = (playerId: string) => {
@@ -124,11 +159,20 @@ class RoomState extends Schema
       this.currState = new EndState(this);
     }
     delete this.players[playerId];
+    delete this.submittedPlayers[playerId];
   };
 
   getPlayer = (id: string): IPlayer => {
     return this.players[id];
   };
+
+  get numPlayers() {
+    return Object.keys(this.players).length;
+  }
+
+  get allPlayersSubmitted(): boolean {
+    return objectValues(this.submittedPlayers).every(Boolean);
+  }
 
   addSubmittedPlayer = (id: string): void => {
     this.submittedPlayers[id] = true;
@@ -140,9 +184,12 @@ class RoomState extends Schema
     }
   };
 
-  get numPlayers() {
-    return Object.keys(this.players).length;
-  }
+  sendWarning = (clientId: string, warning: Warning) => {
+    const client = this.getClient(clientId);
+    if (client) {
+      this.room.send(client, warn(warning));
+    }
+  };
 
   incrementRound = () => {
     this.round += 1;
@@ -208,6 +255,28 @@ class RoomState extends Schema
       }
     }
     return false;
+  };
+
+  setCurrPrompts = () => {
+    this.roundData = new ArraySchema<RoundData>();
+    const round = this.round - 1;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const data = chain.getLinks[round].prompt.text;
+      const id = chain.getLinks[round].image.playerId;
+      this.roundData.push(new RoundData(id, data));
+    }
+  };
+
+  setCurrDrawings = () => {
+    this.roundData = new ArraySchema<RoundData>();
+    const round = this.round - 1;
+    const chains = this.chains;
+    for (const chain of chains) {
+      const data = chain.getLinks[round].image.imageData;
+      const id = chain.getLinks[round + 1].prompt.playerId;
+      this.roundData.push(new RoundData(id, data));
+    }
   };
 
   get gameIsOver() {
