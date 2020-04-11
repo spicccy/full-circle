@@ -10,6 +10,7 @@ import {
   IRoomStateSynced,
   Warning,
 } from '@full-circle/shared/lib/roomState/interfaces';
+import { Client } from 'colyseus';
 
 import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
@@ -47,8 +48,6 @@ export interface IRoomStateBackend {
   readonly clock: IClock;
   setCurator: (id: string) => void;
   getCurator: () => string;
-
-  getClient: (clientId: string) => IClient | undefined;
 
   addPlayer: (player: IPlayer) => Warning | null;
   removePlayer: (playerId: string) => void;
@@ -131,7 +130,7 @@ class RoomState extends Schema
     return this.curator;
   };
 
-  getClient = (clientId: string): IClient | undefined => {
+  getClient = (clientId: string): Client | undefined => {
     return this.room.clients.find((client) => client.id === clientId);
   };
 

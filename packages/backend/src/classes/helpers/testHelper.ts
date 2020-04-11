@@ -1,5 +1,3 @@
-import { partialMock } from '@full-circle/shared/lib/testHelpers';
-
 import { IClient, IClock, IRoom } from '../../interfaces';
 import RoomState from '../roomState';
 
@@ -15,13 +13,13 @@ export const mockRoom: IRoom = {
   clients: [],
 };
 
-export const mockClient: IClient = partialMock<IClient>({
+export const mockClient: IClient = {
   id: '',
   sessionId: '',
   close: () => {
     return;
   },
-});
+};
 
 export const addPlayers = (roomState: RoomState, nPlayers: number) => {
   for (let i = 0; i < nPlayers; i++) {

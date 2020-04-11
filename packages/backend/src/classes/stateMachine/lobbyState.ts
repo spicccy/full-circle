@@ -61,16 +61,15 @@ class LobbyState implements IState {
   };
 
   validateLobby = (): boolean => {
-    let retval = true;
     if (this.roomState.numPlayers < 3) {
       this.roomState.sendWarning(
         this.roomState.getCurator(),
         Warning.NOT_ENOUGH_PLAYERS
       );
-      retval = false;
+      return false;
     }
 
-    return retval;
+    return true;
   };
 
   advanceState = () => {

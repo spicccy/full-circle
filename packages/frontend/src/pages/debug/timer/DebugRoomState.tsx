@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import Draggable from 'react-draggable';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
@@ -18,7 +18,9 @@ const Debug = styled.pre`
   z-index: 5;
 `;
 
-export const DebugRoomState: React.FC<{ debug?: boolean }> = ({ debug }) => {
+export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
+  debug,
+}) => {
   const { room, roomCode, syncedState } = useRoom();
 
   const messages = useRoomMessage();

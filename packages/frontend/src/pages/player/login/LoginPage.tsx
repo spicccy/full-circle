@@ -1,7 +1,13 @@
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { stat } from 'fs';
 import { Box, Text } from 'grommet';
-import React, { Reducer, useEffect, useReducer, useState } from 'react';
+import React, {
+  FunctionComponent,
+  Reducer,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -41,7 +47,7 @@ const errorReducer: ErrorReducer = (currState, action) => {
   }
 };
 
-const LoginPage: React.FC = () => {
+const LoginPage: FunctionComponent = () => {
   const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
 
