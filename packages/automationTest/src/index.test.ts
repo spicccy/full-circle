@@ -1,4 +1,4 @@
-import { Page, BoundingBox } from 'puppeteer';
+import { BoundingBox, Page } from 'puppeteer';
 
 let imgCounter = 0;
 let dir = 'create_and_join_game';
@@ -23,7 +23,7 @@ const joinGame = async (
   playerName: string,
   roomCode: string,
   newPage: Page,
-  isScreenshot: Boolean
+  isScreenshot: boolean
 ) => {
   await newPage.goto('localhost:3000/');
   await newPage.waitForSelector('[data-testid=playerNameInput]');
