@@ -37,17 +37,17 @@ describe('Full Circle', () => {
     await page.screenshot({
       path: screenshotName('lobby_no_players.png'),
     });
-    await expect(page).toMatch('Room ID');
+    await expect(page).toMatch('Room');
   });
 
   it('should be able to join the room with another browser instance', async () => {
-    await page.waitForXPath("//p[@data-testid='roomID']");
-    const [element] = await page.$x("//p[@data-testid='roomID']");
+    await page.waitForXPath("//h3[@data-testid='roomID']");
+    const [element] = await page.$x("//h3[@data-testid='roomID']");
     const codeString = await page.evaluate(
       (element) => element.textContent,
       element
     );
-    const roomCode = codeString.replace('Room ID : ', '');
+    const roomCode = codeString.replace('Room: ', '');
     const context1 = await browser.createIncognitoBrowserContext();
     const playerPage1 = await context1.newPage();
     await joinGame('Player 1', roomCode, playerPage1, true);
