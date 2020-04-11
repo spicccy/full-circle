@@ -53,3 +53,10 @@ export interface IRoomStateSynced {
   submittedPlayers: Record<string, boolean>;
   roundData: IRoundData[];
 }
+
+export enum Warning {
+  TOO_MANY_PLAYERS = 'The room is already full',
+  GAME_ALREADY_STARTED = 'The game has already started',
+  CONFLICTING_USERNAMES = 'That username has already been taken for this room',
+  NOT_ENOUGH_PLAYERS = 'You need at least three players to join this room',
+}

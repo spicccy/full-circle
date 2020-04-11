@@ -1,6 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
@@ -12,15 +13,15 @@ class DrawState implements IState {
   private readyPlayers = new Set<string>();
   private timerHandle: Delayed | undefined;
 
-  constructor(private room: IRoomStateBackend) {}
+  constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = () => {
-    throw new Error('Game has already started');
+    throw new Error(Warning.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
     this.readyPlayers.delete(client.id);
-    this.room.removePlayer(client.id);
+    this.roomState.removePlayer(client.id);
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
@@ -28,7 +29,7 @@ class DrawState implements IState {
       case getType(submitDrawing): {
         const drawing = message.payload;
         const id = client.id;
-        this.room.storeDrawing(id, drawing);
+        this.roomState.storeDrawing(id, drawing);
         this.onClientReady(id);
         return;
       }
@@ -37,19 +38,21 @@ class DrawState implements IState {
 
   onClientReady = (clientId: string) => {
     this.readyPlayers.add(clientId);
-    if (this.readyPlayers.size >= this.room.numPlayers) {
+    if (this.readyPlayers.size >= this.roomState.numPlayers) {
       this.advanceState();
     }
   };
 
   onStateStart = () => {
-    this.room.setPhase(new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH));
+    this.roomState.setPhase(
+      new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH)
+    );
     this.readyPlayers.clear();
-    this.timerHandle = this.room.clock.setTimeout(
+    this.timerHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       DEFAULT_DRAW_PHASE_LENGTH
     );
-    this.room.clearSubmittedPlayers();
+    this.roomState.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {
@@ -57,12 +60,12 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
-    if (this.room.gameIsOver) {
-      this.room.setRevealState();
+    if (this.roomState.gameIsOver) {
+      this.roomState.setRevealState();
       return;
     }
-    this.room.setCurrDrawings();
-    this.room.setGuessState();
+    this.roomState.setCurrDrawings();
+    this.roomState.setGuessState();
   };
 }
 

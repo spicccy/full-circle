@@ -1,29 +1,32 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 
-import { addPlayers, mockClock } from '../../helpers/testHelper';
+import { IRoom } from '../../../interfaces';
+import { addPlayers, mockRoom } from '../../helpers/testHelper';
 import RoomState from '../../roomState';
 
 describe('Guess State', () => {
-  let room: RoomState;
+  let roomState: RoomState;
+  let room: IRoom;
 
   beforeEach(() => {
-    room = new RoomState(mockClock);
-    addPlayers(room, 8);
-    room.advanceState();
-    room.advanceState();
+    room = mockRoom;
+    roomState = new RoomState(room);
+    addPlayers(roomState, 8);
+    roomState.advanceState();
+    roomState.advanceState();
   });
 
   it('has a matching phaseType', () => {
-    expect(room.phase.phaseType).toBe(PhaseType.GUESS);
+    expect(roomState.phase.phaseType).toBe(PhaseType.GUESS);
   });
 
   it('has a timer', () => {
-    expect(room.phase.phaseEnd).toBeGreaterThan(0);
+    expect(roomState.phase.phaseEnd).toBeGreaterThan(0);
   });
 
   it('advances to draw phase', () => {
-    room.advanceState();
-    expect(room.phase.phaseType).toBe(PhaseType.DRAW);
-    expect(room.round).toBe(2);
+    roomState.advanceState();
+    expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
+    expect(roomState.round).toBe(2);
   });
 });
