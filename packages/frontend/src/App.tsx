@@ -9,6 +9,7 @@ import { RoomProvider } from './contexts/RoomContext';
 import {
   CreatePage,
   CuratorGamePage,
+  Error404,
   Instructions,
   LoginPage,
   PlayerGamePage,
@@ -35,6 +36,7 @@ export const App: FunctionComponent = () => {
               <Route exact path="/curator" component={CuratorGamePage} />
               <Route exact path="/instructions" component={Instructions} />
               <Route exact path="/team" component={Team} />
+              <Route path="/" component={Error404} />
             </Switch>
           </ToastProvider>
         </Grommet>
