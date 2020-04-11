@@ -1,6 +1,7 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
 import { Box } from 'grommet';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { DrawingCard } from './DrawingCard';
@@ -8,6 +9,9 @@ import { GuessCard } from './GuessCard';
 
 const GuessPage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
+  const [submitted, setSubmitted] = useState(false);
+
+  const { addToast } = useToasts();
 
   const id = room?.sessionId;
   const roundData = syncedState?.roundData;
@@ -16,6 +20,8 @@ const GuessPage: FunctionComponent = () => {
 
   const handleSubmit = (guess: string) => {
     room?.send(submitGuess(guess));
+    setSubmitted(true);
+    addToast('Submitted Guess', { appearance: 'success' });
   };
 
   return (
@@ -31,7 +37,7 @@ const GuessPage: FunctionComponent = () => {
         <DrawingCard drawing={drawing} />
       </Box>
       <Box width="medium">
-        <GuessCard onSubmitGuess={handleSubmit} />
+        <GuessCard submitted={submitted} onSubmitGuess={handleSubmit} />
       </Box>
     </Box>
   );

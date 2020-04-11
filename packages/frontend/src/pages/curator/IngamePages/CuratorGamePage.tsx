@@ -1,7 +1,7 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Fragment, FunctionComponent, useState } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
