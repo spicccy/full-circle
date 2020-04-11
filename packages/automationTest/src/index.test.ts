@@ -1,48 +1,10 @@
-import { Page } from 'puppeteer';
-let imgCounter = 0;
-
-function screenshotName(name: string) {
-  imgCounter += 1;
-  return 'screenshots/create_and_join_game/'
-    .concat(imgCounter.toString(10))
-    .concat('_')
-    .concat(name)
-    .concat('.png');
-}
-
-const joinGame = async (
-  playerName: string,
-  roomCode: string,
-  newPage: Page,
-  isScreenshot: boolean
-) => {
-  await newPage.goto('localhost:3000/');
-  await newPage.waitForSelector('[data-testid=playerNameInput]');
-  await newPage.click('input[data-testid=playerNameInput]');
-  await newPage.type('input[data-testid=playerNameInput]', playerName);
-  await newPage.click('input[data-testid=roomCodeInput]');
-  await newPage.type('input[data-testid=roomCodeInput]', roomCode);
-  if (isScreenshot) {
-    await newPage.screenshot({
-      path: screenshotName('player_login'),
-    });
-  }
-  await Promise.all([
-    newPage.click('[data-testid=joinRoom]'),
-    newPage.waitForNavigation({ waitUntil: 'networkidle0' }),
-  ]);
-  if (isScreenshot) {
-    await newPage.screenshot({
-      path: screenshotName('player_joined_room.png'),
-    });
-  }
-  await expect(newPage).toMatch('Joined room');
-};
+import { drawImage } from './drawingAutomation';
+import { makeGuess } from './guessingAutomation';
+import { changeDir, joinGame, screenshotName } from './lobbyAutomation';
 
 describe('Full Circle', () => {
   beforeAll(async () => {
-    jest.setTimeout(20000);
-    page.setDefaultTimeout(5000);
+    jest.setTimeout(200000);
     await page.goto('localhost:3000/');
   });
 
@@ -75,22 +37,25 @@ describe('Full Circle', () => {
     await page.screenshot({
       path: screenshotName('lobby_no_players.png'),
     });
-    await expect(page).toMatch('Room ID');
+    await expect(page).toMatch('Room');
   });
 
   it('should be able to join the room with another browser instance', async () => {
-    await page.waitForXPath("//p[@data-testid='roomID']");
-    const [element] = await page.$x("//p[@data-testid='roomID']");
+    await page.waitForXPath("//h3[@data-testid='roomID']");
+    const [element] = await page.$x("//h3[@data-testid='roomID']");
     const codeString = await page.evaluate(
       (element) => element.textContent,
       element
     );
-    const roomCode = codeString.replace('Room ID : ', '');
-    const playerPage1 = await browser.newPage();
+    const roomCode = codeString.replace('Room: ', '');
+    const context1 = await browser.createIncognitoBrowserContext();
+    const playerPage1 = await context1.newPage();
     await joinGame('Player 1', roomCode, playerPage1, true);
-    const playerPage2 = await browser.newPage();
+    const context2 = await browser.createIncognitoBrowserContext();
+    const playerPage2 = await context2.newPage();
     await joinGame('Player 2', roomCode, playerPage2, false);
-    const playerPage3 = await browser.newPage();
+    const context3 = await browser.createIncognitoBrowserContext();
+    const playerPage3 = await context3.newPage();
     await joinGame('Player 3', roomCode, playerPage3, false);
     await page.screenshot({
       path: screenshotName('lobby_with_player.png'),
@@ -98,5 +63,24 @@ describe('Full Circle', () => {
     await expect(page).toMatch('Player 1');
     await expect(page).toMatch('Player 2');
     await expect(page).toMatch('Player 3');
+
+    changeDir('draw_guess_round_1');
+    await page.waitForSelector("[data-testid='startGame']");
+    await page.click("[data-testid='startGame']");
+    await page.waitForSelector("[data-testid='curatorTimer']");
+    await drawImage(playerPage1, 'drawing_player_1', 'red (e)');
+    await drawImage(playerPage2, 'drawing_player_2', 'yellow (r)');
+    await drawImage(playerPage3, 'drawing_player_3', 'blue (g)');
+    await makeGuess(playerPage1, 'guess_player_1.', 'Guess 1_1');
+    await makeGuess(playerPage2, 'guess_player_2.', 'Guess 2_1');
+    await makeGuess(playerPage3, 'guess_player_3.', 'Guess 3_1');
+
+    changeDir('draw_guess_round_2');
+    await drawImage(playerPage1, 'drawing_player_1', 'green (t)');
+    await drawImage(playerPage2, 'drawing_player_2', 'purple (y)');
+    await drawImage(playerPage3, 'drawing_player_3', 'orange (d)');
+
+    changeDir('end_game');
+    await page.waitForSelector("[data-testid='endMessage']");
   });
 });

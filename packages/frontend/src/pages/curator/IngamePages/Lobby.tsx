@@ -51,6 +51,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
             label="Start Game"
             icon={<Launch />}
             onClick={startGame}
+            data-testid="startGame"
             disabled={nPlayers < 3}
             size="large"
           />
