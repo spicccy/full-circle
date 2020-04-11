@@ -18,6 +18,9 @@ export const mockRoom = partialMock<Room>({
   onStateChange: jest.fn().mockReturnValue({
     clear: jest.fn(),
   }) as any,
+  onMessage: jest.fn().mockReturnValue({
+    clear: jest.fn(),
+  }) as any,
   onLeave: jest.fn().mockReturnValue({
     clear: jest.fn(),
   }) as any,
