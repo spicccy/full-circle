@@ -57,7 +57,7 @@ class LobbyState implements IState {
   };
 
   onStateEnd = () => {
-    return;
+    this.room.clearSubmittedPlayers();
   };
 
   validateLobby = (): boolean => {
