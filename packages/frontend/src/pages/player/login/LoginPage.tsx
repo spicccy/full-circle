@@ -50,8 +50,6 @@ const LoginPage: FunctionComponent = () => {
   const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
 
-  console.log('url_params', params);
-
   const [name, setName] = useState(localStorage.getItem('username') ?? '');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
 
