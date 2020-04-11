@@ -3,9 +3,9 @@ import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Car, Home } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Card } from 'src/components/Card/Card';
+import { LinkButton } from 'src/components/Link/LinkButton';
 
-import { Card } from '../../components/Card/Card';
-import { LinkButton } from '../../components/Link/LinkButton';
 import TaxiImage from './Taxi';
 
 const Error404: FunctionComponent = () => {

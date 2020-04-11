@@ -1,5 +1,3 @@
-import 'styled-components/macro';
-
 import { Colour } from '@full-circle/shared/lib/canvas';
 import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
@@ -25,13 +23,13 @@ const Animator = styled('svg')<{ duration: string; delay: string }>`
     animation-timing-function: ease-in-out;
     animation-delay: ${props.delay};
     color: ${Colour.BLUE};
+    opacity: 0;
   `}
 `;
 
 const Icon: React.FC<{ duration: string }> = ({ duration }) => {
   return (
     <Animator
-      css={{ opacity: 0 }}
       duration={duration}
       delay="0s"
       xmlns="http://www.w3.org/2000/svg"
