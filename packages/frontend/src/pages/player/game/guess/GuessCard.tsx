@@ -29,6 +29,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           css={{ textAlign: 'center', fontSize: '32px' }}
+          data-testid="guessBox"
         />
       </BorderBottom>
       <Box>
