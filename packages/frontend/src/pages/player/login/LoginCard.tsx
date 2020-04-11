@@ -28,7 +28,8 @@ interface ILoginCardProps {
   setName(name: string): void;
   setRoomCode(roomCode: string): void;
   attemptToJoinRoom(): void;
-  error?: 'username' | 'roomCode';
+  usernameError?: boolean;
+  roomCodeError?: boolean;
 }
 
 const LoginCard: FunctionComponent<ILoginCardProps> = ({
@@ -37,7 +38,8 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   setName,
   setRoomCode,
   attemptToJoinRoom,
-  error,
+  usernameError,
+  roomCodeError,
 }) => {
   const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
@@ -47,6 +49,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   };
 
   const [loading, setLoading] = useState(false);
+  const error = usernameError || roomCodeError;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -68,7 +71,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           <Text
             size="xlarge"
             margin={{ right: 'small' }}
-            color={error === 'username' ? Colour.RED : undefined}
+            color={usernameError ? Colour.RED : undefined}
           >
             Name:
           </Text>
@@ -86,7 +89,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           <Text
             size="xlarge"
             margin={{ right: 'small' }}
-            color={error === 'roomCode' ? Colour.RED : undefined}
+            color={roomCodeError ? Colour.RED : undefined}
           >
             Room:
           </Text>

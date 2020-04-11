@@ -18,10 +18,6 @@ class LobbyState implements IState {
     const username = options.username;
     const clientId = client.id;
 
-    if (this.roomState.numPlayers >= MAX_PLAYERS) {
-      throw new Error(Warning.TOO_MANY_PLAYERS);
-    }
-
     if (!this.roomState.getCurator()) {
       this.roomState.setCurator(clientId);
       return;
@@ -33,7 +29,6 @@ class LobbyState implements IState {
       throw new Error(error);
     }
 
-    this.roomState.addClient(client);
     this.roomState.addSubmittedPlayer(player.id);
   };
 
@@ -51,7 +46,7 @@ class LobbyState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    if (clientId === this.roomState.getCurator()) {
+    if (clientId === this.roomState.getCurator() && this.validateLobby()) {
       this.advanceState();
     }
   };
@@ -79,12 +74,10 @@ class LobbyState implements IState {
   };
 
   advanceState = () => {
-    if (this.validateLobby()) {
-      this.roomState.allocate();
-      this.roomState.incrementRound();
-      this.roomState.setCurrPrompts();
-      this.roomState.setDrawState();
-    }
+    this.roomState.allocate();
+    this.roomState.incrementRound();
+    this.roomState.setCurrPrompts();
+    this.roomState.setDrawState();
   };
 }
 

@@ -52,7 +52,6 @@ export interface IRoomStateSynced {
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
   roundData: IRoundData[];
-  warnings: Record<string, string>;
 }
 
 export enum Warning {

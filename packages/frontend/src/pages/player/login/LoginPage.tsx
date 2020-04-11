@@ -1,6 +1,7 @@
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { stat } from 'fs';
 import { Box, Text } from 'grommet';
-import React, { useEffect, useState } from 'react';
+import React, { Reducer, useEffect, useReducer, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -11,6 +12,35 @@ interface ILoginPageParams {
   roomCode?: string;
 }
 
+type LoginPageErrorState = {
+  username: boolean;
+  roomCode: boolean;
+  connection: boolean;
+};
+
+const initialErrorState: LoginPageErrorState = {
+  username: false,
+  roomCode: false,
+  connection: false,
+};
+
+type ErrorAction =
+  | { type: 'setError'; on: keyof LoginPageErrorState }
+  | { type: 'clearError'; on: keyof LoginPageErrorState };
+
+type ErrorReducer = Reducer<LoginPageErrorState, ErrorAction>;
+
+const errorReducer: ErrorReducer = (currState, action) => {
+  switch (action.type) {
+    case 'setError':
+      currState[action.on] = true;
+      return { ...currState };
+    case 'clearError':
+      currState[action.on] = false;
+      return { ...currState };
+  }
+};
+
 const LoginPage: React.FC = () => {
   const { room, joinRoomByCode, roomError } = useRoom();
   const params = useParams<ILoginPageParams>();
@@ -18,8 +48,9 @@ const LoginPage: React.FC = () => {
   const [name, setName] = useState(localStorage.getItem('username') ?? '');
   const [roomCode, setRoomCode] = useState(params.roomCode ?? '');
 
-  const [error, setError] = useState<'username' | 'roomCode' | undefined>(
-    undefined
+  const [errorState, dispatchError] = useReducer<ErrorReducer>(
+    errorReducer,
+    initialErrorState
   );
 
   const attemptToJoinRoom = async () => {
@@ -30,9 +61,9 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (roomError) {
       if (roomError === Warning.CONFLICTING_USERNAMES) {
+        dispatchError({ type: 'setError', on: 'username' });
         localStorage.removeItem('username');
         setName('');
-        setError('username');
       }
 
       // TODO: fix this raf hack
@@ -62,11 +93,18 @@ const LoginPage: React.FC = () => {
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <LoginCard
           name={name}
-          setName={setName}
+          setName={(name: string) => {
+            dispatchError({ type: 'clearError', on: 'username' });
+            setName(name);
+          }}
           roomCode={roomCode}
-          setRoomCode={setRoomCode}
+          setRoomCode={(code: string) => {
+            dispatchError({ type: 'clearError', on: 'roomCode' });
+            setRoomCode(code);
+          }}
           attemptToJoinRoom={attemptToJoinRoom}
-          error={error}
+          usernameError={errorState.username}
+          roomCodeError={errorState.roomCode}
         />
       </Box>
       <Text>

@@ -1,7 +1,6 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { mocked } from 'ts-jest/utils';
 
-import { IRoom } from '../../interfaces';
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import { getAllocation } from './../../util/sortPlayers/sortPlayers';
@@ -186,11 +185,9 @@ describe('Room state', () => {
 
   describe('should send the correct round', () => {
     let roomState: RoomState;
-    let room: IRoom;
 
     beforeEach(() => {
-      room = mockRoom;
-      roomState = new RoomState(room);
+      roomState = new RoomState(mockRoom);
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],

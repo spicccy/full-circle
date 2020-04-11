@@ -1,5 +1,6 @@
+import { partialMock } from '@full-circle/shared/lib/testHelpers';
+
 import { IClient, IClock, IRoom } from '../../interfaces';
-import { partialMock } from '../../util/test/helpers';
 import RoomState from '../roomState';
 
 export const mockClock: IClock = {
@@ -8,9 +9,11 @@ export const mockClock: IClock = {
   }),
 };
 
-export const mockRoom: IRoom = partialMock<IRoom>({
+export const mockRoom: IRoom = {
   clock: mockClock,
-});
+  send: jest.fn(),
+  clients: [],
+};
 
 export const mockClient: IClient = partialMock<IClient>({
   id: '',

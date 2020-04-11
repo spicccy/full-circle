@@ -15,7 +15,7 @@ interface ILobbyProps {
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { syncedState, roomCode, leaveRoom } = useRoom();
 
-  const nPlayers = Object.keys(syncedState?.players || {}).length;
+  const nPlayers = Object.keys(syncedState?.players ?? {}).length;
 
   return (
     <Box css={{ position: 'relative' }} fill>

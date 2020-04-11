@@ -1,13 +1,12 @@
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { IPlayer, Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { mocked } from 'ts-jest/utils';
 
 import { MAX_PLAYERS } from '../../../constants';
 import { IClient, IRoom } from '../../../interfaces';
-import { MyRoom } from '../../../MyRoom';
-import { partialMock } from '../../../util/test/helpers';
-import { mockClient, mockClock, mockRoom } from '../../helpers/testHelper';
+import { mockClient, mockRoom } from '../../helpers/testHelper';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
 import { getAllocation } from './../../../util/sortPlayers/sortPlayers';

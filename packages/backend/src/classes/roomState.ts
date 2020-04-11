@@ -10,10 +10,9 @@ import {
   IRoomStateSynced,
   Warning,
 } from '@full-circle/shared/lib/roomState/interfaces';
-import invariant from 'tiny-invariant';
 
+import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
-import { MyRoom } from '../MyRoom';
 import { getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -49,9 +48,7 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addClient: (client: IClient) => void;
-  removeClient: (clientId: string) => void;
-  getClient: (clientId: string) => IClient;
+  getClient: (clientId: string) => IClient | undefined;
 
   addPlayer: (player: IPlayer) => Warning | null;
   removePlayer: (playerId: string) => void;
@@ -123,8 +120,6 @@ class RoomState extends Schema
   @type({ map: 'string' })
   warnings = new MapSchema<string>();
 
-  clients = new Map<string, IClient>();
-
   // =====================================
   // IRoomStateBackend Api
   // =====================================
@@ -136,28 +131,15 @@ class RoomState extends Schema
     return this.curator;
   };
 
-  addClient = (client: IClient) => {
-    this.clients.set(client.id, client);
-  };
-
-  removeClient = (clientId: string) => {
-    this.clients.delete(clientId);
-  };
-
-  getClient = (clientId: string): IClient => {
-    const maybeClient = this.clients.get(clientId);
-    if (maybeClient) return maybeClient;
-
-    // if we can't find a particular client, fallback to messaging the curator
-    const maybeCurator = this.clients.get(this.curator);
-    invariant(
-      maybeCurator,
-      "There's no players or curator clients in this room"
-    );
-    return maybeCurator;
+  getClient = (clientId: string): IClient | undefined => {
+    return this.room.clients.find((client) => client.id === clientId);
   };
 
   addPlayer = (player: IPlayer): Warning | null => {
+    if (this.numPlayers >= MAX_PLAYERS) {
+      return Warning.TOO_MANY_PLAYERS;
+    }
+
     for (const id in this.players) {
       const existingPlayer: Player = this.players[id];
       if (player.username === existingPlayer.username) {
@@ -198,7 +180,9 @@ class RoomState extends Schema
 
   sendWarning = (clientId: string, warning: Warning) => {
     const client = this.getClient(clientId);
-    this.room.send(client, warn(warning));
+    if (client) {
+      this.room.send(client, warn(warning));
+    }
   };
 
   incrementRound = () => {
@@ -346,7 +330,6 @@ class RoomState extends Schema
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {
-    this.clients.set(client.id, client);
     this.currState.onJoin(client, options);
   };
 

@@ -56,28 +56,25 @@ const CuratorGamePage: FunctionComponent = () => {
 
   const startGame = () => room.send(notifyPlayerReady());
 
-  let MainPage = null;
-  switch (syncedState?.phase.phaseType) {
-    case PhaseType.LOBBY:
-      MainPage = <Lobby startGame={startGame} />;
-      break;
-    case PhaseType.DRAW:
-      MainPage = <IngameDraw />;
-      break;
-    case PhaseType.GUESS:
-      MainPage = <IngameGuess />;
-      break;
-    case PhaseType.REVEAL:
-      MainPage = <IngameReveal />;
-      break;
-    default:
-      MainPage = <div>Loading...</div>;
-  }
+  const renderBody = () => {
+    switch (syncedState?.phase.phaseType) {
+      case PhaseType.LOBBY:
+        return <Lobby startGame={startGame} />;
+      case PhaseType.DRAW:
+        return <IngameDraw />;
+      case PhaseType.GUESS:
+        return <IngameGuess />;
+      case PhaseType.REVEAL:
+        return <IngameReveal />;
+      default:
+        return <div>Loading</div>;
+    }
+  };
 
   return (
     <Fragment>
       {popup}
-      {MainPage}
+      {renderBody()}
     </Fragment>
   );
 };
