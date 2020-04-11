@@ -5,7 +5,6 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { getType } from 'typesafe-actions';
 
-import { MAX_PLAYERS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
@@ -57,7 +56,7 @@ class LobbyState implements IState {
   };
 
   onStateEnd = () => {
-    return;
+    this.roomState.clearSubmittedPlayers();
   };
 
   validateLobby = (): boolean => {

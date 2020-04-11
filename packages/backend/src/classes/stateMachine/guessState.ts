@@ -10,7 +10,6 @@ import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 
 class GuessState implements IState {
-  private readyPlayers = new Set<string>();
   private timerHandle: Delayed | undefined;
 
   constructor(private roomState: IRoomStateBackend) {}
@@ -20,7 +19,6 @@ class GuessState implements IState {
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.readyPlayers.delete(client.id);
     this.roomState.removePlayer(client.id);
   };
 
@@ -37,8 +35,8 @@ class GuessState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    this.readyPlayers.add(clientId);
-    if (this.readyPlayers.size >= this.roomState.numPlayers) {
+    this.roomState.addSubmittedPlayer(clientId);
+    if (this.roomState.allPlayersSubmitted) {
       this.advanceState();
     }
   };
@@ -47,16 +45,16 @@ class GuessState implements IState {
     this.roomState.setPhase(
       new Phase(PhaseType.GUESS, DEFAULT_GUESS_PHASE_LENGTH)
     );
-    this.readyPlayers.clear();
+    this.roomState.clearSubmittedPlayers();
     this.timerHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       DEFAULT_GUESS_PHASE_LENGTH
     );
-    this.roomState.clearSubmittedPlayers();
   };
 
   onStateEnd = () => {
     this.timerHandle?.clear();
+    this.roomState.clearSubmittedPlayers();
   };
 
   advanceState = () => {

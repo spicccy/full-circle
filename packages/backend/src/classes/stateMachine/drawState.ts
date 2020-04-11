@@ -10,7 +10,6 @@ import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_DRAW_PHASE_LENGTH } from '../subSchema/phase';
 
 class DrawState implements IState {
-  private readyPlayers = new Set<string>();
   private timerHandle: Delayed | undefined;
 
   constructor(private roomState: IRoomStateBackend) {}
@@ -20,7 +19,6 @@ class DrawState implements IState {
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.readyPlayers.delete(client.id);
     this.roomState.removePlayer(client.id);
   };
 
@@ -37,8 +35,8 @@ class DrawState implements IState {
   };
 
   onClientReady = (clientId: string) => {
-    this.readyPlayers.add(clientId);
-    if (this.readyPlayers.size >= this.roomState.numPlayers) {
+    this.roomState.addSubmittedPlayer(clientId);
+    if (this.roomState.allPlayersSubmitted) {
       this.advanceState();
     }
   };
@@ -47,7 +45,6 @@ class DrawState implements IState {
     this.roomState.setPhase(
       new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH)
     );
-    this.readyPlayers.clear();
     this.timerHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       DEFAULT_DRAW_PHASE_LENGTH
@@ -57,6 +54,7 @@ class DrawState implements IState {
 
   onStateEnd = () => {
     this.timerHandle?.clear();
+    this.roomState.clearSubmittedPlayers();
   };
 
   advanceState = () => {

@@ -75,6 +75,7 @@ export interface IRoomStateBackend {
   setEndState: () => void;
   setLobbyState: () => void;
 
+  readonly allPlayersSubmitted: boolean;
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
 }
@@ -148,6 +149,7 @@ class RoomState extends Schema
 
     const { id } = player;
     this.players[id] = player;
+    this.submittedPlayers[id] = false;
     return null;
   };
 
@@ -157,11 +159,20 @@ class RoomState extends Schema
       this.currState = new EndState(this);
     }
     delete this.players[playerId];
+    delete this.submittedPlayers[playerId];
   };
 
   getPlayer = (id: string): IPlayer => {
     return this.players[id];
   };
+
+  get numPlayers() {
+    return Object.keys(this.players).length;
+  }
+
+  get allPlayersSubmitted(): boolean {
+    return objectValues(this.submittedPlayers).every(Boolean);
+  }
 
   addSubmittedPlayer = (id: string): void => {
     this.submittedPlayers[id] = true;
@@ -172,10 +183,6 @@ class RoomState extends Schema
       this.submittedPlayers[playerId] = false;
     }
   };
-
-  get numPlayers() {
-    return Object.keys(this.players).length;
-  }
 
   sendWarning = (clientId: string, warning: Warning) => {
     const client = this.getClient(clientId);
