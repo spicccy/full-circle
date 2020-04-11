@@ -1,11 +1,10 @@
+import { Colour } from '@full-circle/shared/lib/canvas';
 import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
 import React from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 import styled from 'styled-components';
-import { Colour } from '@full-circle/shared/lib/canvas';
-import { colors } from 'grommet/themes/base';
 
 const PlayerLocation = styled.div<IPlayerBoxAngleProps>`
   position: absolute;

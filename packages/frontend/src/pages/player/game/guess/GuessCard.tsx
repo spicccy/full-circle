@@ -1,27 +1,23 @@
 import 'styled-components/macro';
 
 import { Box, TextInput } from 'grommet';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Card } from 'src/components/Card/Card';
 
 import { BorderBottom } from '../components/BorderBottom';
 import { SubmitButton } from '../components/SubmitButton';
 
 interface IGuessCardProps {
-  onSubmitGuess(guess: string): void;
-  submitted: boolean;
+  guess: string;
+  setGuess(guess: string): void;
+  onSubmitGuess(): void;
 }
 
 const GuessCard: FunctionComponent<IGuessCardProps> = ({
+  guess,
+  setGuess,
   onSubmitGuess,
-  submitted,
 }) => {
-  const [guess, setGuess] = useState('');
-
-  const handleSubmitGuess = () => {
-    onSubmitGuess(guess);
-  };
-
   return (
     <Card justify="center">
       <BorderBottom height="xsmall" justify="center">
@@ -31,7 +27,6 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({
           placeholder="Guess here"
           size="large"
           value={guess}
-          disabled={submitted}
           onChange={(e) => setGuess(e.target.value)}
           css={{ textAlign: 'center', fontSize: '32px' }}
           data-testid="guessBox"
@@ -39,8 +34,8 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({
       </BorderBottom>
       <Box>
         <SubmitButton
-          disabled={!guess || submitted}
-          onClick={handleSubmitGuess}
+          disabled={!guess}
+          onClick={onSubmitGuess}
           label="Submit"
           data-testid="submitGuess"
         />

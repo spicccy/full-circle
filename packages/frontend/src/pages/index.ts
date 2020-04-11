@@ -4,3 +4,4 @@ export { Instructions } from './curator/Instructions';
 export { LoginPage } from './player/login/LoginPage';
 export { PlayerGamePage } from './player/game/PlayerGamePage';
 export { Team } from './curator/Team';
+export { Error404 } from './shared/Error404';
