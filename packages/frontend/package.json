@@ -22,6 +22,7 @@
     "polished": "^3.4.4",
     "qrcode.react": "^1.0.0",
     "react": "^16.13.0",
+    "react-clipboard.js": "^2.0.16",
     "react-dom": "^16.13.0",
     "react-draggable": "^4.2.0",
     "react-router-dom": "^5.1.2",

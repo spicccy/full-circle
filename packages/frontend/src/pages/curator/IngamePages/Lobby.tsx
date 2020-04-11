@@ -1,9 +1,10 @@
 import 'styled-components/macro';
 
 import { Box, Button, Heading, Paragraph } from 'grommet';
-import { Add } from 'grommet-icons';
+import { Add, Clipboard as ClipboardIcon } from 'grommet-icons';
 import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
+import Clipboard from 'react-clipboard.js';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
@@ -17,6 +18,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { syncedState, roomCode, leaveRoom } = useRoom();
 
   const nPlayers = Object.keys(syncedState?.players ?? {}).length;
+  const joinUrl = `${process.env.REACT_APP_BACKEND_URL}/join/${roomCode}`;
 
   return (
     <Box css={{ position: 'relative' }} fill>
@@ -36,10 +38,19 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
               Room: {roomCode}
             </Heading>
             <Paragraph>Quick join QR code</Paragraph>
-            <QR
-              value={`${process.env.REACT_APP_BACKEND_URL}/join/${roomCode}`}
-              about={`Join room ${roomCode}`}
-            ></QR>
+            <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
+            <Paragraph>Copy this link to your friends</Paragraph>
+            <div
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <a href={joinUrl}>{joinUrl}</a>
+              <Clipboard data-clipboard-text={joinUrl}>
+                <ClipboardIcon />
+              </Clipboard>
+            </div>
           </Box>
           <Button
             alignSelf="center"
