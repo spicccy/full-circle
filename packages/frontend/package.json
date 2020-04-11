@@ -13,7 +13,7 @@
     "prettier": "prettier --write src/**/*.ts",
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
-  "homepage": ".",
+  "homepage": "https://full-circle.netlify.com",
   "dependencies": {
     "@full-circle/shared": "^1.0.0",
     "grommet": "^2.11.1",
