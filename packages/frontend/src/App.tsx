@@ -3,6 +3,7 @@ import 'styled-components/macro';
 import { Grommet } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { ToastProvider } from 'react-toast-notifications';
 
 import { RoomProvider } from './contexts/RoomContext';
 import {
@@ -24,16 +25,18 @@ export const App: FunctionComponent = () => {
           debug={!(process.env.REACT_APP_HIDE_DEBUG === 'hide')}
         />
         <Grommet theme={theme} full>
-          <Switch>
-            <Route exact path="/" component={LoginPage} />
-            <Route exact path="/join" component={LoginPage} />
-            <Route exact path="/join/:roomCode" component={LoginPage} />
-            <Route exact path="/create" component={CreatePage} />
-            <Route exact path="/play" component={PlayerGamePage} />
-            <Route exact path="/curator" component={CuratorGamePage} />
-            <Route exact path="/instructions" component={Instructions} />
-            <Route exact path="/team" component={Team} />
-          </Switch>
+          <ToastProvider autoDismiss autoDismissTimeout={2500}>
+            <Switch>
+              <Route exact path="/" component={LoginPage} />
+              <Route exact path="/join" component={LoginPage} />
+              <Route exact path="/join/:roomCode" component={LoginPage} />
+              <Route exact path="/create" component={CreatePage} />
+              <Route exact path="/play" component={PlayerGamePage} />
+              <Route exact path="/curator" component={CuratorGamePage} />
+              <Route exact path="/instructions" component={Instructions} />
+              <Route exact path="/team" component={Team} />
+            </Switch>
+          </ToastProvider>
         </Grommet>
       </RoomProvider>
     );

@@ -1,6 +1,7 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent } from 'react';
 import { Redirect } from 'react-router-dom';
+import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomLeave } from 'src/hooks/useRoomListeners';
 
@@ -11,8 +12,10 @@ import { Lobby } from './lobby/LobbyPage';
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
+  const { addToast } = useToasts();
+
   useRoomLeave(() => {
-    alert('You have been disconnected');
+    addToast('You have been disconnected', { appearance: 'error' });
   });
 
   if (!room) {
