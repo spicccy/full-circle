@@ -49,7 +49,7 @@ class DrawState implements IState {
       new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH)
     );
     this.timerHandle = this.roomState.clock.setTimeout(
-      () => this.startBuffer(),
+      this.startBuffer,
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
@@ -62,7 +62,6 @@ class DrawState implements IState {
   };
 
   startBuffer = () => {
-    console.log(this.roomState.unsubmittedPlayerIds);
     this.roomState.unsubmittedPlayerIds.forEach((id) => {
       this.roomState.sendAction(id, forceSubmit());
     });

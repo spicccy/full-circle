@@ -3,18 +3,14 @@ import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
-import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
-import { BUFFER_MS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
 
 class LobbyState implements IState {
-  private bufferHandle: Delayed | undefined;
-
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (client: IClient, options: IJoinOptions) => {
@@ -60,7 +56,6 @@ class LobbyState implements IState {
   };
 
   onStateEnd = () => {
-    this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
   };
 
@@ -74,13 +69,6 @@ class LobbyState implements IState {
     }
 
     return true;
-  };
-
-  startBuffer = () => {
-    this.bufferHandle = this.roomState.clock.setTimeout(
-      this.advanceState,
-      BUFFER_MS
-    );
   };
 
   advanceState = () => {

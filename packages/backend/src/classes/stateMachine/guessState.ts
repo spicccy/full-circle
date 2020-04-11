@@ -50,7 +50,7 @@ class GuessState implements IState {
     );
     this.roomState.clearSubmittedPlayers();
     this.timerHandle = this.roomState.clock.setTimeout(
-      () => this.startBuffer(),
+      this.startBuffer,
       DEFAULT_GUESS_PHASE_LENGTH
     );
   };
@@ -62,7 +62,6 @@ class GuessState implements IState {
   };
 
   startBuffer = () => {
-    console.log(this.roomState.unsubmittedPlayerIds);
     this.roomState.unsubmittedPlayerIds.forEach((id) => {
       this.roomState.sendAction(id, forceSubmit());
     });
