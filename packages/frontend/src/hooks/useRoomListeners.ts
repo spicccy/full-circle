@@ -1,12 +1,14 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
 export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
   const { addMessageListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 
-  const [messages, setMessages] = useState<ServerAction[]>([]);
+  useEffect(() => {
+    handlerRef.current = msgHandler;
+  }, [msgHandler]);
 
   useEffect(() => {
     const clearListener = addMessageListener((message) =>
