@@ -10,7 +10,7 @@ const IngameReveal: FunctionComponent = () => {
     <Box css={{ position: 'relative' }} fill>
       <PlayerBackground />
       <Box flex align="center" justify="center">
-        <Heading>Thats a wrap, bois.</Heading>
+        <Heading data-testid="endMessage">Thats a wrap, bois.</Heading>
         <Paragraph>
           Each player will be able to control their own viewing of their chain
         </Paragraph>
