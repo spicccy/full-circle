@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
 export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
-  const { room, addMessageListener } = useRoom();
+  const { addMessageListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 
   useEffect(() => {
@@ -11,17 +11,15 @@ export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
   }, [msgHandler]);
 
   useEffect(() => {
-    if (room) {
-      const clearListener = addMessageListener((message) =>
-        handlerRef.current(message)
-      );
-      return clearListener;
-    }
-  }, [addMessageListener, room]);
+    const clearListener = addMessageListener((message) =>
+      handlerRef.current(message)
+    );
+    return clearListener;
+  }, [addMessageListener]);
 };
 
 export const useRoomLeave = (msgHandler: (code: number) => void) => {
-  const { room, addLeaveListener } = useRoom();
+  const { addLeaveListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 
   useEffect(() => {
@@ -29,11 +27,7 @@ export const useRoomLeave = (msgHandler: (code: number) => void) => {
   }, [msgHandler]);
 
   useEffect(() => {
-    if (room) {
-      const clearListener = addLeaveListener((code) =>
-        handlerRef.current(code)
-      );
-      return clearListener;
-    }
-  }, [addLeaveListener, room]);
+    const clearListener = addLeaveListener((code) => handlerRef.current(code));
+    return clearListener;
+  }, [addLeaveListener]);
 };
