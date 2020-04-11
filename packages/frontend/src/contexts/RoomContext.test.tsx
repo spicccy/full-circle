@@ -1,9 +1,10 @@
+import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { render, wait, waitForDomChange } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Client, Room } from 'colyseus.js';
 import { RoomAvailable } from 'colyseus.js/lib/Room';
 import React, { useState } from 'react';
-import { mocked, mockRoom as baseMockRoom, partialMock } from 'src/testHelpers';
+import { mocked, mockRoom as baseMockRoom } from 'src/testHelpers';
 
 import { useColyseus } from './ColyseusContext';
 import { RoomProvider, useRoom } from './RoomContext';

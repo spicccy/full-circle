@@ -1,3 +1,4 @@
+import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { Room } from 'colyseus.js';
 
 export const mocked = <T extends (...args: any[]) => any>(
@@ -7,10 +8,6 @@ export const mocked = <T extends (...args: any[]) => any>(
     throw new Error(`Expected a mock, but found a real function.`);
   }
   return f;
-};
-
-export const partialMock = <R, T extends R = R>(mock: Partial<T>): R => {
-  return mock as R;
 };
 
 export const mockRoom = partialMock<Room>({
