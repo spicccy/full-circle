@@ -1,5 +1,4 @@
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
-import { stat } from 'fs';
 import { Box, Text } from 'grommet';
 import React, {
   FunctionComponent,
