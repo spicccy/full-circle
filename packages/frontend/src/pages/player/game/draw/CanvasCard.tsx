@@ -91,7 +91,7 @@ const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
   });
 
   return (
-    <Card css={{ pointerEvents: submitted ? 'none' : undefined }}>
+    <Card>
       <BorderBottom
         css={{ position: 'relative' }}
         align="center"
