@@ -10,3 +10,5 @@ export const displayDrawing = createAction('@server/displayDrawing')<
 export const displayPrompt = createAction('@server/displayPrompt')<string>();
 
 export const warn = createAction('@server/warn')<Warning>();
+
+export const forceSubmit = createAction('@server/forceSubmit')();

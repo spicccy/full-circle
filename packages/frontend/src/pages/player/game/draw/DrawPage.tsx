@@ -1,4 +1,5 @@
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import {
   CanvasAction,
   Colour,
@@ -10,6 +11,8 @@ import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
+import { getType } from 'typesafe-actions';
 
 import { CanvasCard } from './CanvasCard';
 import { PenPicker } from './penPicker/PenPicker';
@@ -36,6 +39,14 @@ const DrawPage: FunctionComponent = () => {
     room?.send(submitDrawing(canvasActions));
     addToast('Submitted Drawing', { appearance: 'success' });
   };
+
+  useRoomMessage((action) => {
+    switch (action.type) {
+      case getType(forceSubmit): {
+        handleSubmitDrawing();
+      }
+    }
+  });
 
   return (
     <Box

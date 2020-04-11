@@ -1,16 +1,19 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
+import { BUFFER_MS } from '../../constants';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 
 class GuessState implements IState {
   private timerHandle: Delayed | undefined;
+  private bufferHandle: Delayed | undefined;
 
   constructor(private roomState: IRoomStateBackend) {}
 
@@ -37,7 +40,7 @@ class GuessState implements IState {
   onClientReady = (clientId: string) => {
     this.roomState.addSubmittedPlayer(clientId);
     if (this.roomState.allPlayersSubmitted) {
-      this.advanceState();
+      this.startBuffer();
     }
   };
 
@@ -47,14 +50,27 @@ class GuessState implements IState {
     );
     this.roomState.clearSubmittedPlayers();
     this.timerHandle = this.roomState.clock.setTimeout(
-      this.advanceState,
+      () => this.startBuffer(),
       DEFAULT_GUESS_PHASE_LENGTH
     );
   };
 
   onStateEnd = () => {
     this.timerHandle?.clear();
+    this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
+  };
+
+  startBuffer = () => {
+    console.log(this.roomState.unsubmittedPlayerIds);
+    this.roomState.unsubmittedPlayerIds.forEach((id) => {
+      this.roomState.sendAction(id, forceSubmit());
+    });
+
+    this.bufferHandle = this.roomState.clock.setTimeout(
+      this.advanceState,
+      BUFFER_MS
+    );
   };
 
   advanceState = () => {

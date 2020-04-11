@@ -1,5 +1,5 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
-import { ClientAction } from '@full-circle/shared/lib/actions';
+import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
@@ -54,6 +54,7 @@ export interface IRoomStateBackend {
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
 
+  sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: Warning) => void;
 
   setPhase: (phase: Phase) => void;
@@ -76,6 +77,7 @@ export interface IRoomStateBackend {
   setLobbyState: () => void;
 
   readonly allPlayersSubmitted: boolean;
+  readonly unsubmittedPlayerIds: string[];
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
 }
@@ -174,6 +176,17 @@ class RoomState extends Schema
     return objectValues(this.submittedPlayers).every(Boolean);
   }
 
+  get unsubmittedPlayerIds(): string[] {
+    const ids = [];
+    for (const playerId in this.submittedPlayers) {
+      if (!this.submittedPlayers[playerId]) {
+        ids.push(playerId);
+      }
+    }
+
+    return ids;
+  }
+
   addSubmittedPlayer = (id: string): void => {
     this.submittedPlayers[id] = true;
   };
@@ -184,11 +197,15 @@ class RoomState extends Schema
     }
   };
 
-  sendWarning = (clientId: string, warning: Warning) => {
+  sendAction = (clientId: string, action: ServerAction) => {
     const client = this.getClient(clientId);
     if (client) {
-      this.room.send(client, warn(warning));
+      this.room.send(client, action);
     }
+  };
+
+  sendWarning = (clientId: string, warning: Warning) => {
+    this.sendAction(clientId, warn(warning));
   };
 
   incrementRound = () => {
