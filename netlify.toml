@@ -1,5 +1,5 @@
 [build]
     command = "lerna run build --stream"
     publish = "packages/frontend/build"
-    environment = { REACT_APP_BACKEND_URL="wss://full-circle-backend.herokuapp.com", REACT_APP_HIDE_DEBUG="hide", REACT_APP_BACKEND_LOCALHOST="false" }
+    environment = { REACT_APP_BACKEND_URL="wss://full-circle-backend.herokuapp.com", REACT_APP_HIDE_DEBUG="hide", REACT_APP_BACKEND_LOCALHOST="false", REACT_APP_FRONTEND_URL: "https://full-circle.netlify.com" }
 
