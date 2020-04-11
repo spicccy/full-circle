@@ -48,6 +48,7 @@ interface ICanvasCardProps {
   canvasActions: CanvasAction[];
   setCanvasActions(canvasActions: CanvasAction[]): void;
   onSubmitDrawing(): void;
+  submitted: boolean;
 }
 
 // TODO: (Tony) implement redo
@@ -56,6 +57,7 @@ const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
   canvasActions,
   setCanvasActions,
   onSubmitDrawing,
+  submitted,
 }) => {
   const isEmpty = canvasActions.length === 0;
 
@@ -130,7 +132,7 @@ const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
         </EraserWrapper>
         <SubmitButton
           title="submit (ctrl-enter)"
-          disabled={isEmpty}
+          disabled={isEmpty || submitted}
           onClick={onSubmitDrawing}
           label="Submit"
           data-testid="submitDrawing"

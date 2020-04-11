@@ -1,5 +1,4 @@
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
-import { stat } from 'fs';
 import { Box, Text } from 'grommet';
 import React, {
   FunctionComponent,
@@ -9,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
+import { useToasts } from 'react-toast-notifications';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 
@@ -59,10 +59,7 @@ const LoginPage: FunctionComponent = () => {
     initialErrorState
   );
 
-  const attemptToJoinRoom = async () => {
-    localStorage.setItem('username', name);
-    await joinRoomByCode(roomCode, { username: name });
-  };
+  const { addToast } = useToasts();
 
   useEffect(() => {
     if (roomError) {
@@ -72,16 +69,17 @@ const LoginPage: FunctionComponent = () => {
         setName('');
       }
 
+      addToast(roomError, { appearance: 'error' });
       // TODO: fix this raf hack
       // need to wait 2af on chrome+firefox in order for the border to show up before the alert
       // this can probably be removed once we move away from alerts to a popup method
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          alert(roomError);
-        });
-      });
     }
-  }, [roomError]);
+  }, [addToast, roomError]);
+
+  const attemptToJoinRoom = async () => {
+    localStorage.setItem('username', name);
+    await joinRoomByCode(roomCode, { username: name });
+  };
 
   if (room) {
     return <Redirect to="/play" />;

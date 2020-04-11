@@ -1,9 +1,10 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Fragment, FunctionComponent, useState } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { useRoomMessage } from '../../../hooks/useRoomListeners';
@@ -21,15 +22,13 @@ Lobby should only re-render when a new player has joined
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
-  const [popup, _setPopup] = useState<React.ReactNode>(null);
+  const { addToast } = useToasts();
 
   // TODO: ALEX expand this in upcoming PR
   const curatorMessageHandler = (msg: ServerAction) => {
     switch (msg.type) {
       case '@server/warn':
-        // TODO: find a nice popup or toast library
-        // setPopup(<div>{msg.payload.message}</div>);
-        alert(msg.payload);
+        addToast(msg.payload, { appearance: 'warning' });
         break;
       default:
     }
@@ -58,12 +57,7 @@ const CuratorGamePage: FunctionComponent = () => {
     }
   };
 
-  return (
-    <Fragment>
-      {popup}
-      {renderBody()}
-    </Fragment>
-  );
+  return <Fragment>{renderBody()}</Fragment>;
 };
 
 export { CuratorGamePage };

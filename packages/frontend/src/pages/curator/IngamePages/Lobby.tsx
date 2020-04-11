@@ -1,12 +1,15 @@
 import 'styled-components/macro';
 
 import { Box, Button, Heading, Paragraph } from 'grommet';
-import { Add } from 'grommet-icons';
+import { Launch } from 'grommet-icons';
+import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
 import logo from 'src/images/fullcircle.png';
+
+import { CopyLink } from '../../../components/Link/CopyLink';
 
 interface ILobbyProps {
   startGame(): void;
@@ -16,6 +19,8 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { syncedState, roomCode, leaveRoom } = useRoom();
 
   const nPlayers = Object.keys(syncedState?.players ?? {}).length;
+
+  const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 
   return (
     <Box css={{ position: 'relative' }} fill>
@@ -30,16 +35,25 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
         <Box width="medium" align="center">
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
-          <Box align="center">
-            <Paragraph data-testid="roomID">Room ID : {roomCode}</Paragraph>
+          <Box align="center" margin="medium">
+            <Heading level="3" data-testid="roomID">
+              Room: {roomCode}
+            </Heading>
+            <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
+            <Paragraph size="small">Quick join QR code</Paragraph>
+            <Paragraph size="small">
+              Copy this link to your friends
+              <CopyLink url={joinUrl} />
+            </Paragraph>
           </Box>
           <Button
             alignSelf="center"
             label="Start Game"
-            icon={<Add />}
+            icon={<Launch />}
             onClick={startGame}
             data-testid="startGame"
             disabled={nPlayers < 3}
+            size="large"
           />
         </Box>
       </Box>

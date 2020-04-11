@@ -9,9 +9,13 @@ import { SubmitButton } from '../components/SubmitButton';
 
 interface IGuessCardProps {
   onSubmitGuess(guess: string): void;
+  submitted: boolean;
 }
 
-const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
+const GuessCard: FunctionComponent<IGuessCardProps> = ({
+  onSubmitGuess,
+  submitted,
+}) => {
   const [guess, setGuess] = useState('');
 
   const handleSubmitGuess = () => {
@@ -27,6 +31,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
           placeholder="Guess here"
           size="large"
           value={guess}
+          disabled={submitted}
           onChange={(e) => setGuess(e.target.value)}
           css={{ textAlign: 'center', fontSize: '32px' }}
           data-testid="guessBox"
@@ -34,7 +39,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({ onSubmitGuess }) => {
       </BorderBottom>
       <Box>
         <SubmitButton
-          disabled={!guess}
+          disabled={!guess || submitted}
           onClick={handleSubmitGuess}
           label="Submit"
           data-testid="submitGuess"
