@@ -1,9 +1,5 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import {
-  displayDrawing,
-  forceSubmit,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
@@ -14,16 +10,17 @@ import { getType } from 'typesafe-actions';
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 
-const GuessPage: FunctionComponent = () => {
-  const { room, syncedState } = useRoom();
+interface IGuessPage {
+  drawing: string;
+}
+
+const GuessPage: FunctionComponent<IGuessPage> = (props) => {
+  const { room } = useRoom();
 
   const { addToast } = useToasts();
   const [guess, setGuess] = useState('');
 
-  const id = room?.sessionId;
-  const roundData = syncedState?.roundData;
-  const drawingString = roundData?.find((link) => link.id === id)?.data;
-  const drawing = drawingString ? JSON.parse(drawingString) : [];
+  const drawing = props.drawing ? JSON.parse(props.drawing) : [];
 
   const handleSubmit = () => {
     room?.send(submitGuess(guess));
@@ -34,16 +31,6 @@ const GuessPage: FunctionComponent = () => {
     switch (action.type) {
       case getType(forceSubmit): {
         handleSubmit();
-        return;
-      }
-
-      case getType(displayDrawing): {
-        console.log(action.payload);
-        return;
-      }
-
-      case getType(displayPrompt): {
-        console.log(action.payload, 'displayPrompt??');
         return;
       }
     }
