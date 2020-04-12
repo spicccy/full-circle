@@ -81,6 +81,9 @@ export interface IRoomStateBackend {
   readonly unsubmittedPlayerIds: string[];
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
+  playerDisconnected: (id: string) => void;
+  playerReconnected: (id: string) => void;
+  attemptReconnection: (id: string) => string | null;
 }
 
 class RoomState extends Schema
@@ -125,6 +128,10 @@ class RoomState extends Schema
 
   // =====================================
   // IRoomStateBackend Api
+  // =====================================
+
+  // =====================================
+  // Player tracking and management
   // =====================================
   setCurator = (id: string): void => {
     this.curator = id;
@@ -198,6 +205,28 @@ class RoomState extends Schema
     }
   };
 
+  playerDisconnected = (id: string): void => {
+    const player: Player = this.players[id];
+    player.disconnected = true;
+  };
+
+  playerReconnected = (id: string): void => {
+    const player: Player = this.players[id];
+    player.disconnected = false;
+  };
+
+  attemptReconnection = (username: string): string | null => {
+    for (const id in this.players) {
+      const player: Player = this.players[id];
+      if (player.username === username && player.disconnected) {
+        return player.id;
+      }
+    }
+
+    return null;
+  };
+
+  // Communication with frontend
   sendAction = (clientId: string, action: ServerAction) => {
     const client = this.getClient(clientId);
     if (client) {
@@ -226,6 +255,10 @@ class RoomState extends Schema
     this.phase = phase;
   };
 
+  // ===========================================================================
+  // Chain management
+  // TODO: refactor chain management into its own class (SRP)
+  // ===========================================================================
   get currChains() {
     return this.chains;
   }
@@ -302,6 +335,9 @@ class RoomState extends Schema
     }
   };
 
+  // ===========================================================================
+  // Game state management
+  // ===========================================================================
   get gameIsOver() {
     // TODO: implement checking of the room's configured round length
     let phasesElapsed = this.round * 2;

@@ -25,6 +25,11 @@ type RoomStateWithFn = IRoomStateSynced & {
 
 export type IRoom = Room<RoomStateWithFn>;
 
+export enum RoomErrors {
+  INITIALISATION_ERROR = 'Unable to initialise the room',
+  NO_MATCHING_ROOMS = 'Failed to find a room with a matching code',
+}
+
 interface IRoomLoadingState {
   isLoading: true;
   room: undefined;
@@ -98,9 +103,11 @@ interface IRoomContext {
   syncedState?: IRoomStateSynced;
   createAndJoinRoom(): Promise<IRoom | null>;
   joinRoomByCode(roomId: string, options: IJoinOptions): Promise<IRoom | null>;
+  reconnectToRoomByCode(roomId: string, id: string): Promise<IRoom | null>;
   leaveRoom(): void;
   addMessageListener(listener: MessageListener): RemoveListener;
   addLeaveListener(listener: LeaveListener): RemoveListener;
+  clearError(): void;
 }
 
 export const RoomContext = createContext<IRoomContext & RoomState>(null as any);
@@ -121,17 +128,30 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME);
       const rooms = await colyseus.getAvailableRooms();
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
-      invariant(roomWithMetadata, 'Unable to find the room we just created');
+      if (!roomWithMetadata) {
+        setRoomState(getRoomFailureState(RoomErrors.INITIALISATION_ERROR));
+        return null;
+      }
 
       setRoomState(
         getRoomSuccessState(room, roomWithMetadata.metadata.roomCode)
       );
+
       return room;
     } catch (e) {
       setRoomState(getRoomFailureState(e));
       return null;
     }
   }, [colyseus]);
+
+  const clearError = useCallback(() => {
+    setRoomState({
+      isLoading: true,
+      room: undefined,
+      roomError: undefined,
+      roomCode: undefined,
+    });
+  }, []);
 
   const joinRoomByCode = useCallback(
     async (roomCode: string, options: IJoinOptions): Promise<IRoom | null> => {
@@ -151,15 +171,49 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         );
 
         if (!matchingRoom) {
-          setRoomState(
-            getRoomFailureState('Failed to find a room with a matching code')
-          );
+          setRoomState(getRoomFailureState(RoomErrors.NO_MATCHING_ROOMS));
           return null;
         }
 
         const { roomId } = matchingRoom;
 
         const room = await colyseus.joinById<RoomStateWithFn>(roomId, options);
+
+        setRoomState(getRoomSuccessState(room, roomCode));
+        return room;
+      } catch (e) {
+        setRoomState(getRoomFailureState(e));
+        return null;
+      }
+    },
+    [colyseus]
+  );
+
+  const reconnectToRoomByCode = useCallback(
+    async (roomCode: string, id: string): Promise<IRoom | null> => {
+      setRoomState({
+        isLoading: true,
+        room: undefined,
+        roomError: undefined,
+        roomCode: undefined,
+      });
+
+      try {
+        const rooms = await colyseus.getAvailableRooms<IRoomMetadata>(
+          ROOM_NAME
+        );
+        const matchingRoom = rooms.find(
+          (room) => room.metadata?.roomCode === roomCode
+        );
+
+        if (!matchingRoom) {
+          setRoomState(getRoomFailureState(RoomErrors.NO_MATCHING_ROOMS));
+          return null;
+        }
+
+        const { roomId } = matchingRoom;
+
+        const room = await colyseus.reconnect<RoomStateWithFn>(roomId, id);
 
         setRoomState(getRoomSuccessState(room, roomCode));
         return room;
@@ -226,7 +280,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     syncedState,
     createAndJoinRoom,
     joinRoomByCode,
+    reconnectToRoomByCode,
     leaveRoom,
+    clearError,
     addMessageListener,
     addLeaveListener,
   };
