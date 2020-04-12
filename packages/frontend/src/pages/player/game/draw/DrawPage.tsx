@@ -22,7 +22,7 @@ interface IDrawPage {
   prompt: string;
 }
 
-const DrawPage: FunctionComponent<IDrawPage> = (props) => {
+const DrawPage: FunctionComponent<IDrawPage> = ({ prompt }) => {
   const { room } = useRoom();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [submitted, setSubmitted] = useState(false);
@@ -33,8 +33,6 @@ const DrawPage: FunctionComponent<IDrawPage> = (props) => {
   });
 
   const { addToast } = useToasts();
-
-  const prompt = props.prompt ?? '';
 
   const handleSubmitDrawing = () => {
     setSubmitted(true);

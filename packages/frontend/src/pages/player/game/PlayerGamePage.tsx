@@ -31,7 +31,7 @@ const PlayerGamePage: FunctionComponent = () => {
     addToast('You have been disconnected', { appearance: 'error' });
   });
 
-  const msgHandler: MessageHandler = (message: ServerAction) => {
+  const msgHandler: MessageHandler = (message) => {
     switch (message.type) {
       case getType(displayPrompt):
         setCurrentDrawing('');
@@ -62,7 +62,9 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={currentDrawing} />;
+      return (
+        <GuessPage drawing={currentDrawing ? JSON.parse(currentDrawing) : []} />
+      );
     }
 
     default: {

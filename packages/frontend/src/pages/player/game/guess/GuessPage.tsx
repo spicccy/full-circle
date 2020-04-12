@@ -9,18 +9,17 @@ import { getType } from 'typesafe-actions';
 
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 
 interface IGuessPage {
-  drawing: string;
+  drawing: CanvasAction[];
 }
 
-const GuessPage: FunctionComponent<IGuessPage> = (props) => {
+const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
   const { room } = useRoom();
 
   const { addToast } = useToasts();
   const [guess, setGuess] = useState('');
-
-  const drawing = props.drawing ? JSON.parse(props.drawing) : [];
 
   const handleSubmit = () => {
     room?.send(submitGuess(guess));
