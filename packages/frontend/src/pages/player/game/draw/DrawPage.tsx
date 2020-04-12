@@ -9,7 +9,6 @@ import {
 } from '@full-circle/shared/lib/canvas';
 import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
-import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
@@ -34,11 +33,8 @@ const DrawPage: FunctionComponent<IDrawPage> = ({ prompt }) => {
     penThickness: PenThickness.MEDIUM,
   });
 
-  const { addToast } = useToasts();
-
   const handleSubmitDrawing = () => {
     room?.send(submitDrawing(canvasActions));
-    addToast('Submitted Drawing', { appearance: 'success' });
   };
 
   useRoomMessage((action) => {
