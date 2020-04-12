@@ -1,3 +1,5 @@
+import { ServerAction } from '@full-circle/shared/lib/actions';
+import { reconnect } from '@full-circle/shared/lib/actions/server';
 import { RECONNECT_COMMAND } from '@full-circle/shared/lib/join/interfaces';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
@@ -12,6 +14,7 @@ import { Redirect, useParams } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { RoomErrors, useRoom } from 'src/contexts/RoomContext';
+import { getType } from 'typesafe-actions';
 
 import { LoginCard } from './LoginCard';
 
@@ -84,23 +87,30 @@ const LoginPage: FunctionComponent = () => {
           break;
       }
 
-      if (errorMsg.startsWith(RECONNECT_COMMAND)) {
-        const id = errorMsg.split(':')[1];
+      try {
+        const maybeServerAction: ServerAction = JSON.parse(errorMsg);
         let toastId = '';
-        addToast(
-          'Reconnecting to room',
-          {
-            appearance: 'info',
-          },
-          (id) => {
-            toastId = id;
-          }
-        );
-        reconnectToRoomByCode(roomCode, id).then((_room) => {
-          removeToast(toastId);
-          addToast('Reconnected!', { appearance: 'success' });
-        });
-      } else {
+        switch (maybeServerAction.type) {
+          case getType(reconnect):
+            addToast(
+              'Reconnecting to room',
+              {
+                appearance: 'info',
+              },
+              (id) => {
+                toastId = id;
+              }
+            );
+            reconnectToRoomByCode(roomCode, maybeServerAction.payload).then(
+              (_room) => {
+                removeToast(toastId);
+                addToast('Reconnected!', { appearance: 'success' });
+              }
+            );
+            break;
+        }
+      } catch (e) {
+        console.warn('Server threw an unsafe warning');
         addToast(errorMsg, { appearance: 'error' });
       }
     }

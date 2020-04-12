@@ -182,6 +182,8 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         setRoomState(getRoomSuccessState(room, roomCode));
         return room;
       } catch (e) {
+        console.log(typeof e);
+        console.log('ERROR here', e);
         setRoomState(getRoomFailureState(e));
         return null;
       }

@@ -8,6 +8,8 @@ export const displayPrompt = createAction('@server/displayPrompt')<string>();
 
 export const warn = createAction('@server/warn')<Warning>();
 
+export const reconnect = createAction('@server/reconnect')<string>();
+
 export const forceSubmit = createAction('@server/forceSubmit')();
 
 export const curatorReveal = createAction('@server/curatorReveal')<IChain[]>();

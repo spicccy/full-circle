@@ -1,5 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import { reconnect } from '@full-circle/shared/lib/actions/server';
 import {
   IJoinOptions,
   RECONNECT_COMMAND,
@@ -31,7 +32,7 @@ class LobbyState implements IState {
     const maybeExistingId = this.roomState.attemptReconnection(username);
     if (maybeExistingId) {
       // throw an error since we can't message them till they are in the room
-      throw new Error(RECONNECT_COMMAND + ':' + maybeExistingId);
+      throw new Error(JSON.stringify(reconnect(maybeExistingId)));
     }
 
     const error = this.roomState.addPlayer(player);
