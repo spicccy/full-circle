@@ -33,7 +33,6 @@ export const parsePreRoomMessage = (message: string): MaybeCommand => {
   };
   if (message.startsWith(':')) {
     const parts = message.split(':');
-    console.log(parts);
     switch (parts[1]) {
       case PRE_ROOM_MESSAGE.RECONNECT_COMMAND:
         return {
