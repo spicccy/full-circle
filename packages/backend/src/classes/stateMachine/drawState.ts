@@ -49,10 +49,11 @@ class DrawState implements IState {
       new Phase(PhaseType.DRAW, DEFAULT_DRAW_PHASE_LENGTH)
     );
     this.timerHandle = this.roomState.clock.setTimeout(
-      this.startBuffer,
+      this.advanceState,
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
+    this.roomState.setCurrPrompts();
   };
 
   onStateEnd = () => {
@@ -78,7 +79,6 @@ class DrawState implements IState {
       this.roomState.sendReveal();
       return;
     }
-    this.roomState.setCurrDrawings();
     this.roomState.setGuessState();
   };
 }

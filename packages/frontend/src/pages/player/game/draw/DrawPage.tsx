@@ -1,5 +1,9 @@
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit } from '@full-circle/shared/lib/actions/server';
+import {
+  forceSubmit,
+  displayDrawing,
+  displayPrompt,
+} from '@full-circle/shared/lib/actions/server';
 import {
   CanvasAction,
   Colour,
@@ -44,6 +48,17 @@ const DrawPage: FunctionComponent = () => {
     switch (action.type) {
       case getType(forceSubmit): {
         handleSubmitDrawing();
+        return;
+      }
+
+      case getType(displayDrawing): {
+        console.log(action.payload, 'display Drawing??');
+        return;
+      }
+
+      case getType(displayPrompt): {
+        console.log(action.payload);
+        return;
       }
     }
   });

@@ -1,6 +1,11 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import { curatorReveal, warn } from '@full-circle/shared/lib/actions/server';
+import {
+  curatorReveal,
+  warn,
+  displayPrompt,
+  displayDrawing,
+} from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -202,6 +207,7 @@ class RoomState extends Schema
     const client = this.getClient(clientId);
     if (client) {
       this.room.send(client, action);
+      console.log('sent action to ', clientId);
     }
   };
 
@@ -287,7 +293,8 @@ class RoomState extends Schema
     for (const chain of chains) {
       const data = chain.getLinks[round].prompt.text;
       const id = chain.getLinks[round].image.playerId;
-      this.roundData.push(new RoundData(id, data));
+      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
+      this.sendAction(id, displayPrompt(data));
     }
   };
 
@@ -298,7 +305,8 @@ class RoomState extends Schema
     for (const chain of chains) {
       const data = chain.getLinks[round].image.imageData;
       const id = chain.getLinks[round + 1].prompt.playerId;
-      this.roundData.push(new RoundData(id, data));
+      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
+      this.sendAction(id, displayDrawing(JSON.parse(data)));
     }
   };
 

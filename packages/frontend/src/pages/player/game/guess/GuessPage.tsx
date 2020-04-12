@@ -1,5 +1,9 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit } from '@full-circle/shared/lib/actions/server';
+import {
+  displayDrawing,
+  forceSubmit,
+  displayPrompt,
+} from '@full-circle/shared/lib/actions/server';
 import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
@@ -30,6 +34,17 @@ const GuessPage: FunctionComponent = () => {
     switch (action.type) {
       case getType(forceSubmit): {
         handleSubmit();
+        return;
+      }
+
+      case getType(displayDrawing): {
+        console.log(action.payload);
+        return;
+      }
+
+      case getType(displayPrompt): {
+        console.log(action.payload, 'displayPrompt??');
+        return;
       }
     }
   });
