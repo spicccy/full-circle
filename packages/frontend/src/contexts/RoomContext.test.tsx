@@ -1,3 +1,5 @@
+import { preroomWarn, warn } from '@full-circle/shared/lib/actions/server';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { render, wait, waitForDomChange } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -29,7 +31,7 @@ const TestConsumer: React.FunctionComponent = () => {
       <div data-testid="isLoading">{String(isLoading)}</div>
       <div data-testid="roomId">{room?.id}</div>
       <div data-testid="roomCode">{roomCode}</div>
-      <div data-testid="roomError">{roomError}</div>
+      <div data-testid="roomError">{JSON.stringify(roomError)}</div>
       <button data-testid="createAndJoinRoom" onClick={createAndJoinRoom} />
       <input
         data-testid="joinRoomId"
@@ -192,9 +194,11 @@ describe('RoomContext', () => {
   });
 
   it('handles create room error', async () => {
-    mocked(mockColyseus.create).mockRejectedValue('room create failed');
+    mocked(mockColyseus.create).mockRejectedValue(
+      JSON.stringify(warn(RoomErrorType.UNKNOWN_ERROR))
+    );
     mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
-      'get available rooms failed'
+      JSON.stringify(warn(RoomErrorType.UNKNOWN_ERROR))
     );
 
     const { getByTestId } = render(
@@ -208,15 +212,12 @@ describe('RoomContext', () => {
 
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
-    expect(getByTestId('roomError')).toHaveTextContent('room create failed');
+    expect(getByTestId('roomError')).toHaveTextContent(
+      RoomErrorType.UNKNOWN_ERROR
+    );
   });
 
   it('handles join room error', async () => {
-    mocked(mockColyseus.joinById).mockRejectedValue('joinById failed');
-    mocked(mockColyseus.getAvailableRooms).mockRejectedValue(
-      'get available rooms failed'
-    );
-
     const { getByTestId } = render(
       <RoomProvider>
         <TestConsumer />
@@ -229,7 +230,7 @@ describe('RoomContext', () => {
     expect(getByTestId('isLoading')).toHaveTextContent('false');
     expect(getByTestId('roomId')).toBeEmpty();
     expect(getByTestId('roomError')).toHaveTextContent(
-      'get available rooms failed'
+      RoomErrorType.ROOM_NOT_FOUND
     );
   });
 });
