@@ -34,12 +34,10 @@ const PlayerGamePage: FunctionComponent = () => {
   const msgHandler: MessageHandler = (message) => {
     switch (message.type) {
       case getType(displayPrompt):
-        setCurrentDrawing('');
-        setCurrentPrompt(message.payload);
+        setCurrentPrompt(message.payload || '');
         break;
       case getType(displayDrawing):
-        setCurrentPrompt('');
-        setCurrentDrawing(message.payload);
+        setCurrentDrawing(message.payload || '');
         break;
       default:
         console.warn('Unhandled message');
