@@ -73,8 +73,8 @@ export interface IRoomStateBackend {
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
 
-  setCurrDrawings: () => void;
-  setCurrPrompts: () => void;
+  sendCurrDrawings: () => void;
+  sendCurrPrompts: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -300,7 +300,7 @@ class RoomState extends Schema
     return false;
   };
 
-  setCurrPrompts = () => {
+  sendCurrPrompts = () => {
     this.roundData = new ArraySchema<RoundData>();
     const round = this.round - 1;
     const chains = this.chains;
@@ -312,7 +312,7 @@ class RoomState extends Schema
     }
   };
 
-  setCurrDrawings = () => {
+  sendCurrDrawings = () => {
     this.roundData = new ArraySchema<RoundData>();
     const round = this.round - 1;
     const chains = this.chains;

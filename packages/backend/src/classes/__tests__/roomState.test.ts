@@ -207,7 +207,7 @@ describe('Room state', () => {
 
     it('image data', () => {
       roomState.round = 1;
-      roomState.setCurrDrawings();
+      roomState.sendCurrDrawings();
       expect(roomState.roundData[0].id).toBe('b');
       expect(roomState.roundData[1].id).toBe('d');
       expect(roomState.roundData[0].data).toBe('{"lol":"iunno"}');
@@ -217,7 +217,7 @@ describe('Room state', () => {
     it('prompt data', () => {
       roomState.round = 1;
       roomState.incrementRound();
-      roomState.setCurrPrompts();
+      roomState.sendCurrPrompts();
       expect(roomState.roundData[0].id).toBe('c');
       expect(roomState.roundData[1].id).toBe('b');
       expect(roomState.roundData[0].data).toBe('prompt1');

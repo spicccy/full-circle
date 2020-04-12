@@ -53,7 +53,7 @@ class DrawState implements IState {
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
-    this.roomState.setCurrPrompts();
+    this.roomState.sendCurrPrompts();
   };
 
   onStateEnd = () => {

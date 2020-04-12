@@ -53,7 +53,7 @@ class GuessState implements IState {
       this.startBuffer,
       DEFAULT_GUESS_PHASE_LENGTH
     );
-    this.roomState.setCurrDrawings();
+    this.roomState.sendCurrDrawings();
   };
 
   onStateEnd = () => {
