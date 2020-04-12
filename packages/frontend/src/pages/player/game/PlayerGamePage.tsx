@@ -1,22 +1,50 @@
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import React, { FunctionComponent } from 'react';
+import {
+  displayDrawing,
+  displayPrompt,
+} from '@full-circle/shared/lib/actions/server';
+import { ServerAction } from '@full-circle/shared/lib/actions';
+import React, { FunctionComponent, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomLeave } from 'src/hooks/useRoomListeners';
+import {
+  MessageHandler,
+  useRoomLeave,
+  useRoomMessage,
+} from 'src/hooks/useRoomListeners';
 
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
+import { getType } from 'typesafe-actions';
 
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
+
+  const [currentPrompt, setCurrentPrompt] = useState<string>('');
+  const [currentDrawing, setCurrentDrawing] = useState<string>('');
 
   const { addToast } = useToasts();
 
   useRoomLeave(() => {
     addToast('You have been disconnected', { appearance: 'error' });
   });
+
+  const msgHandler: MessageHandler = (message) => {
+    switch (message.type) {
+      case getType(displayPrompt):
+        setCurrentPrompt(message.payload || '');
+        break;
+      case getType(displayDrawing):
+        setCurrentDrawing(message.payload || '');
+        break;
+      default:
+        console.warn('Unhandled message');
+    }
+  };
+
+  useRoomMessage(msgHandler);
 
   if (!room) {
     return <Redirect to="/" />;
@@ -28,11 +56,13 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage />;
+      return <DrawPage prompt={currentPrompt} />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage />;
+      return (
+        <GuessPage drawing={currentDrawing ? JSON.parse(currentDrawing) : []} />
+      );
     }
 
     default: {

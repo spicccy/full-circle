@@ -18,8 +18,12 @@ import { CanvasCard } from './CanvasCard';
 import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
-const DrawPage: FunctionComponent = () => {
-  const { room, syncedState } = useRoom();
+interface IDrawPage {
+  prompt: string;
+}
+
+const DrawPage: FunctionComponent<IDrawPage> = ({ prompt }) => {
+  const { room } = useRoom();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [pen, setPen] = useState<Pen>({
@@ -29,10 +33,6 @@ const DrawPage: FunctionComponent = () => {
   });
 
   const { addToast } = useToasts();
-
-  const id = room?.sessionId;
-  const roundData = syncedState?.roundData;
-  const prompt = roundData?.find((link) => link.id === id)?.data ?? '';
 
   const handleSubmitDrawing = () => {
     setSubmitted(true);
@@ -44,6 +44,7 @@ const DrawPage: FunctionComponent = () => {
     switch (action.type) {
       case getType(forceSubmit): {
         handleSubmitDrawing();
+        return;
       }
     }
   });

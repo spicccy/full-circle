@@ -64,6 +64,7 @@ class GuessState implements IState {
       this.startBuffer,
       DEFAULT_GUESS_PHASE_LENGTH
     );
+    this.roomState.sendCurrDrawings();
   };
 
   onStateEnd = () => {
@@ -89,7 +90,6 @@ class GuessState implements IState {
       return;
     }
     this.roomState.incrementRound();
-    this.roomState.setCurrPrompts();
     this.roomState.setDrawState();
   };
 }

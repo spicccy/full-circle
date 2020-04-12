@@ -1,6 +1,11 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import { curatorReveal, warn } from '@full-circle/shared/lib/actions/server';
+import {
+  curatorReveal,
+  displayDrawing,
+  displayPrompt,
+  warn,
+} from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -68,8 +73,8 @@ export interface IRoomStateBackend {
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
 
-  setCurrDrawings: () => void;
-  setCurrPrompts: () => void;
+  sendCurrDrawings: () => void;
+  sendCurrPrompts: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -231,6 +236,7 @@ class RoomState extends Schema
     const client = this.getClient(clientId);
     if (client) {
       this.room.send(client, action);
+      console.log('sent action to ', clientId);
     }
   };
 
@@ -273,6 +279,19 @@ class RoomState extends Schema
   };
 
   setChains = (chainOrder: string[][]) => {
+    const somePrompts = [
+      'cat',
+      'dog',
+      'mouse',
+      'turd',
+      'chicken',
+      'computer',
+      'p90x',
+      'car',
+      'screaming rock',
+      'a rockin wave',
+    ];
+    let i = 0;
     for (const currChain of chainOrder) {
       const owner = currChain[0];
       const newChain = new Chain(owner);
@@ -283,6 +302,7 @@ class RoomState extends Schema
         const drawer = currChain[j + 1];
         newChain.addLink(new Link(drawer, guesser));
       }
+      newChain.links[0].prompt.setText(somePrompts[i++]);
       this.chains.push(newChain);
     }
   };
@@ -313,25 +333,27 @@ class RoomState extends Schema
     return false;
   };
 
-  setCurrPrompts = () => {
+  sendCurrPrompts = () => {
     this.roundData = new ArraySchema<RoundData>();
     const round = this.round - 1;
     const chains = this.chains;
     for (const chain of chains) {
       const data = chain.getLinks[round].prompt.text;
       const id = chain.getLinks[round].image.playerId;
-      this.roundData.push(new RoundData(id, data));
+      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
+      this.sendAction(id, displayPrompt(data));
     }
   };
 
-  setCurrDrawings = () => {
+  sendCurrDrawings = () => {
     this.roundData = new ArraySchema<RoundData>();
     const round = this.round - 1;
     const chains = this.chains;
     for (const chain of chains) {
       const data = chain.getLinks[round].image.imageData;
       const id = chain.getLinks[round + 1].prompt.playerId;
-      this.roundData.push(new RoundData(id, data));
+      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
+      this.sendAction(id, displayDrawing(data));
     }
   };
 

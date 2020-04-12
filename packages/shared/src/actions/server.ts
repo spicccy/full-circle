@@ -1,11 +1,8 @@
 import { createAction } from 'typesafe-actions';
 
-import { CanvasAction } from '../canvas';
 import { IChain, Warning } from '../roomState/interfaces';
 
-export const displayDrawing = createAction('@server/displayDrawing')<
-  CanvasAction[]
->();
+export const displayDrawing = createAction('@server/displayDrawing')<string>();
 
 export const displayPrompt = createAction('@server/displayPrompt')<string>();
 

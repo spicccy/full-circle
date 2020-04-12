@@ -9,17 +9,17 @@ import { getType } from 'typesafe-actions';
 
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
 
-const GuessPage: FunctionComponent = () => {
-  const { room, syncedState } = useRoom();
+interface IGuessPage {
+  drawing: CanvasAction[];
+}
+
+const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
+  const { room } = useRoom();
 
   const { addToast } = useToasts();
   const [guess, setGuess] = useState('');
-
-  const id = room?.sessionId;
-  const roundData = syncedState?.roundData;
-  const drawingString = roundData?.find((link) => link.id === id)?.data;
-  const drawing = drawingString ? JSON.parse(drawingString) : [];
 
   const handleSubmit = () => {
     room?.send(submitGuess(guess));
@@ -30,6 +30,7 @@ const GuessPage: FunctionComponent = () => {
     switch (action.type) {
       case getType(forceSubmit): {
         handleSubmit();
+        return;
       }
     }
   });

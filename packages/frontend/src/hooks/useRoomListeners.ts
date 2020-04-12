@@ -2,7 +2,9 @@ import { ServerAction } from '@full-circle/shared/lib/actions';
 import { useEffect, useRef } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
-export const useRoomMessage = (msgHandler: (message: ServerAction) => void) => {
+export type MessageHandler = (message: ServerAction) => void;
+
+export const useRoomMessage = (msgHandler: MessageHandler) => {
   const { addMessageListener } = useRoom();
   const handlerRef = useRef(msgHandler);
 

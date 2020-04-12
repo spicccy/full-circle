@@ -64,6 +64,7 @@ class DrawState implements IState {
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
+    this.roomState.sendCurrPrompts();
   };
 
   onStateEnd = () => {
@@ -89,7 +90,6 @@ class DrawState implements IState {
       this.roomState.sendReveal();
       return;
     }
-    this.roomState.setCurrDrawings();
     this.roomState.setGuessState();
   };
 }
