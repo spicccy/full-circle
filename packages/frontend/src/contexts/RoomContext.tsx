@@ -1,9 +1,11 @@
-import { ServerAction } from '@full-circle/shared/lib/actions';
+import { RoomError, ServerAction } from '@full-circle/shared/lib/actions';
+import { clientError } from '@full-circle/shared/lib/actions/client';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import {
   IRoomMetadata,
   IRoomStateSynced,
+  RoomErrorType,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { Room } from 'colyseus.js';
 import React, {
@@ -24,11 +26,6 @@ type RoomStateWithFn = IRoomStateSynced & {
 };
 
 export type IRoom = Room<RoomStateWithFn>;
-
-export enum RoomErrors {
-  INITIALISATION_ERROR = 'Unable to initialise the room',
-  NO_MATCHING_ROOMS = 'Failed to find a room with a matching code',
-}
 
 interface IRoomLoadingState {
   isLoading: true;
@@ -54,7 +51,7 @@ interface IRoomSuccessState {
 interface IRoomFailureState {
   isLoading: false;
   room: undefined;
-  roomError: string;
+  roomError: RoomError;
   roomCode: undefined;
 }
 
@@ -88,12 +85,24 @@ const getRoomSuccessState = (
   roomError: undefined,
 });
 
-const getRoomFailureState = (roomError: string): IRoomFailureState => ({
+const getRoomFailureState = (roomError: RoomError): IRoomFailureState => ({
   isLoading: false,
   room: undefined,
   roomCode: undefined,
   roomError,
 });
+
+const parseServerError = (errorAsString: string): RoomError => {
+  try {
+    const error: RoomError = JSON.parse(errorAsString);
+    invariant(error.type, 'Ensure that the JSON.parse was valid');
+    return error;
+  } catch (e) {
+    console.warn('Unknown error received from server: ', errorAsString);
+    console.warn('Exception occured: ', e);
+    return clientError(RoomErrorType.UNKNOWN_ERROR);
+  }
+};
 
 type MessageListener = (message: ServerAction) => void;
 type LeaveListener = (code: number) => void;
@@ -129,7 +138,12 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       const rooms = await colyseus.getAvailableRooms();
       const roomWithMetadata = rooms.find((r) => r.roomId === room.id);
       if (!roomWithMetadata) {
-        setRoomState(getRoomFailureState(RoomErrors.INITIALISATION_ERROR));
+        // couldn't find the room we just created?
+        setRoomState(
+          getRoomFailureState(
+            clientError(RoomErrorType.ROOM_INITIALISATION_ERROR)
+          )
+        );
         return null;
       }
 
@@ -139,7 +153,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
       return room;
     } catch (e) {
-      setRoomState(getRoomFailureState(e));
+      setRoomState(getRoomFailureState(parseServerError(e)));
       return null;
     }
   }, [colyseus]);
@@ -171,7 +185,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         );
 
         if (!matchingRoom) {
-          setRoomState(getRoomFailureState(RoomErrors.NO_MATCHING_ROOMS));
+          setRoomState(
+            getRoomFailureState(clientError(RoomErrorType.ROOM_NOT_FOUND))
+          );
           return null;
         }
 
@@ -182,7 +198,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         setRoomState(getRoomSuccessState(room, roomCode));
         return room;
       } catch (e) {
-        setRoomState(getRoomFailureState(e));
+        setRoomState(getRoomFailureState(parseServerError(e)));
         return null;
       }
     },
@@ -207,7 +223,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         );
 
         if (!matchingRoom) {
-          setRoomState(getRoomFailureState(RoomErrors.NO_MATCHING_ROOMS));
+          setRoomState(
+            getRoomFailureState(clientError(RoomErrorType.ROOM_NOT_FOUND))
+          );
           return null;
         }
 
@@ -229,7 +247,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState({
       isLoading: false,
       room: undefined,
-      roomError: '',
+      roomError: undefined,
       roomCode: undefined,
     });
   }, []);

@@ -1,7 +1,5 @@
-import { ServerAction } from '@full-circle/shared/lib/actions';
-import { reconnect } from '@full-circle/shared/lib/actions/server';
-import { RECONNECT_COMMAND } from '@full-circle/shared/lib/join/interfaces';
-import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { clientError } from '@full-circle/shared/lib/actions/client';
+import { reconnect, warn } from '@full-circle/shared/lib/actions/server';
 import { Box, Text } from 'grommet';
 import React, {
   FunctionComponent,
@@ -13,7 +11,7 @@ import React, {
 import { Redirect, useParams } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
-import { RoomErrors, useRoom } from 'src/contexts/RoomContext';
+import { useRoom } from 'src/contexts/RoomContext';
 import { getType } from 'typesafe-actions';
 
 import { LoginCard } from './LoginCard';
@@ -75,43 +73,27 @@ const LoginPage: FunctionComponent = () => {
     if (roomError) {
       const errorMsg = roomError;
       clearError(); // stops the below switch from executing infinitely
-      switch (errorMsg) {
-        case Warning.CONFLICTING_USERNAMES:
-          dispatchError({ type: 'setError', on: 'username' });
-          localStorage.removeItem('username');
-          setName('');
-          break;
-        case RoomErrors.NO_MATCHING_ROOMS:
-          dispatchError({ type: 'setError', on: 'roomCode' });
-          setRoomCode('');
-          break;
-      }
 
-      try {
-        const maybeServerAction: ServerAction = JSON.parse(errorMsg);
-        let toastId = '';
-        switch (maybeServerAction.type) {
-          case getType(reconnect):
-            addToast(
-              'Reconnecting to room',
-              {
-                appearance: 'info',
-              },
-              (id) => {
-                toastId = id;
-              }
-            );
-            reconnectToRoomByCode(roomCode, maybeServerAction.payload).then(
-              (_room) => {
-                removeToast(toastId);
-                addToast('Reconnected!', { appearance: 'success' });
-              }
-            );
-            break;
-        }
-      } catch (e) {
-        console.warn('Server threw an unsafe warning');
-        addToast(errorMsg, { appearance: 'error' });
+      let dismissableToastId = '';
+
+      switch (errorMsg.type) {
+        case getType(clientError):
+          addToast(errorMsg.payload, { appearance: 'error' });
+          break;
+        case getType(reconnect):
+          addToast(
+            `Reconnecting to ${roomCode}`,
+            { appearance: 'info' },
+            (id) => (dismissableToastId = id)
+          );
+          reconnectToRoomByCode(roomCode, errorMsg.payload).then((_room) => {
+            removeToast(dismissableToastId);
+            addToast('Reconnected!', { appearance: 'success' });
+          });
+          break;
+        case getType(warn):
+          addToast(errorMsg.payload, { appearance: 'error' });
+          break;
       }
     }
   }, [
