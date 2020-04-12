@@ -50,7 +50,7 @@ class GuessState implements IState {
     );
     this.roomState.clearSubmittedPlayers();
     this.timerHandle = this.roomState.clock.setTimeout(
-      this.advanceState,
+      this.startBuffer,
       DEFAULT_GUESS_PHASE_LENGTH
     );
     this.roomState.setCurrDrawings();
