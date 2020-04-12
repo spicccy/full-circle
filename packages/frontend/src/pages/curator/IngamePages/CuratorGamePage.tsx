@@ -30,6 +30,9 @@ const CuratorGamePage: FunctionComponent = () => {
       case '@server/warn':
         addToast(msg.payload, { appearance: 'warning' });
         break;
+      case '@server/curatorReveal':
+        console.log(msg.payload);
+        break;
       default:
     }
   };

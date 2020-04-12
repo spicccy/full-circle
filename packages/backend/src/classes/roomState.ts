@@ -1,6 +1,11 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
+<<<<<<< HEAD
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import { warn } from '@full-circle/shared/lib/actions/server';
+=======
+import { ClientAction } from '@full-circle/shared/lib/actions';
+import { curatorReveal, warn } from '@full-circle/shared/lib/actions/server';
+>>>>>>> sends chain to the curator frontend
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -56,6 +61,7 @@ export interface IRoomStateBackend {
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: Warning) => void;
+  sendReveal: () => void;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -206,6 +212,13 @@ class RoomState extends Schema
 
   sendWarning = (clientId: string, warning: Warning) => {
     this.sendAction(clientId, warn(warning));
+  }
+  
+  sendReveal = () => {
+    const curator = this.getClient(this.curator);
+    if (curator) {
+      this.room.send(curator, curatorReveal(this.chains));
+    }
   };
 
   incrementRound = () => {

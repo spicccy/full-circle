@@ -75,6 +75,7 @@ class DrawState implements IState {
   advanceState = () => {
     if (this.roomState.gameIsOver) {
       this.roomState.setRevealState();
+      this.roomState.sendReveal();
       return;
     }
     this.roomState.setCurrDrawings();
