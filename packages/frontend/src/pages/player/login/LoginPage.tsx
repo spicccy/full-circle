@@ -66,11 +66,13 @@ const LoginPage: FunctionComponent = () => {
     initialErrorState
   );
 
-  const { addToast } = useToasts();
+  const { addToast, removeToast, toastStack } = useToasts();
 
   useEffect(() => {
     if (roomError) {
-      switch (roomError) {
+      const errorMsg = roomError;
+      clearError(); // stops the below switch from executing infinitely
+      switch (errorMsg) {
         case Warning.CONFLICTING_USERNAMES:
           dispatchError({ type: 'setError', on: 'username' });
           localStorage.removeItem('username');
@@ -82,19 +84,34 @@ const LoginPage: FunctionComponent = () => {
           break;
       }
 
-      if (roomError.startsWith(RECONNECT_COMMAND)) {
-        clearError();
-        const id = roomError.split(':')[1];
-        addToast('Reconnecting to room', { appearance: 'info' });
+      if (errorMsg.startsWith(RECONNECT_COMMAND)) {
+        const id = errorMsg.split(':')[1];
+        let toastId = '';
+        addToast(
+          'Reconnecting to room',
+          {
+            appearance: 'info',
+          },
+          (id) => {
+            toastId = id;
+          }
+        );
         reconnectToRoomByCode(roomCode, id).then((_room) => {
+          removeToast(toastId);
           addToast('Reconnected!', { appearance: 'success' });
         });
       } else {
-        addToast(roomError, { appearance: 'error' });
-        clearError();
+        addToast(errorMsg, { appearance: 'error' });
       }
     }
-  }, [addToast, clearError, reconnectToRoomByCode, roomCode, roomError]);
+  }, [
+    addToast,
+    clearError,
+    reconnectToRoomByCode,
+    removeToast,
+    roomCode,
+    roomError,
+  ]);
 
   const attemptToJoinRoom = async () => {
     localStorage.setItem('username', name);
