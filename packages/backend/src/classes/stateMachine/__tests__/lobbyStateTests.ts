@@ -1,12 +1,12 @@
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { IPlayer, Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { mocked } from 'ts-jest/utils';
 
 import { MAX_PLAYERS } from '../../../constants';
 import { IClient, IRoom } from '../../../interfaces';
-import { mockClient, mockRoom } from '../../helpers/testHelper';
+import { addPlayers, mockClient, mockRoom } from '../../helpers/testHelper';
 import RoomState, { IState } from '../../roomState';
 import LobbyState from '../lobbyState';
 import { getAllocation } from './../../../util/sortPlayers/sortPlayers';
@@ -23,13 +23,6 @@ export const testClient: IClient = partialMock<IClient>({
   id: 'player',
 });
 
-const createTestPlayer = (num: number): IPlayer => {
-  return {
-    id: `${num}_id`,
-    username: `${num}_username`,
-  };
-};
-
 describe('Lobby State', () => {
   let room: IRoom;
   let roomState: RoomState;
@@ -40,9 +33,7 @@ describe('Lobby State', () => {
     roomState = new RoomState(room);
     roomState.setCurator('curator');
 
-    for (let i = 0; i < 3; i++) {
-      roomState.addPlayer(createTestPlayer(i));
-    }
+    addPlayers(roomState, 3);
 
     lobbyState = roomState.currState;
     const mockedVal = [

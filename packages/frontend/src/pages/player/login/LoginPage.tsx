@@ -66,7 +66,7 @@ const LoginPage: FunctionComponent = () => {
     initialErrorState
   );
 
-  const { addToast, removeToast, toastStack } = useToasts();
+  const { addToast, removeToast } = useToasts();
 
   useEffect(() => {
     if (roomError) {
