@@ -4,3 +4,6 @@
 .vscode/settings.json
 .DS_Store
 .idea
+
+# Local Netlify folder
+.netlify
