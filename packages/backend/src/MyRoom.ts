@@ -1,7 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
-import { Room } from 'colyseus';
+import { Client, Room } from 'colyseus';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
 import RoomState from './classes/roomState';
@@ -27,12 +27,18 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     this.state.onReceive(client, message);
   }
 
-  onLeave(client: IClient, consented: boolean) {
+  async onLeave(client: Client, consented: boolean) {
     console.log(`${client.id} left ${this.roomId}.`);
     if (client.id === this.state.curator) {
       this.disconnect();
     } else {
       this.state.onLeave(client, consented);
+      try {
+        await this.allowReconnection(client);
+        this.state.playerReconnected(client.id);
+      } catch (e) {
+        this.state.removePlayer(client.id);
+      }
     }
   }
 

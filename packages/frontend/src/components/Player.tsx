@@ -28,7 +28,10 @@ interface IPlayerProps {
   angle: number;
 }
 
-function boxBackground(playerSubmitted?: boolean) {
+function boxBackground(playerSubmitted?: boolean, disconnected?: boolean) {
+  if (disconnected) {
+    return Colour.DARK_GRAY;
+  }
   if (playerSubmitted) {
     return Colour.ORANGE;
   } else {
@@ -36,7 +39,10 @@ function boxBackground(playerSubmitted?: boolean) {
   }
 }
 
-function boxBorder(playerSubmitted?: boolean) {
+function boxBorder(playerSubmitted?: boolean, disconnected?: boolean) {
+  if (disconnected) {
+    return Colour.RED;
+  }
   if (playerSubmitted) {
     return Colour.BLACK;
   } else {
@@ -49,15 +55,20 @@ export const Player: FunctionComponent<IPlayerProps> = ({ player, angle }) => {
   const playerSubmitted = Boolean(
     player && syncedState?.submittedPlayers?.[player.id]
   );
+
+  const disconnected = Boolean(
+    player && syncedState?.players?.[player.id].disconnected
+  );
+
   return (
     <PlayerLocation angle={angle}>
       <PlayerBox
         border={{
-          color: boxBorder(playerSubmitted),
+          color: boxBorder(playerSubmitted, disconnected),
           size: 'medium',
         }}
         angle={-angle}
-        background={boxBackground(playerSubmitted)}
+        background={boxBackground(playerSubmitted, disconnected)}
         pad="small"
         round="small"
       >

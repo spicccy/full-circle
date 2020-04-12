@@ -1,3 +1,4 @@
+import { RECONNECT_COMMAND } from '@full-circle/shared/lib/join/interfaces';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, {
@@ -10,7 +11,7 @@ import React, {
 import { Redirect, useParams } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
-import { useRoom } from 'src/contexts/RoomContext';
+import { RoomErrors, useRoom } from 'src/contexts/RoomContext';
 
 import { LoginCard } from './LoginCard';
 
@@ -48,7 +49,13 @@ const errorReducer: ErrorReducer = (currState, action) => {
 };
 
 const LoginPage: FunctionComponent = () => {
-  const { room, joinRoomByCode, roomError } = useRoom();
+  const {
+    room,
+    joinRoomByCode,
+    roomError,
+    reconnectToRoomByCode,
+    clearError,
+  } = useRoom();
   const params = useParams<ILoginPageParams>();
 
   const [name, setName] = useState(localStorage.getItem('username') ?? '');
@@ -63,18 +70,31 @@ const LoginPage: FunctionComponent = () => {
 
   useEffect(() => {
     if (roomError) {
-      if (roomError === Warning.CONFLICTING_USERNAMES) {
-        dispatchError({ type: 'setError', on: 'username' });
-        localStorage.removeItem('username');
-        setName('');
+      switch (roomError) {
+        case Warning.CONFLICTING_USERNAMES:
+          dispatchError({ type: 'setError', on: 'username' });
+          localStorage.removeItem('username');
+          setName('');
+          break;
+        case RoomErrors.NO_MATCHING_ROOMS:
+          dispatchError({ type: 'setError', on: 'roomCode' });
+          setRoomCode('');
+          break;
       }
 
-      addToast(roomError, { appearance: 'error' });
-      // TODO: fix this raf hack
-      // need to wait 2af on chrome+firefox in order for the border to show up before the alert
-      // this can probably be removed once we move away from alerts to a popup method
+      if (roomError.startsWith(RECONNECT_COMMAND)) {
+        clearError();
+        const id = roomError.split(':')[1];
+        addToast('Reconnecting to room', { appearance: 'info' });
+        reconnectToRoomByCode(roomCode, id).then((_room) => {
+          addToast('Reconnected!', { appearance: 'success' });
+        });
+      } else {
+        addToast(roomError, { appearance: 'error' });
+        clearError();
+      }
     }
-  }, [addToast, roomError]);
+  }, [addToast, clearError, reconnectToRoomByCode, roomCode, roomError]);
 
   const attemptToJoinRoom = async () => {
     localStorage.setItem('username', name);

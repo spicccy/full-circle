@@ -3,10 +3,13 @@ import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 
 class Player extends Schema implements IPlayer {
   @type('string')
-  id = '';
+  id: string;
 
   @type('string')
-  username = '';
+  username: string;
+
+  @type('boolean')
+  disconnected = false;
 
   constructor(id: string, username: string) {
     super();

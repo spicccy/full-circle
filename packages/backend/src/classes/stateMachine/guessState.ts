@@ -1,6 +1,10 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
 import { forceSubmit } from '@full-circle/shared/lib/actions/server';
+import {
+  IJoinOptions,
+  RECONNECT_COMMAND,
+} from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
@@ -17,12 +21,19 @@ class GuessState implements IState {
 
   constructor(private roomState: IRoomStateBackend) {}
 
-  onJoin = () => {
+  onJoin = (client: IClient, options: IJoinOptions) => {
+    const username = options.username;
+    // see if the player had previously been in the lobby
+    const maybeExistingId = this.roomState.attemptReconnection(username);
+    if (maybeExistingId) {
+      // throw an error since we can't message them till they are in the room
+      throw new Error(RECONNECT_COMMAND + ':' + maybeExistingId);
+    }
     throw new Error(Warning.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.roomState.removePlayer(client.id);
+    this.roomState.playerDisconnected(client.id);
   };
 
   onReceive = (client: IClient, message: ClientAction) => {

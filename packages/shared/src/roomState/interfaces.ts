@@ -23,6 +23,7 @@ export interface IChain {
 export interface IPlayer {
   id: string;
   username: string;
+  disconnected: boolean;
 }
 
 export interface IPhase {
