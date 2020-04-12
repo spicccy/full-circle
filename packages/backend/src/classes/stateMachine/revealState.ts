@@ -1,7 +1,8 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
+  createPreRoomMessage,
   IJoinOptions,
-  RECONNECT_COMMAND,
+  PRE_ROOM_MESSAGE,
 } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
@@ -16,10 +17,15 @@ class RevealState implements IState {
   onJoin = (client: IClient, options: IJoinOptions) => {
     const username = options.username;
     // see if the player had previously been in the lobby
-    const maybeExistingId = this.roomState.attemptReconnection(username);
+    const maybeExistingId = this.roomState.getReconnectableId(username);
     if (maybeExistingId) {
       // throw an error since we can't message them till they are in the room
-      throw new Error(RECONNECT_COMMAND + ':' + maybeExistingId);
+      throw new Error(
+        createPreRoomMessage(
+          PRE_ROOM_MESSAGE.RECONNECT_COMMAND,
+          maybeExistingId
+        )
+      );
     }
     throw new Error(Warning.GAME_ALREADY_STARTED);
   };

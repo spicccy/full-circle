@@ -83,7 +83,7 @@ export interface IRoomStateBackend {
   clearSubmittedPlayers: () => void;
   playerDisconnected: (id: string) => void;
   playerReconnected: (id: string) => void;
-  attemptReconnection: (id: string) => string | null;
+  getReconnectableId: (id: string) => string | null;
 }
 
 class RoomState extends Schema
@@ -215,7 +215,7 @@ class RoomState extends Schema
     player.disconnected = false;
   };
 
-  attemptReconnection = (username: string): string | null => {
+  getReconnectableId = (username: string): string | null => {
     for (const id in this.players) {
       const player: Player = this.players[id];
       if (player.username === username && player.disconnected) {

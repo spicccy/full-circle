@@ -1,4 +1,7 @@
-import { RECONNECT_COMMAND } from '@full-circle/shared/lib/join/interfaces';
+import {
+  parsePreRoomMessage,
+  PRE_ROOM_MESSAGE,
+} from '@full-circle/shared/lib/join/interfaces';
 import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, {
@@ -84,22 +87,28 @@ const LoginPage: FunctionComponent = () => {
           break;
       }
 
-      if (errorMsg.startsWith(RECONNECT_COMMAND)) {
-        const id = errorMsg.split(':')[1];
+      const maybePreRoomCommand = parsePreRoomMessage(errorMsg);
+      if (maybePreRoomCommand.commandType) {
         let toastId = '';
-        addToast(
-          'Reconnecting to room',
-          {
-            appearance: 'info',
-          },
-          (id) => {
-            toastId = id;
-          }
-        );
-        reconnectToRoomByCode(roomCode, id).then((_room) => {
-          removeToast(toastId);
-          addToast('Reconnected!', { appearance: 'success' });
-        });
+        switch (maybePreRoomCommand.commandType) {
+          case PRE_ROOM_MESSAGE.RECONNECT_COMMAND:
+            addToast(
+              'Reconnecting to room',
+              {
+                appearance: 'info',
+              },
+              (id) => {
+                toastId = id;
+              }
+            );
+            reconnectToRoomByCode(
+              roomCode,
+              maybePreRoomCommand.commandPayload
+            ).then((_room) => {
+              removeToast(toastId);
+              addToast('Reconnected!', { appearance: 'success' });
+            });
+        }
       } else {
         addToast(errorMsg, { appearance: 'error' });
       }
