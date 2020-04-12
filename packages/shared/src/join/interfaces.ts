@@ -4,7 +4,7 @@ export interface IJoinOptions {
 
 // how the backend communicates with frontend without a client being in a room
 export enum PRE_ROOM_MESSAGE {
-  RECONNECT_COMMAND = ':RECONNECT:',
+  RECONNECT_COMMAND = 'RECONNECT',
 }
 
 export type Command = {
@@ -23,7 +23,7 @@ export const createPreRoomMessage = (
   type: PRE_ROOM_MESSAGE,
   payload: string
 ): string => {
-  return type + payload;
+  return ':' + type + ':' + payload;
 };
 
 export const parsePreRoomMessage = (message: string): MaybeCommand => {
@@ -33,11 +33,12 @@ export const parsePreRoomMessage = (message: string): MaybeCommand => {
   };
   if (message.startsWith(':')) {
     const parts = message.split(':');
-    switch (parts[0]) {
+    console.log(parts);
+    switch (parts[1]) {
       case PRE_ROOM_MESSAGE.RECONNECT_COMMAND:
         return {
-          commandType: parts[0],
-          commandPayload: parts[1],
+          commandType: parts[1],
+          commandPayload: parts[2],
         };
     }
 
