@@ -59,8 +59,17 @@ export const randomChain = (ids: string[]): string[][] | undefined => {
 };
 
 export const orderedChain = (ids: string[]): string[][] => {
-  console.log(ids);
-  return [['']];
+  const chains: string[][] = [];
+  const n = ids.length;
+  for (let i = 0; i < n; i++) {
+    const chain = [];
+    chain.push(ids[i]);
+    for (let j = 1; j < n; j++) {
+      chain.push(ids[(i + j) % n]);
+    }
+    chains.push(chain);
+  }
+  return chains;
 };
 
 export const getAllocation = (type: Allocation) => {
