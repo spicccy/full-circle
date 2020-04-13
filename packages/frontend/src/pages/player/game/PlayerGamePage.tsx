@@ -1,9 +1,9 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   displayDrawing,
   displayPrompt,
 } from '@full-circle/shared/lib/actions/server';
-import { ServerAction } from '@full-circle/shared/lib/actions';
+import { CanvasAction } from '@full-circle/shared/lib/canvas';
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
@@ -13,17 +13,18 @@ import {
   useRoomLeave,
   useRoomMessage,
 } from 'src/hooks/useRoomListeners';
+import { getType } from 'typesafe-actions';
 
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
-import { getType } from 'typesafe-actions';
+import { RevealPage } from './reveal/RevealPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
   const [currentPrompt, setCurrentPrompt] = useState<string>('');
-  const [currentDrawing, setCurrentDrawing] = useState<string>('');
+  const [currentDrawing, setCurrentDrawing] = useState<CanvasAction[]>([]);
 
   const { addToast } = useToasts();
 
@@ -34,10 +35,10 @@ const PlayerGamePage: FunctionComponent = () => {
   const msgHandler: MessageHandler = (message) => {
     switch (message.type) {
       case getType(displayPrompt):
-        setCurrentPrompt(message.payload || '');
+        setCurrentPrompt(message.payload);
         break;
       case getType(displayDrawing):
-        setCurrentDrawing(message.payload || '');
+        setCurrentDrawing(JSON.parse(message.payload));
         break;
       default:
         console.warn('Unhandled message');
@@ -60,9 +61,11 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.GUESS: {
-      return (
-        <GuessPage drawing={currentDrawing ? JSON.parse(currentDrawing) : []} />
-      );
+      return <GuessPage drawing={currentDrawing} />;
+    }
+
+    case PhaseType.REVEAL: {
+      return <RevealPage />;
     }
 
     default: {

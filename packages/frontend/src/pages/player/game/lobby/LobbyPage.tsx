@@ -4,9 +4,11 @@ import React, { FunctionComponent } from 'react';
 import { Card } from 'src/components/Card/Card';
 import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
-import { ReactComponent as Close } from 'src/icons/close.svg';
+import { Close } from 'src/icons';
 import logo from 'src/images/fullcircle.png';
 import styled from 'styled-components/macro';
+
+import { Background } from '../components/Background';
 
 const CloseButton = styled(LinkAnchor)`
   position: absolute;
@@ -24,14 +26,7 @@ const Lobby: FunctionComponent = () => {
   const { roomCode, leaveRoom } = useRoom();
 
   return (
-    <Box
-      background="dark-1"
-      flex
-      height={{ min: '100vh' }}
-      align="center"
-      justify="center"
-      pad="medium"
-    >
+    <Background>
       <Box width="medium">
         <Card
           css={{ position: 'relative' }}
@@ -57,7 +52,7 @@ const Lobby: FunctionComponent = () => {
           </Heading>
         </Card>
       </Box>
-    </Box>
+    </Background>
   );
 };
 
