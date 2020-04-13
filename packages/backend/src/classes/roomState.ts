@@ -19,7 +19,7 @@ import { Client } from 'colyseus';
 
 import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
-import { getAllocation } from '../util/sortPlayers/sortPlayers';
+import { Allocation, getAllocation } from '../util/sortPlayers/sortPlayers';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -89,16 +89,24 @@ export interface IRoomStateBackend {
   playerDisconnected: (id: string) => void;
   playerReconnected: (id: string) => void;
   attemptReconnection: (id: string) => string | null;
+
+  updatePlayerScores: () => void;
 }
+
+export type RoomOptions = {
+  predictableChains: boolean;
+};
 
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
+  options?: RoomOptions;
 
-  constructor(private room: IRoom) {
+  constructor(private room: IRoom, options?: RoomOptions) {
     super();
     this.clock = room.clock;
+    this.options = options;
   }
 
   //==================================================================================
@@ -127,9 +135,6 @@ class RoomState extends Schema
 
   @type([RoundData])
   roundData = new ArraySchema<RoundData>();
-
-  @type({ map: 'string' })
-  warnings = new MapSchema<string>();
 
   // =====================================
   // IRoomStateBackend Api
@@ -271,7 +276,9 @@ class RoomState extends Schema
 
   allocate = () => {
     this.chains = new ArraySchema<Chain>();
-    const allocation = getAllocation(0);
+    const allocation = getAllocation(
+      this.options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
+    );
     const ids = objectValues(this.players).map((val) => val.id);
     const chainOrder = allocation(ids);
     if (!chainOrder) return;
@@ -354,6 +361,22 @@ class RoomState extends Schema
       const id = chain.getLinks[round + 1].prompt.playerId;
       this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
       this.sendAction(id, displayDrawing(data));
+    }
+  };
+
+  updatePlayerScores = () => {
+    // reset scores so this function is idempotent
+    for (const id in this.players) {
+      (this.players[id] as Player).score = 0;
+    }
+
+    for (const chain of this.chains) {
+      for (let i = 1; i < chain.links.length; i++) {
+        if (chain.links[i].prompt.text === chain.links[i - 1].prompt.text) {
+          const playerId = chain.links[i].prompt.playerId;
+          (this.players[playerId] as Player).score++;
+        }
+      }
     }
   };
 

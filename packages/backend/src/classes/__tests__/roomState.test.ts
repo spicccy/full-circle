@@ -22,6 +22,7 @@ describe('Room state', () => {
       mocked(getAllocation).mockReturnValue(() => {
         return mockedVal;
       });
+      jest.spyOn(state, 'updatePlayerScores').mockImplementation(() => null);
     });
 
     it('starts with the lobby state', () => {
@@ -124,6 +125,9 @@ describe('Room state', () => {
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom);
+      jest
+        .spyOn(roomState, 'updatePlayerScores')
+        .mockImplementation(() => null);
     });
 
     it('ends the game loop correctly when there are three players', () => {

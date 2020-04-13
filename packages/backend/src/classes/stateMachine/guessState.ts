@@ -71,6 +71,7 @@ class GuessState implements IState {
     this.timerHandle?.clear();
     this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
+    this.roomState.updatePlayerScores();
   };
 
   startBuffer = () => {
