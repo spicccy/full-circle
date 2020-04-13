@@ -11,10 +11,10 @@ import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
+  IChain,
   IPlayer,
   IRoomStateSynced,
   RoomErrorType,
-  IChain,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { Client } from 'colyseus';
 
