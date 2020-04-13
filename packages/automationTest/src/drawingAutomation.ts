@@ -1,6 +1,6 @@
 import { BoundingBox, Page } from 'puppeteer';
-
-import { screenshotName } from './lobbyAutomation';
+import { screenshotName } from './screenshotAutomation';
+import { setCurrPage } from '../jest-setup';
 
 const drawLine = async (
   playerPage: Page,
@@ -25,6 +25,7 @@ export const drawImage = async (
   colour: string
 ) => {
   await playerPage.bringToFront();
+  setCurrPage(playerPage);
   const canvas = await playerPage.waitForSelector("[data-testid='drawCanvas']");
   const colourSelector = "[data-testid='".concat(colour).concat("']");
   await playerPage.waitForSelector(colourSelector);

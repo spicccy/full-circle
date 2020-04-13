@@ -1,6 +1,7 @@
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
-import { changeDir, joinGame, screenshotName } from './lobbyAutomation';
+import { joinGame } from './lobbyAutomation';
+import { changeDir, screenshotName } from './screenshotAutomation';
 
 describe('Full Circle', () => {
   beforeAll(async () => {
@@ -9,11 +10,11 @@ describe('Full Circle', () => {
   });
 
   it('should display the login page with links to join/create a room', async () => {
+    await expect(page).toMatch('Full Circle');
+    await expect(page).toMatch('OR create a new game here');
     await page.screenshot({
       path: screenshotName('login_page.png'),
     });
-    await expect(page).toMatch('Full Circle');
-    await expect(page).toMatch('OR create a new game here');
   });
 
   it('should successfully navigate to the room creation page', async () => {
@@ -22,10 +23,10 @@ describe('Full Circle', () => {
       page.click("[data-testid='newGame']"),
       page.waitForNavigation(),
     ]);
+    await expect(page).toMatch('Create a Room');
     await page.screenshot({
       path: screenshotName('home_page.png'),
     });
-    await expect(page).toMatch('Create a Room');
   });
 
   it('should be able to successfully create a room', async () => {
@@ -34,10 +35,10 @@ describe('Full Circle', () => {
       page.click("[data-testid='createGame']"),
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
+    await expect(page).toMatch('Room');
     await page.screenshot({
       path: screenshotName('lobby_no_players.png'),
     });
-    await expect(page).toMatch('Room');
   });
 
   it('should be able to join the room with another browser instance', async () => {
@@ -57,12 +58,12 @@ describe('Full Circle', () => {
     const context3 = await browser.createIncognitoBrowserContext();
     const playerPage3 = await context3.newPage();
     await joinGame('Player 3', roomCode, playerPage3, false);
-    await page.screenshot({
-      path: screenshotName('lobby_with_player.png'),
-    });
     await expect(page).toMatch('Player 1');
     await expect(page).toMatch('Player 2');
     await expect(page).toMatch('Player 3');
+    await page.screenshot({
+      path: screenshotName('lobby_with_player.png'),
+    });
 
     changeDir('draw_guess_round_1');
     await page.waitForSelector("[data-testid='startGame']");
@@ -81,7 +82,7 @@ describe('Full Circle', () => {
     await drawImage(playerPage3, 'drawing_player_3', 'orange (d)');
 
     changeDir('end_game');
-    await page.waitForSelector("[data-testid='endMessage']");
+    //await page.waitForSelector("[data-testid='endMessage']");
     await page.screenshot({
       path: screenshotName('game_over'),
     });
