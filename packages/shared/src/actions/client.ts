@@ -12,3 +12,5 @@ export const submitGuess = createAction('@client/submitGuess')<string>();
 export const notifyPlayerReady = createAction('@client/notifyPlayerReady')();
 
 export const clientError = createAction('@client/warn')<RoomErrorType>();
+
+export const revealChain = createAction('@client/revealChain')();

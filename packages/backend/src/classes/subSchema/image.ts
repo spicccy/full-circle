@@ -1,7 +1,10 @@
 import { Schema, type } from '@colyseus/schema';
-import { IImage } from '@full-circle/shared/lib/roomState/interfaces';
+import {
+  IImage,
+  IImagePrivate,
+} from '@full-circle/shared/lib/roomState/interfaces';
 
-class Image extends Schema implements IImage {
+class Image extends Schema implements IImage, IImagePrivate {
   @type('string')
   _imageData = '';
 

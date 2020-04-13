@@ -1,7 +1,7 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Fragment, FunctionComponent } from 'react';
+import { Fragment, FunctionComponent, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
@@ -12,6 +12,7 @@ import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
 import { IngameReveal } from './IngameReveal';
 import { Lobby } from './Lobby';
+import { IChainPrivate } from '@full-circle/shared/lib/roomState/interfaces';
 /* 
 TODO:
 The page constantly renders as the phasetimer
@@ -21,6 +22,7 @@ Lobby should only re-render when a new player has joined
 
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
+  const [chain, setChain] = useState<IChainPrivate | null>(null);
 
   const { addToast } = useToasts();
 
@@ -33,6 +35,7 @@ const CuratorGamePage: FunctionComponent = () => {
       case '@server/curatorReveal':
         // TODO: Connect this up with Winson's mock
         console.log(msg.payload);
+        setChain(msg.payload);
         break;
       default:
     }
@@ -55,7 +58,7 @@ const CuratorGamePage: FunctionComponent = () => {
       case PhaseType.GUESS:
         return <IngameGuess />;
       case PhaseType.REVEAL:
-        return <IngameReveal />;
+        return <IngameReveal chain={chain} />;
       default:
         return <div>Loading</div>;
     }

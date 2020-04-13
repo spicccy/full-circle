@@ -5,9 +5,19 @@ export interface IPrompt {
   playerId: string;
 }
 
+export interface IPromptPrivate {
+  _text: string;
+  _playerId: string;
+}
+
 export interface IImage {
   imageData: string;
   playerId: string;
+}
+
+export interface IImagePrivate {
+  _imageData: string;
+  _playerId: string;
 }
 
 export interface ILink {
@@ -15,9 +25,19 @@ export interface ILink {
   image: IImage;
 }
 
+export interface ILinkPrivate {
+  _prompt: IPromptPrivate;
+  _image: IImagePrivate;
+}
+
 export interface IChain {
   id: string;
   links: ILink[];
+}
+
+export interface IChainPrivate {
+  id: string;
+  links: ILinkPrivate[];
 }
 
 export interface IPlayer {
@@ -53,6 +73,7 @@ export interface IRoomStateSynced {
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
   roundData: IRoundData[];
+  revealer: string;
 }
 
 export enum RoomErrorType {

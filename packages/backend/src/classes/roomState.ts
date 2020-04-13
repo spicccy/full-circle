@@ -63,6 +63,8 @@ export interface IRoomStateBackend {
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => void;
 
+  setRevealer: () => void;
+
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
   getRound: () => number;
@@ -121,6 +123,8 @@ class RoomState extends Schema
   @type([Chain])
   chains = new ArraySchema<Chain>();
 
+  chainItr = 0;
+
   @type({ map: Player })
   players = new MapSchema<Player>();
 
@@ -135,6 +139,12 @@ class RoomState extends Schema
 
   @type([RoundData])
   roundData = new ArraySchema<RoundData>();
+
+  @type({ map: 'string' })
+  warnings = new MapSchema<string>();
+
+  @type('string')
+  revealer = '';
 
   // =====================================
   // IRoomStateBackend Api
@@ -249,9 +259,21 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
+  setRevealer = () => {
+    const itr = this.chainItr;
+    if (itr < this.chains.length) {
+      this.revealer = this.chains[itr].id;
+      return;
+    }
+    this.revealer = '';
+  };
+
   sendReveal = () => {
     const curator = this.curator;
-    this.sendAction(curator, curatorReveal(this.chains));
+    const itr = this.chainItr++;
+    if (itr < this.chains.length) {
+      this.sendAction(curator, curatorReveal(this.chains[itr]));
+    }
   };
 
   incrementRound = () => {
