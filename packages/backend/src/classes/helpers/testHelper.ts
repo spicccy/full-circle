@@ -2,6 +2,7 @@ import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 
 import { IClient, IClock, IRoom } from '../../interfaces';
 import RoomState from '../roomState';
+import Player from '../subSchema/player';
 
 export const mockClock: IClock = {
   setTimeout: jest.fn().mockReturnValue({
@@ -24,11 +25,7 @@ export const mockClient: IClient = {
 };
 
 export const createTestPlayer = (num: number): IPlayer => {
-  return {
-    id: `${num}_id`,
-    username: `${num}_username`,
-    disconnected: false,
-  };
+  return new Player(`${num}_id`, `${num}_username`);
 };
 
 export const addPlayers = (roomState: RoomState, nPlayers: number) => {

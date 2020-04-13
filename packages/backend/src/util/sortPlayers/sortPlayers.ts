@@ -7,6 +7,7 @@ Things to consider
 */
 export enum Allocation {
   RAND = 0,
+  ORDERED = 1,
 }
 
 export const allocate = (
@@ -62,10 +63,11 @@ const orderedChain = (ids: string[]): string[][] => {
   return [['']];
 };
 
-export const getAllocation = (type: number) => {
+export const getAllocation = (type: Allocation) => {
   switch (type) {
     case Allocation.RAND:
       return randomChain;
+    case Allocation.ORDERED:
     default:
       return orderedChain;
   }
