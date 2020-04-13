@@ -416,11 +416,12 @@ class RoomState extends Schema
   // ===========================================================================
   get gameIsOver() {
     // TODO: implement checking of the room's configured round length
-    let phasesElapsed = this.round * 2;
-    if (this.phase.phaseType === PhaseType.GUESS) {
-      phasesElapsed += 1;
-    }
-    if (phasesElapsed > this.numPlayers) {
+    const phasesElapsed = this.round * 2;
+    // TODO be able to end on a guess
+    // if (this.phase.phaseType === PhaseType.GUESS) {
+    //   phasesElapsed += 1;
+    // }
+    if (phasesElapsed > this.numPlayers - 1) {
       return true;
     }
 
