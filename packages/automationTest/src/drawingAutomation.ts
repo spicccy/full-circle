@@ -1,6 +1,6 @@
 import { BoundingBox, Page } from 'puppeteer';
 import { screenshotName } from './screenshotAutomation';
-import { setCurrPage } from '../jest-setup';
+import { setCurrPage } from '../setup';
 
 const drawLine = async (
   playerPage: Page,

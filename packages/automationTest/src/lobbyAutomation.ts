@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer';
 import { screenshotName } from './screenshotAutomation';
-import { setCurrPage } from '../jest-setup';
+import { setCurrPage } from '../setup';
 
 export const joinGame = async (
   playerName: string,
