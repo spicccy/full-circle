@@ -1,6 +1,6 @@
 import { createAction } from 'typesafe-actions';
 
-import { IChainSynced, RoomErrorType } from '../roomState/interfaces';
+import { IChain, RoomErrorType } from '../roomState/interfaces';
 
 export const displayDrawing = createAction('@server/displayDrawing')<string>();
 
@@ -19,6 +19,4 @@ export const throwServerWarning = (error: RoomErrorType) => {
 export const sendReconnect = (clientId: string) => {
   throw new Error(JSON.stringify(reconnect(clientId)));
 };
-export const curatorReveal = createAction('@server/curatorReveal')<
-  IChainSynced
->();
+export const curatorReveal = createAction('@server/curatorReveal')<IChain>();
