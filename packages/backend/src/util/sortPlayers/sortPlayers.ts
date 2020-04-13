@@ -45,7 +45,7 @@ export const allocate = (
   return undefined;
 };
 
-const randomChain = (ids: string[]): string[][] | undefined => {
+export const randomChain = (ids: string[]): string[][] | undefined => {
   const numIds = ids.length;
   const chainLength = Math.floor((numIds - 1) / 2) * 2;
   //initialise
@@ -58,7 +58,7 @@ const randomChain = (ids: string[]): string[][] | undefined => {
   return allocatedChains;
 };
 
-const orderedChain = (ids: string[]): string[][] => {
+export const orderedChain = (ids: string[]): string[][] => {
   console.log(ids);
   return [['']];
 };
