@@ -6,10 +6,12 @@ import {
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
+import { revealChain } from '@full-circle/shared/lib/actions/client';
 
 class RevealState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
@@ -31,6 +33,13 @@ class RevealState implements IState {
 
   onReceive = (client: IClient, message: ClientAction) => {
     console.log(client, message);
+    switch (message.type) {
+      case getType(revealChain): {
+        this.roomState.sendReveal();
+        this.roomState.setRevealState();
+        return;
+      }
+    }
   };
 
   onClientReady = (clientId: string) => {
@@ -41,6 +50,7 @@ class RevealState implements IState {
 
   onStateStart = () => {
     this.roomState.setPhase(new Phase(PhaseType.REVEAL));
+    this.roomState.setRevealer();
   };
 
   onStateEnd = () => {

@@ -5,6 +5,8 @@ import { BaseButton } from 'src/components/BaseButton';
 import { Card } from 'src/components/Card/Card';
 import { ThumbDown, ThumbUp } from 'src/icons';
 import styled from 'styled-components';
+import { useRoom } from 'src/contexts/RoomContext';
+import { revealChain } from '@full-circle/shared/lib/actions/client';
 
 import { Background } from '../components/Background';
 
@@ -39,6 +41,14 @@ const LikeButton = styled(BaseButton)`
 `;
 
 const RevealPage: FunctionComponent = () => {
+  const { room, syncedState } = useRoom();
+
+  const onSubmit = () => {
+    room?.send(revealChain());
+  };
+
+  const display = syncedState?.revealer === room?.sessionId;
+
   return (
     <Background>
       <Box width="medium">
@@ -51,7 +61,12 @@ const RevealPage: FunctionComponent = () => {
               <ThumbUp />
             </LikeButton>
           </Box>
-          <Button size="large" label="Next" />
+          <Button
+            disabled={!display}
+            onClick={onSubmit}
+            size="large"
+            label="Next"
+          />
         </Card>
       </Box>
     </Background>

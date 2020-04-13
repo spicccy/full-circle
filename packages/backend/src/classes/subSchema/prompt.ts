@@ -24,6 +24,13 @@ class Prompt extends Schema implements IPrompt {
   get text() {
     return this._text;
   }
+
+  get prompt() {
+    return {
+      playerId: this._playerId,
+      text: this._text,
+    };
+  }
 }
 
 export default Prompt;

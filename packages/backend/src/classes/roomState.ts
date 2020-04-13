@@ -11,6 +11,7 @@ import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
+  IChain,
   IPlayer,
   IRoomStateSynced,
   RoomErrorType,
@@ -62,6 +63,8 @@ export interface IRoomStateBackend {
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => void;
+
+  setRevealer: () => void;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -118,9 +121,6 @@ class RoomState extends Schema
   @type('string')
   curator = '';
 
-  @type([Chain])
-  chains = new ArraySchema<Chain>();
-
   @type({ map: Player })
   players = new MapSchema<Player>();
 
@@ -135,6 +135,16 @@ class RoomState extends Schema
 
   @type([RoundData])
   roundData = new ArraySchema<RoundData>();
+
+  @type({ map: 'string' })
+  warnings = new MapSchema<string>();
+
+  @type('string')
+  revealer = '';
+
+  displayChain = 0;
+
+  chains = new ArraySchema<Chain>();
 
   // =====================================
   // IRoomStateBackend Api
@@ -249,9 +259,30 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
+  setRevealer = () => {
+    const itr = this.displayChain;
+    const chains = this.chains;
+    if (itr < chains.length) {
+      this.revealer = chains[itr].id;
+      return;
+    }
+    this.revealer = '';
+  };
+
   sendReveal = () => {
     const curator = this.curator;
-    this.sendAction(curator, curatorReveal(this.chains));
+    const itr = this.displayChain++;
+    if (itr < this.chains.length) {
+      const chain = this.chains[itr];
+      const links = chain.links;
+      const payload: IChain = {
+        id: chain.id,
+        links: links.map((val) => {
+          return val.link;
+        }),
+      };
+      this.sendAction(curator, curatorReveal(payload));
+    }
   };
 
   incrementRound = () => {
