@@ -45,7 +45,7 @@ export const DebugRoomState: FunctionComponent<{ debug?: boolean }> = ({
         <br />
         Session id: {room ? room.sessionId : 'NA'}
         <br />
-        Room Error: {roomError ?? 'NA'}
+        Room Error: {roomError && JSON.stringify(roomError, undefined, 2)}
         <br />
         Room state:
         <br />

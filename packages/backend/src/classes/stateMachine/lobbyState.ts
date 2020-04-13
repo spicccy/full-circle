@@ -1,11 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import {
-  IJoinOptions,
-  RECONNECT_COMMAND,
-} from '@full-circle/shared/lib/join/interfaces';
+  throwServerWarning,
+  sendReconnect,
+} from '@full-circle/shared/lib/actions/server';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
@@ -31,12 +32,12 @@ class LobbyState implements IState {
     const maybeExistingId = this.roomState.attemptReconnection(username);
     if (maybeExistingId) {
       // throw an error since we can't message them till they are in the room
-      throw new Error(RECONNECT_COMMAND + ':' + maybeExistingId);
+      sendReconnect(maybeExistingId);
     }
 
     const error = this.roomState.addPlayer(player);
     if (error) {
-      throw new Error(error);
+      throwServerWarning(error);
     }
 
     this.roomState.addSubmittedPlayer(player.id);
@@ -75,7 +76,7 @@ class LobbyState implements IState {
     if (this.roomState.numPlayers < 3) {
       this.roomState.sendWarning(
         this.roomState.getCurator(),
-        Warning.NOT_ENOUGH_PLAYERS
+        RoomErrorType.NOT_ENOUGH_PLAYERS
       );
       return false;
     }

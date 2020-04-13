@@ -1,6 +1,6 @@
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { mocked } from 'ts-jest/utils';
 
@@ -144,7 +144,7 @@ describe('Lobby State', () => {
         }),
         { username: 'username' }
       );
-    }).toThrowError(Warning.CONFLICTING_USERNAMES);
+    }).toThrowError(RoomErrorType.CONFLICTING_USERNAMES);
 
     lobbyState.onJoin(
       partialMock<IClient>({

@@ -1,12 +1,13 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import {
-  IJoinOptions,
-  RECONNECT_COMMAND,
-} from '@full-circle/shared/lib/join/interfaces';
+  forceSubmit,
+  throwServerWarning,
+  sendReconnect,
+} from '@full-circle/shared/lib/actions/server';
+import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { Warning } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
@@ -21,15 +22,15 @@ class DrawState implements IState {
 
   constructor(private roomState: IRoomStateBackend) {}
 
-  onJoin = (client: IClient, options: IJoinOptions) => {
+  onJoin = (_client: IClient, options: IJoinOptions) => {
     const username = options.username;
     // see if the player had previously been in the lobby
     const maybeExistingId = this.roomState.attemptReconnection(username);
     if (maybeExistingId) {
       // throw an error since we can't message them till they are in the room
-      throw new Error(RECONNECT_COMMAND + ':' + maybeExistingId);
+      sendReconnect(maybeExistingId);
     }
-    throw new Error(Warning.GAME_ALREADY_STARTED);
+    throwServerWarning(RoomErrorType.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

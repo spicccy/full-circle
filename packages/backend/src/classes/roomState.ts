@@ -13,7 +13,7 @@ import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
   IPlayer,
   IRoomStateSynced,
-  Warning,
+  RoomErrorType,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { Client } from 'colyseus';
 
@@ -54,13 +54,13 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: IPlayer) => Warning | null;
+  addPlayer: (player: IPlayer) => RoomErrorType | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
 
   sendAction: (clientID: string, action: ServerAction) => void;
-  sendWarning: (clientID: string, warning: Warning) => void;
+  sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => void;
 
   setPhase: (phase: Phase) => void;
@@ -150,15 +150,15 @@ class RoomState extends Schema
     return this.room.clients.find((client) => client.id === clientId);
   };
 
-  addPlayer = (player: IPlayer): Warning | null => {
+  addPlayer = (player: IPlayer): RoomErrorType | null => {
     if (this.numPlayers >= MAX_PLAYERS) {
-      return Warning.TOO_MANY_PLAYERS;
+      return RoomErrorType.TOO_MANY_PLAYERS;
     }
 
     for (const id in this.players) {
       const existingPlayer: Player = this.players[id];
       if (player.username === existingPlayer.username) {
-        return Warning.CONFLICTING_USERNAMES;
+        return RoomErrorType.CONFLICTING_USERNAMES;
       }
     }
 
@@ -240,7 +240,7 @@ class RoomState extends Schema
     }
   };
 
-  sendWarning = (clientId: string, warning: Warning) => {
+  sendWarning = (clientId: string, warning: RoomErrorType) => {
     this.sendAction(clientId, warn(warning));
   };
 
