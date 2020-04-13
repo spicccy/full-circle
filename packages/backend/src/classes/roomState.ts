@@ -123,8 +123,6 @@ class RoomState extends Schema
   @type([Chain])
   chains = new ArraySchema<Chain>();
 
-  chainItr = 0;
-
   @type({ map: Player })
   players = new MapSchema<Player>();
 
@@ -145,6 +143,8 @@ class RoomState extends Schema
 
   @type('string')
   revealer = '';
+
+  displayChain = 0;
 
   // =====================================
   // IRoomStateBackend Api
@@ -260,7 +260,7 @@ class RoomState extends Schema
   };
 
   setRevealer = () => {
-    const itr = this.chainItr;
+    const itr = this.displayChain;
     if (itr < this.chains.length) {
       this.revealer = this.chains[itr].id;
       return;
@@ -270,7 +270,7 @@ class RoomState extends Schema
 
   sendReveal = () => {
     const curator = this.curator;
-    const itr = this.chainItr++;
+    const itr = this.displayChain++;
     if (itr < this.chains.length) {
       this.sendAction(curator, curatorReveal(this.chains[itr]));
     }
