@@ -14,6 +14,7 @@ import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
 import { getType } from 'typesafe-actions';
 
+import { Background } from '../components/Background';
 import { CanvasCard } from './CanvasCard';
 import { DrawingSubmittedCard } from './DrawingSubmittedCard';
 import { PenPicker } from './penPicker/PenPicker';
@@ -75,18 +76,7 @@ const DrawPage: FunctionComponent<IDrawPage> = ({ prompt }) => {
     );
   };
 
-  return (
-    <Box
-      background="dark-1"
-      flex
-      height={{ min: '100vh' }}
-      align="center"
-      justify="center"
-      pad="medium"
-    >
-      {renderBody()}
-    </Box>
-  );
+  return <Background>{renderBody()}</Background>;
 };
 
 export { DrawPage };

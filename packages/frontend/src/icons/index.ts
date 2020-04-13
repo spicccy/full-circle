@@ -1,0 +1,9 @@
+export { ReactComponent as Close } from './close.svg';
+export { ReactComponent as Delete } from './delete.svg';
+export { ReactComponent as Eraser } from './eraser.svg';
+export { ReactComponent as Redo } from './redo.svg';
+export { ReactComponent as ThumbDownOutline } from './thumb-down-outline.svg';
+export { ReactComponent as ThumbDown } from './thumb-down.svg';
+export { ReactComponent as ThumbUpOutline } from './thumb-up-outline.svg';
+export { ReactComponent as ThumbUp } from './thumb-up.svg';
+export { ReactComponent as Undo } from './undo.svg';

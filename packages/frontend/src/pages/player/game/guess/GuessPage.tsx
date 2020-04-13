@@ -8,6 +8,7 @@ import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
 import { getType } from 'typesafe-actions';
 
+import { Background } from '../components/Background';
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 import { GuessSubmittedCard } from './GuessSubmittedCard';
@@ -60,18 +61,7 @@ const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
     );
   };
 
-  return (
-    <Box
-      background="dark-1"
-      flex
-      height={{ min: '100vh' }}
-      align="center"
-      justify="center"
-      pad="medium"
-    >
-      {renderBody()}
-    </Box>
-  );
+  return <Background>{renderBody()}</Background>;
 };
 
 export { GuessPage };
