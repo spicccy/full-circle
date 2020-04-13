@@ -1,17 +1,19 @@
 import 'styled-components/macro';
 
+import { objectValues } from '@full-circle/shared/lib/helpers';
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { CuratorTimer } from 'src/components/CuratorTimer';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { PlayerBackground } from 'src/components/PlayerBackground';
+import { useRoom } from 'src/contexts/RoomContext';
 
-/* 
-TODO
-Players who have submitted,
-their box should be highlighted
-*/
 const IngameDraw: FunctionComponent = () => {
+  const { syncedState } = useRoom();
+  const allPlayerReady = syncedState
+    ? objectValues(syncedState.submittedPlayers).every(Boolean)
+    : false;
+  console.log(allPlayerReady);
   return (
     <Box css={{ position: 'relative' }} fill>
       <PlayerBackground />
