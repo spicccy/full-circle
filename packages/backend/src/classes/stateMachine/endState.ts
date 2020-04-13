@@ -1,6 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import {
-  preroomWarn,
+  throwServerWarning,
   sendReconnect,
   warn,
 } from '@full-circle/shared/lib/actions/server';
@@ -23,7 +23,7 @@ class EndState implements IState {
       // throw an error since we can't message them till they are in the room
       sendReconnect(maybeExistingId);
     }
-    preroomWarn(RoomErrorType.GAME_ALREADY_STARTED);
+    throwServerWarning(RoomErrorType.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

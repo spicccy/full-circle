@@ -1,7 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import {
-  preroomWarn,
+  throwServerWarning,
   sendReconnect,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -37,7 +37,7 @@ class LobbyState implements IState {
 
     const error = this.roomState.addPlayer(player);
     if (error) {
-      preroomWarn(error);
+      throwServerWarning(error);
     }
 
     this.roomState.addSubmittedPlayer(player.id);

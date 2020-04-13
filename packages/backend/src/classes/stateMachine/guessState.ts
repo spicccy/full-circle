@@ -2,7 +2,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
 import {
   forceSubmit,
-  preroomWarn,
+  throwServerWarning,
   sendReconnect,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -29,7 +29,7 @@ class GuessState implements IState {
     if (maybeExistingId) {
       sendReconnect(maybeExistingId);
     }
-    preroomWarn(RoomErrorType.GAME_ALREADY_STARTED);
+    throwServerWarning(RoomErrorType.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

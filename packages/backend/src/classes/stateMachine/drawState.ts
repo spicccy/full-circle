@@ -2,7 +2,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import {
   forceSubmit,
-  preroomWarn,
+  throwServerWarning,
   sendReconnect,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -30,7 +30,7 @@ class DrawState implements IState {
       // throw an error since we can't message them till they are in the room
       sendReconnect(maybeExistingId);
     }
-    preroomWarn(RoomErrorType.GAME_ALREADY_STARTED);
+    throwServerWarning(RoomErrorType.GAME_ALREADY_STARTED);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

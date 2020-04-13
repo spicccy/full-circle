@@ -1,4 +1,7 @@
-import { preroomWarn, warn } from '@full-circle/shared/lib/actions/server';
+import {
+  throwServerWarning,
+  warn,
+} from '@full-circle/shared/lib/actions/server';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { render, wait, waitForDomChange } from '@testing-library/react';

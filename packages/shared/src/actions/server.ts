@@ -14,7 +14,7 @@ export const forceSubmit = createAction('@server/forceSubmit')();
 
 export const curatorReveal = createAction('@server/curatorReveal')<IChain[]>();
 
-export const preroomWarn = (error: RoomErrorType) => {
+export const throwServerWarning = (error: RoomErrorType) => {
   throw new Error(JSON.stringify(warn(error)));
 };
 
