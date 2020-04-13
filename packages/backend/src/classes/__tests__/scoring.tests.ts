@@ -1,6 +1,3 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { mocked } from 'ts-jest/utils';
-
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import Player from '../subSchema/player';
@@ -9,9 +6,9 @@ describe('room scoring', () => {
   let roomState: RoomState;
   let playerIds: string[];
 
-  beforeAll(() => {
+  beforeEach(() => {
     roomState = new RoomState(mockRoom, { predictableChains: true });
-    addPlayers(roomState, 5);
+    addPlayers(roomState, 3);
     playerIds = [];
     for (const id in roomState.players) {
       playerIds.push(id);
@@ -23,5 +20,68 @@ describe('room scoring', () => {
       const player: Player = roomState.players[id];
       expect(player.score).toBe(0);
     }
+  });
+
+  it('should award a point to players who match the previous prompt', () => {
+    roomState.advanceState();
+
+    const chain1Links = roomState.currChains[0].links;
+    const chain1Prompt1 = chain1Links[0].prompt.text;
+    const chain1Guesser1 = chain1Links[1].prompt.playerId;
+    roomState.storeDrawing('0_id', []);
+    roomState.storeDrawing('1_id', []);
+    roomState.storeDrawing('2_id', []);
+    roomState.advanceState();
+
+    roomState.storeGuess(chain1Guesser1, chain1Prompt1);
+    roomState.advanceState();
+
+    expect(roomState.players[chain1Guesser1].score).toBe(1);
+  });
+
+  it('should not-award a point to players who do not match the previous prompt', () => {
+    roomState.advanceState();
+
+    const chain1Links = roomState.currChains[0].links;
+    const chain1Guesser1 = chain1Links[1].prompt.playerId;
+    roomState.storeDrawing('0_id', []);
+    roomState.storeDrawing('1_id', []);
+    roomState.storeDrawing('2_id', []);
+    roomState.advanceState();
+
+    roomState.storeGuess(chain1Guesser1, 'notavalidprompt');
+    roomState.advanceState();
+
+    expect(roomState.players[chain1Guesser1].score).toBe(0);
+  });
+
+  it('should award points to all-players who match the previous prompt', () => {
+    roomState.advanceState();
+
+    // use the fact that we are using predictable chains to know who is guessing who's drawings
+
+    const chain1Links = roomState.currChains[0].links;
+    const chain1Prompt = chain1Links[0].prompt.text;
+    const chain2Links = roomState.currChains[1].links;
+    const chain2Prompt = chain2Links[0].prompt.text;
+    const chain3Links = roomState.currChains[2].links;
+    const chain3Prompt = chain3Links[0].prompt.text;
+
+    roomState.storeDrawing('0_id', []);
+    roomState.storeDrawing('1_id', []);
+    roomState.storeDrawing('2_id', []);
+    roomState.advanceState();
+
+    roomState.storeGuess('1_id', chain1Prompt);
+    roomState.storeGuess('2_id', chain2Prompt);
+    roomState.storeGuess(
+      '0_id',
+      chain3Prompt + 'this extra bit ensures this guess is wrong'
+    );
+    roomState.advanceState();
+
+    expect(roomState.players['1_id'].score).toBe(1);
+    expect(roomState.players['2_id'].score).toBe(1);
+    expect(roomState.players['0_id'].score).toBe(0);
   });
 });

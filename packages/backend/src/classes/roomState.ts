@@ -365,10 +365,22 @@ class RoomState extends Schema
   };
 
   updatePlayerScores = () => {
+    // reset scores so this function is idempotent
     for (const id in this.players) {
-      const player: Player = this.players[id];
-      for (const chain of this.chains) {
-        continue;
+      (this.players[id] as Player).score = 0;
+    }
+
+    for (const chain of this.chains) {
+      for (let i = 1; i < chain.links.length; i++) {
+        console.log(
+          chain.links[i - 1].prompt.text,
+          'v.s.',
+          chain.links[i].prompt.text
+        );
+        if (chain.links[i].prompt.text === chain.links[i - 1].prompt.text) {
+          const playerId = chain.links[i].prompt.playerId;
+          (this.players[playerId] as Player).score++;
+        }
       }
     }
   };
