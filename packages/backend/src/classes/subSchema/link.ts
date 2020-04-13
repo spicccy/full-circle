@@ -1,13 +1,13 @@
 import { Schema, type } from '@colyseus/schema';
 import {
   ILink,
-  ILinkPrivate,
+  ILinkSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import Image from './image';
 import Prompt from './prompt';
 
-class Link extends Schema implements ILink, ILinkPrivate {
+class Link extends Schema implements ILink, ILinkSynced {
   @type(Prompt)
   _prompt: Prompt;
 

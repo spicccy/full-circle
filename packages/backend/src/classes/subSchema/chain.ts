@@ -1,12 +1,12 @@
 import { ArraySchema, Schema, type } from '@colyseus/schema';
 import {
   IChain,
-  IChainPrivate,
+  IChainSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
 import Link from './link';
 
-class Chain extends Schema implements IChain, IChainPrivate {
+class Chain extends Schema implements IChain, IChainSynced {
   @type('string')
   id = '';
 

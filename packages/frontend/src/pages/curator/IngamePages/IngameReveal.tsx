@@ -1,23 +1,23 @@
 import 'styled-components/macro';
 
 import {
-  IChainPrivate,
-  ILinkPrivate,
+  IChainSynced,
+  ILinkSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
 
 interface IRenderChainProps {
-  chain: IChainPrivate;
+  chain: IChainSynced;
 }
 
 interface IRenderLinkProps {
-  link: ILinkPrivate;
+  link: ILinkSynced;
 }
 
 interface IInGameReveal {
-  chain: IChainPrivate | null;
+  chain: IChainSynced | null;
 }
 
 const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {

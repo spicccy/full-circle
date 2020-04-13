@@ -1,10 +1,10 @@
 import { Schema, type } from '@colyseus/schema';
 import {
   IPrompt,
-  IPromptPrivate,
+  IPromptSynced,
 } from '@full-circle/shared/lib/roomState/interfaces';
 
-class Prompt extends Schema implements IPrompt, IPromptPrivate {
+class Prompt extends Schema implements IPrompt, IPromptSynced {
   @type('string')
   _text = '';
 
