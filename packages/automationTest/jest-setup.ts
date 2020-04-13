@@ -1,5 +1,6 @@
-import { screenshotName } from './src/screenshotAutomation';
 import { Page } from 'puppeteer';
+
+import { screenshotName } from './src/screenshotAutomation';
 
 let currPage = page;
 
