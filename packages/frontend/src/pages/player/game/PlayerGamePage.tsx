@@ -18,8 +18,7 @@ import { getType } from 'typesafe-actions';
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
-import { getType } from 'typesafe-actions';
-import RevealPage from './reveal/RevealPage';
+import { RevealPage } from './reveal/RevealPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
@@ -63,10 +62,6 @@ const PlayerGamePage: FunctionComponent = () => {
 
     case PhaseType.GUESS: {
       return <GuessPage drawing={currentDrawing} />;
-    }
-
-    case PhaseType.REVEAL: {
-      return <RevealPage />;
     }
 
     case PhaseType.REVEAL: {
