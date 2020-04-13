@@ -17,6 +17,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import invariant from 'tiny-invariant';
 
 import { useColyseus } from './ColyseusContext';
 
