@@ -1,14 +1,9 @@
-import { Schema, type } from '@colyseus/schema';
-import {
-  IImage,
-  IImageSynced,
-} from '@full-circle/shared/lib/roomState/interfaces';
+import { Schema } from '@colyseus/schema';
+import { IImage } from '@full-circle/shared/lib/roomState/interfaces';
 
-class Image extends Schema implements IImage, IImageSynced {
-  @type('string')
+class Image extends Schema implements IImage {
   _imageData = '';
 
-  @type('string')
   _playerId = '';
 
   constructor(id: string) {
@@ -26,6 +21,13 @@ class Image extends Schema implements IImage, IImageSynced {
 
   get imageData() {
     return this._imageData;
+  }
+
+  get image() {
+    return {
+      playerId: this._playerId,
+      imageData: this._imageData,
+    };
   }
 }
 

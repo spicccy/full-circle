@@ -1,16 +1,11 @@
-import { ArraySchema, Schema, type } from '@colyseus/schema';
-import {
-  IChain,
-  IChainSynced,
-} from '@full-circle/shared/lib/roomState/interfaces';
+import { ArraySchema, Schema } from '@colyseus/schema';
+import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 
 import Link from './link';
 
-class Chain extends Schema implements IChain, IChainSynced {
-  @type('string')
+class Chain extends Schema implements IChain {
   id = '';
 
-  @type([Link])
   links = new ArraySchema<Link>();
 
   constructor(id: string) {

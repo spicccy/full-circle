@@ -14,6 +14,7 @@ import {
   IPlayer,
   IRoomStateSynced,
   RoomErrorType,
+  IChain,
 } from '@full-circle/shared/lib/roomState/interfaces';
 import { Client } from 'colyseus';
 
@@ -120,9 +121,6 @@ class RoomState extends Schema
   @type('string')
   curator = '';
 
-  @type([Chain])
-  chains = new ArraySchema<Chain>();
-
   @type({ map: Player })
   players = new MapSchema<Player>();
 
@@ -145,6 +143,8 @@ class RoomState extends Schema
   revealer = '';
 
   displayChain = 0;
+
+  chains = new ArraySchema<Chain>();
 
   // =====================================
   // IRoomStateBackend Api
@@ -261,8 +261,9 @@ class RoomState extends Schema
 
   setRevealer = () => {
     const itr = this.displayChain;
-    if (itr < this.chains.length) {
-      this.revealer = this.chains[itr].id;
+    const chains = this.chains;
+    if (itr < chains.length) {
+      this.revealer = chains[itr].id;
       return;
     }
     this.revealer = '';
@@ -272,7 +273,15 @@ class RoomState extends Schema
     const curator = this.curator;
     const itr = this.displayChain++;
     if (itr < this.chains.length) {
-      this.sendAction(curator, curatorReveal(this.chains[itr]));
+      const chain = this.chains[itr];
+      const links = chain.links;
+      const payload: IChain = {
+        id: chain.id,
+        links: links.map((val) => {
+          return val.link;
+        }),
+      };
+      this.sendAction(curator, curatorReveal(payload));
     }
   };
 

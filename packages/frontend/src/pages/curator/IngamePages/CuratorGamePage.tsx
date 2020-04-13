@@ -12,7 +12,7 @@ import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
 import { IngameReveal } from './IngameReveal';
 import { Lobby } from './Lobby';
-import { IChainSynced } from '@full-circle/shared/lib/roomState/interfaces';
+import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 /* 
 TODO:
 The page constantly renders as the phasetimer
@@ -22,7 +22,7 @@ Lobby should only re-render when a new player has joined
 
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
-  const [chain, setChain] = useState<IChainSynced | null>(null);
+  const [chain, setChain] = useState<IChain | null>(null);
 
   const { addToast } = useToasts();
 

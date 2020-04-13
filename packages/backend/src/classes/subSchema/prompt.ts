@@ -1,10 +1,7 @@
 import { Schema, type } from '@colyseus/schema';
-import {
-  IPrompt,
-  IPromptSynced,
-} from '@full-circle/shared/lib/roomState/interfaces';
+import { IPrompt } from '@full-circle/shared/lib/roomState/interfaces';
 
-class Prompt extends Schema implements IPrompt, IPromptSynced {
+class Prompt extends Schema implements IPrompt {
   @type('string')
   _text = '';
 
@@ -26,6 +23,13 @@ class Prompt extends Schema implements IPrompt, IPromptSynced {
 
   get text() {
     return this._text;
+  }
+
+  get prompt() {
+    return {
+      playerId: this._playerId,
+      text: this._text,
+    };
   }
 }
 

@@ -1,23 +1,20 @@
 import 'styled-components/macro';
 
-import {
-  IChainSynced,
-  ILinkSynced,
-} from '@full-circle/shared/lib/roomState/interfaces';
+import { IChain, ILink } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
 
 interface IRenderChainProps {
-  chain: IChainSynced;
+  chain: IChain;
 }
 
 interface IRenderLinkProps {
-  link: ILinkSynced;
+  link: ILink;
 }
 
 interface IInGameReveal {
-  chain: IChainSynced | null;
+  chain: IChain | null;
 }
 
 const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
@@ -32,16 +29,14 @@ const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
           align="center"
           justify="center"
         >
-          <Text>{link._prompt._text}</Text>
+          <Text>{link.prompt.text}</Text>
         </Box>
         {/* <Text textAlign="center">{link.prompt.playerId}</Text> // TODO:
         display usernames*/}
       </Box>
       <Box>
         <Box height="small" width="small" background="red" margin="medium">
-          <ViewCanvas
-            canvasActions={JSON.parse(link._image._imageData || '')}
-          />
+          <ViewCanvas canvasActions={JSON.parse(link.image.imageData || '')} />
         </Box>
         {/* <Text textAlign="center">{link.image.playerId}</Text> // TODO:
         display usernames*/}

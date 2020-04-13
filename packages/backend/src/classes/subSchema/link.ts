@@ -1,17 +1,11 @@
-import { Schema, type } from '@colyseus/schema';
-import {
-  ILink,
-  ILinkSynced,
-} from '@full-circle/shared/lib/roomState/interfaces';
+import { Schema } from '@colyseus/schema';
+import { ILink } from '@full-circle/shared/lib/roomState/interfaces';
 
 import Image from './image';
 import Prompt from './prompt';
 
-class Link extends Schema implements ILink, ILinkSynced {
-  @type(Prompt)
+class Link extends Schema implements ILink {
   _prompt: Prompt;
-
-  @type(Image)
   _image: Image;
 
   constructor(drawId: string, guessId: string) {
@@ -26,6 +20,13 @@ class Link extends Schema implements ILink, ILinkSynced {
 
   get image() {
     return this._image;
+  }
+
+  get link() {
+    return {
+      prompt: this._prompt.prompt,
+      image: this._image.image,
+    };
   }
 }
 

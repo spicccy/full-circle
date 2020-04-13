@@ -5,19 +5,9 @@ export interface IPrompt {
   playerId: string;
 }
 
-export interface IPromptSynced {
-  _text: string;
-  _playerId: string;
-}
-
 export interface IImage {
   imageData: string;
   playerId: string;
-}
-
-export interface IImageSynced {
-  _imageData: string;
-  _playerId: string;
 }
 
 export interface ILink {
@@ -25,19 +15,9 @@ export interface ILink {
   image: IImage;
 }
 
-export interface ILinkSynced {
-  _prompt: IPromptSynced;
-  _image: IImageSynced;
-}
-
 export interface IChain {
   id: string;
   links: ILink[];
-}
-
-export interface IChainSynced {
-  id: string;
-  links: ILinkSynced[];
 }
 
 export interface IPlayer {
