@@ -54,7 +54,6 @@ const PlayerGamePage: FunctionComponent = () => {
 
   switch (syncedState?.phase.phaseType) {
     case PhaseType.LOBBY: {
-      return <RevealPage />;
       return <Lobby />;
     }
 
