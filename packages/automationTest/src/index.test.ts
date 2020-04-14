@@ -1,8 +1,8 @@
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
-import { changeDir, screenshotName } from './screenshotAutomation';
 import { revealChain } from './revealAutomation';
+import { changeDir, screenshotName } from './screenshotAutomation';
 
 const pageList = [page];
 

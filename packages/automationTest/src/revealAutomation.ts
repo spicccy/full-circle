@@ -1,6 +1,7 @@
+import { Page } from 'puppeteer';
+
 import { setCurrPage } from '../jest-setup';
 import { screenshotName } from './screenshotAutomation';
-import { Page } from 'puppeteer';
 
 export const revealChain = async (playerPage: Page, snapshot: string) => {
   await playerPage.bringToFront();
