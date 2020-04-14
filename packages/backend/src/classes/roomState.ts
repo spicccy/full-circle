@@ -403,9 +403,14 @@ class RoomState extends Schema
 
     for (const chain of this.chains) {
       for (let i = 1; i < chain.links.length; i++) {
-        if (chain.links[i].prompt.text === chain.links[i - 1].prompt.text) {
-          const playerId = chain.links[i].prompt.playerId;
-          (this.players[playerId] as Player).score++;
+        if (
+          chain.links[i].prompt.text.toLowerCase().trim() ===
+          chain.links[i - 1].prompt.text.toLowerCase().trim()
+        ) {
+          const goodDrawer = chain.links[i - 1].image.playerId;
+          const correctGuesser = chain.links[i].prompt.playerId;
+          (this.players[correctGuesser] as Player).score++;
+          (this.players[goodDrawer] as Player).score++;
         }
       }
     }
