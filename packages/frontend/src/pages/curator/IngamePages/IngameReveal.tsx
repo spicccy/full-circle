@@ -64,7 +64,11 @@ const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
   // const { syncedState } = useRoom();
   // const arrayOfPlayers = objectValues(syncedState?.players ?? {});
 
-  return <Box fill>{chain ? <RenderChain chain={chain} /> : <></>}</Box>;
+  return (
+    <Box fill data-testid="revealChain">
+      {chain ? <RenderChain chain={chain} /> : <></>}
+    </Box>
+  );
 };
 
 export { IngameReveal };

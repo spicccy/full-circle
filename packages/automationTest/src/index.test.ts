@@ -2,6 +2,7 @@ import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
 import { changeDir, screenshotName } from './screenshotAutomation';
+import { revealChain } from './revealAutomation';
 
 const pageList = [page];
 
@@ -90,10 +91,10 @@ describe('Full Circle', () => {
     await drawImage(pageList[3], 'drawing_player_3', 'orange (d)');
   });
 
-  it('should be able to successfully finish the game', async () => {
-    changeDir('end_game');
-    await page.screenshot({
-      path: screenshotName('game_over'),
-    });
+  it('should be able to transition to the reveal phase where players reveal their chains', async () => {
+    changeDir('reveal_screen');
+    await revealChain(pageList[1], 'reveal_screen_player_1');
+    await revealChain(pageList[2], 'reveal_screen_player_2');
+    await revealChain(pageList[3], 'reveal_screen_player_3');
   });
 });

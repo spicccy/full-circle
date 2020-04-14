@@ -1,5 +1,4 @@
 import { BoundingBox, Page } from 'puppeteer';
-
 import { setCurrPage } from '../jest-setup';
 import { screenshotName } from './screenshotAutomation';
 

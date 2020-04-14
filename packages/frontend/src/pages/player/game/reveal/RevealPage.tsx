@@ -66,6 +66,7 @@ const RevealPage: FunctionComponent = () => {
             onClick={onSubmit}
             size="large"
             label="Next"
+            data-testid="nextChain"
           />
         </Card>
       </Box>
