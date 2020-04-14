@@ -53,6 +53,7 @@ export interface IRoomStateSynced {
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
   roundData: IRoundData[];
+  revealer: string;
 }
 
 export enum RoomErrorType {

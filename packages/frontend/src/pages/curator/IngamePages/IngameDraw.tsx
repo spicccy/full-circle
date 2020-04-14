@@ -1,19 +1,20 @@
 import 'styled-components/macro';
 
-import { objectValues } from '@full-circle/shared/lib/helpers';
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
+import { CuratorBuffer } from 'src/components/CuratorBuffer';
 import { CuratorTimer } from 'src/components/CuratorTimer';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { PlayerBackground } from 'src/components/PlayerBackground';
-import { useRoom } from 'src/contexts/RoomContext';
+import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 
 const IngameDraw: FunctionComponent = () => {
-  const { syncedState } = useRoom();
-  const allPlayerReady = syncedState
-    ? objectValues(syncedState.submittedPlayers).every(Boolean)
-    : false;
-  console.log(allPlayerReady);
+  const { allSubmitted } = useRoomHelpers();
+
+  if (allSubmitted) {
+    return <CuratorBuffer />;
+  }
+
   return (
     <Box css={{ position: 'relative' }} fill>
       <PlayerBackground />

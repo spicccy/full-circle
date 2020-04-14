@@ -3,7 +3,7 @@ import { Box, defaultProps } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { BaseButton } from 'src/components/BaseButton';
 import { useEventListener } from 'src/hooks/useEventListener';
-import { ReactComponent as Eraser } from 'src/icons/eraser.svg';
+import { Eraser } from 'src/icons';
 import styled from 'styled-components';
 
 const ColourBlock = styled(BaseButton)<{

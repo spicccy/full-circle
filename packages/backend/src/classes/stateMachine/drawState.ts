@@ -2,8 +2,8 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import {
   forceSubmit,
-  throwServerWarning,
   sendReconnect,
+  throwServerWarning,
 } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
@@ -88,7 +88,6 @@ class DrawState implements IState {
   advanceState = () => {
     if (this.roomState.gameIsOver) {
       this.roomState.setRevealState();
-      this.roomState.sendReveal();
       return;
     }
     this.roomState.setGuessState();

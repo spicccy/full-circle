@@ -7,6 +7,7 @@ Things to consider
 */
 export enum Allocation {
   RAND = 0,
+  ORDERED = 1,
 }
 
 export const allocate = (
@@ -44,7 +45,7 @@ export const allocate = (
   return undefined;
 };
 
-const randomChain = (ids: string[]): string[][] | undefined => {
+export const randomChain = (ids: string[]): string[][] | undefined => {
   const numIds = ids.length;
   const chainLength = Math.floor((numIds - 1) / 2) * 2;
   //initialise
@@ -57,15 +58,25 @@ const randomChain = (ids: string[]): string[][] | undefined => {
   return allocatedChains;
 };
 
-const orderedChain = (ids: string[]): string[][] => {
-  console.log(ids);
-  return [['']];
+export const orderedChain = (ids: string[]): string[][] => {
+  const chains: string[][] = [];
+  const n = ids.length;
+  for (let i = 0; i < n; i++) {
+    const chain = [];
+    chain.push(ids[i]);
+    for (let j = 1; j < n; j++) {
+      chain.push(ids[(i + j) % n]);
+    }
+    chains.push(chain);
+  }
+  return chains;
 };
 
-export const getAllocation = (type: number) => {
+export const getAllocation = (type: Allocation) => {
   switch (type) {
     case Allocation.RAND:
       return randomChain;
+    case Allocation.ORDERED:
     default:
       return orderedChain;
   }

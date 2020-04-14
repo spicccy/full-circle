@@ -11,6 +11,9 @@ class Player extends Schema implements IPlayer {
   @type('boolean')
   disconnected = false;
 
+  @type('number')
+  score = 0;
+
   constructor(id: string, username: string) {
     super();
     this.id = id;

@@ -4,7 +4,6 @@ import { IChain, ILink } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
-import { mockChain } from 'src/pages/curator/IngamePages/mockChain';
 
 interface IRenderChainProps {
   chain: IChain;
@@ -12,6 +11,10 @@ interface IRenderChainProps {
 
 interface IRenderLinkProps {
   link: ILink;
+}
+
+interface IInGameReveal {
+  chain: IChain | null;
 }
 
 const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
@@ -28,13 +31,15 @@ const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
         >
           <Text>{link.prompt.text}</Text>
         </Box>
-        <Text textAlign="center">{link.prompt.playerId}</Text>
+        {/* <Text textAlign="center">{link.prompt.playerId}</Text> // TODO:
+        display usernames*/}
       </Box>
       <Box>
         <Box height="small" width="small" background="red" margin="medium">
-          <ViewCanvas canvasActions={JSON.parse(link.image.imageData)} />
+          <ViewCanvas canvasActions={JSON.parse(link.image.imageData || '')} />
         </Box>
-        <Text textAlign="center">{link.image.playerId}</Text>
+        {/* <Text textAlign="center">{link.image.playerId}</Text> // TODO:
+        display usernames*/}
       </Box>
     </Box>
   );
@@ -55,15 +60,11 @@ const RenderChain: FunctionComponent<IRenderChainProps> = ({ chain }) => {
   );
 };
 
-const IngameReveal: FunctionComponent = () => {
+const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
   // const { syncedState } = useRoom();
   // const arrayOfPlayers = objectValues(syncedState?.players ?? {});
 
-  return (
-    <Box fill>
-      <RenderChain chain={mockChain} />
-    </Box>
-  );
+  return <Box fill>{chain ? <RenderChain chain={chain} /> : <></>}</Box>;
 };
 
 export { IngameReveal };
