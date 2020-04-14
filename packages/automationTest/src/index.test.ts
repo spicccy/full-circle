@@ -3,7 +3,7 @@ import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
 import { changeDir, screenshotName } from './screenshotAutomation';
 
-let pageList = [page];
+const pageList = [page];
 
 describe('Full Circle', () => {
   beforeAll(async () => {

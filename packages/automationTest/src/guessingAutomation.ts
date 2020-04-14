@@ -1,7 +1,7 @@
 import { Page } from 'puppeteer';
 
-import { screenshotName } from './screenshotAutomation';
 import { setCurrPage } from '../jest-setup';
+import { screenshotName } from './screenshotAutomation';
 
 export const makeGuess = async (
   playerPage: Page,
