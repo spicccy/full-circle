@@ -24,6 +24,7 @@ export interface IPlayer {
   id: string;
   username: string;
   disconnected: boolean;
+  score: number;
 }
 
 export interface IPhase {
