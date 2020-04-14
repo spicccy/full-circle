@@ -20,7 +20,7 @@ global.it = async function (name, func) {
       await func();
     } catch (e) {
       await currPage.screenshot({
-        path: screenshotName('failure'),
+        path: screenshotName('.failure'),
       });
       throw e;
     }
