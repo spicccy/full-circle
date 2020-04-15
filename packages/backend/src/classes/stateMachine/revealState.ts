@@ -1,4 +1,5 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { revealChain } from '@full-circle/shared/lib/actions/client';
 import {
   sendReconnect,
   throwServerWarning,
@@ -11,7 +12,6 @@ import { getType } from 'typesafe-actions';
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
-import { revealChain } from '@full-circle/shared/lib/actions/client';
 
 class RevealState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
