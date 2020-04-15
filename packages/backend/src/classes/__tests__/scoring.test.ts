@@ -22,11 +22,12 @@ describe('room scoring', () => {
     }
   });
 
-  it('should award a point to players who match the previous prompt', () => {
+  it('should award a point to guesser and drawer when the guess matches the prompt', () => {
     roomState.advanceState();
 
     const chain1Links = roomState.currChains[0].links;
     const chain1Prompt1 = chain1Links[0].prompt.text;
+    const chain1Drawer1 = chain1Links[0].image.playerId;
     const chain1Guesser1 = chain1Links[1].prompt.playerId;
     roomState.storeDrawing('0_id', []);
     roomState.storeDrawing('1_id', []);
@@ -36,6 +37,7 @@ describe('room scoring', () => {
     roomState.storeGuess(chain1Guesser1, chain1Prompt1);
     roomState.advanceState();
 
+    expect(roomState.players[chain1Drawer1].score).toBe(1);
     expect(roomState.players[chain1Guesser1].score).toBe(1);
   });
 
@@ -55,7 +57,7 @@ describe('room scoring', () => {
     expect(roomState.players[chain1Guesser1].score).toBe(0);
   });
 
-  it('should award points to all-players who match the previous prompt', () => {
+  it('should award points to all guessers and the drawers when the guess matches the prompt', () => {
     roomState.advanceState();
 
     // use the fact that we are using predictable chains to know who is guessing who's drawings
@@ -80,8 +82,12 @@ describe('room scoring', () => {
     );
     roomState.advanceState();
 
-    expect(roomState.players['1_id'].score).toBe(1);
+    // 0_id (draw) 1_id (guess correctly) 0_id: 1, 1_id: 1, 2_id: 0
+    // 1_id (draw) 2_id (guess correctly) 0_id: 1, 1_id: 2, 2_id: 1
+    // 2_id (draw) 0_id (guess wrong)     0_id: 1, 1_id: 2, 2_id: 1
+
+    expect(roomState.players['1_id'].score).toBe(2);
     expect(roomState.players['2_id'].score).toBe(1);
-    expect(roomState.players['0_id'].score).toBe(0);
+    expect(roomState.players['0_id'].score).toBe(1);
   });
 });

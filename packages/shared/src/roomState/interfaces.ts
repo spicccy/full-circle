@@ -24,6 +24,7 @@ export interface IPlayer {
   id: string;
   username: string;
   disconnected: boolean;
+  score: number;
 }
 
 export interface IPhase {
@@ -63,5 +64,6 @@ export enum RoomErrorType {
   NOT_ENOUGH_PLAYERS = 'You need at least three players to join this room',
   ROOM_NOT_FOUND = 'No room with a matching code was found',
   ROOM_INITIALISATION_ERROR = 'Unable to initialise the room',
+  NETWORK_ERROR = 'Network error',
   UNKNOWN_ERROR = 'An unknown error occured',
 }

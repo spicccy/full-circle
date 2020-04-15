@@ -10,6 +10,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 import logo from 'src/images/fullcircle.png';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
+import { Scoreboard } from '../../../components/Scoreboard';
 
 interface ILobbyProps {
   startGame(): void;

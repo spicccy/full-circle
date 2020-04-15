@@ -1,7 +1,4 @@
-import {
-  throwServerWarning,
-  warn,
-} from '@full-circle/shared/lib/actions/server';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { render, wait, waitForDomChange } from '@testing-library/react';
@@ -11,10 +8,10 @@ import { RoomAvailable } from 'colyseus.js/lib/Room';
 import React, { useState } from 'react';
 import { mocked, mockRoom as baseMockRoom } from 'src/testHelpers';
 
-import { useColyseus } from './ColyseusContext';
+import { useColyseus } from '../ColyseusContext';
 import { RoomProvider, useRoom } from './RoomContext';
 
-jest.mock('./ColyseusContext');
+jest.mock('../ColyseusContext');
 
 const TestConsumer: React.FunctionComponent = () => {
   const {
