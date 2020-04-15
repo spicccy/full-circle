@@ -17,6 +17,7 @@ import {
 } from './pages';
 import { IngameReveal } from './pages/curator/IngamePages/IngameReveal';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
+import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
 
 export const App: FunctionComponent = () => {
@@ -33,7 +34,11 @@ export const App: FunctionComponent = () => {
               <Route exact path="/join" component={LoginPage} />
               <Route exact path="/join/:roomCode" component={LoginPage} />
               <Route exact path="/create" component={CreatePage} />
-              <Route exact path="/play" component={PlayerGamePage} />
+              <Route exact path="/play">
+                <ReconnectManager>
+                  <PlayerGamePage />
+                </ReconnectManager>
+              </Route>
               <Route exact path="/curator" component={CuratorGamePage} />
               <Route exact path="/instructions" component={Instructions} />
               <Route exact path="/team" component={Team} />
