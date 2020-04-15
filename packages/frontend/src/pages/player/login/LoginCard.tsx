@@ -7,6 +7,8 @@ import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import logo from 'src/images/fullcircle.png';
 
+import { RoomInput } from './RoomInput';
+
 const Header: FunctionComponent = () => (
   <Box direction="row" align="center" justify="center">
     <Image
@@ -85,25 +87,7 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
             onChange={(e) => setName(e.target.value)}
           />
         </Box>
-        <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
-          <Text
-            size="xlarge"
-            margin={{ right: 'small' }}
-            color={roomCodeError ? Colour.RED : undefined}
-          >
-            Room:
-          </Text>
-          <TextInput
-            size="medium"
-            id="roomCode"
-            data-testid="roomCodeInput"
-            required
-            maxLength={4}
-            value={roomCode}
-            onChange={(e) => setRoomCode(e.target.value)}
-          />
-        </Box>
-
+        <RoomInput value={roomCode} onChange={setRoomCode} />
         <LoadingButton
           data-testid="joinRoom"
           loading={loading}
