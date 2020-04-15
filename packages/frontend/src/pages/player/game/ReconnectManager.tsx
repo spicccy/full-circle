@@ -88,6 +88,8 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
       case 1000: {
         // 1000 room close
         addToast('Room has been closed', { appearance: 'error' });
+        removeStorage(LocalStorageKey.SESSION_ID);
+        removeStorage(LocalStorageKey.ROOM_ID);
         setReconnecting(false);
         leaveRoom();
         return;
@@ -104,6 +106,8 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
         addToast(`You have been disconnected (${code})`, {
           appearance: 'error',
         });
+        removeStorage(LocalStorageKey.SESSION_ID);
+        removeStorage(LocalStorageKey.ROOM_ID);
         setReconnecting(false);
         leaveRoom();
         return;
