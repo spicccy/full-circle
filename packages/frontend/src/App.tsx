@@ -5,6 +5,7 @@ import React, { FunctionComponent } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ToastProvider } from 'react-toast-notifications';
 
+import { PageContainer } from './components/PageContainer';
 import { RoomProvider } from './contexts/RoomContext';
 import {
   CreatePage,
@@ -26,20 +27,22 @@ export const App: FunctionComponent = () => {
         <DebugRoomState
           debug={!(process.env.REACT_APP_HIDE_DEBUG === 'hide')}
         />
-        <Grommet theme={theme} full>
+        <Grommet theme={theme}>
           <ToastProvider autoDismiss autoDismissTimeout={2500}>
-            <Switch>
-              <Route exact path="/" component={LoginPage} />
-              <Route exact path="/join" component={LoginPage} />
-              <Route exact path="/join/:roomCode" component={LoginPage} />
-              <Route exact path="/create" component={CreatePage} />
-              <Route exact path="/play" component={PlayerGamePage} />
-              <Route exact path="/curator" component={CuratorGamePage} />
-              <Route exact path="/instructions" component={Instructions} />
-              <Route exact path="/team" component={Team} />
-              <Route exact path="/revealtest" component={IngameReveal} />
-              <Route path="/" component={Error404} />
-            </Switch>
+            <PageContainer>
+              <Switch>
+                <Route exact path="/" component={LoginPage} />
+                <Route exact path="/join" component={LoginPage} />
+                <Route exact path="/join/:roomCode" component={LoginPage} />
+                <Route exact path="/create" component={CreatePage} />
+                <Route exact path="/play" component={PlayerGamePage} />
+                <Route exact path="/curator" component={CuratorGamePage} />
+                <Route exact path="/instructions" component={Instructions} />
+                <Route exact path="/team" component={Team} />
+                <Route exact path="/revealtest" component={IngameReveal} />
+                <Route path="/" component={Error404} />
+              </Switch>
+            </PageContainer>
           </ToastProvider>
         </Grommet>
       </RoomProvider>

@@ -16,7 +16,7 @@ const IngameDraw: FunctionComponent = () => {
   }
 
   return (
-    <Box css={{ position: 'relative' }} fill>
+    <Box css={{ position: 'relative' }} flex>
       <PlayerBackground />
       <Box flex align="center" justify="center">
         <Heading>Drawing Phase</Heading>
