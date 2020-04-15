@@ -5,11 +5,18 @@ import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
 import React from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
+import { Whiteboard } from 'src/icons';
+import styled from 'styled-components/macro';
 
 import { AllPlayersCircle } from './AllPlayersCircle';
 import { Player } from './Player';
 
 const arrayOfAngles: number[] = [10, 30, 170, 150, 190, 210, 330, 350];
+
+const WhiteboardBackground = styled(Whiteboard)`
+  height: 100%;
+  width: 100%;
+`;
 
 export const PlayerBackground: FunctionComponent = () => {
   const { syncedState } = useRoom();
@@ -27,6 +34,8 @@ export const PlayerBackground: FunctionComponent = () => {
       justify="center"
     >
       <AllPlayersCircle />
+      <WhiteboardBackground preserveAspectRatio="none" />
+
       {playerBoxes}
     </Box>
   );
