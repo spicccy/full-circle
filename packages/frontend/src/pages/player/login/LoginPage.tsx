@@ -14,6 +14,7 @@ import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
 import { getType } from 'typesafe-actions';
 
+import { Background } from '../game/components/Background';
 import { LoginCard } from './LoginCard';
 
 interface ILoginPageParams {
@@ -115,14 +116,7 @@ const LoginPage: FunctionComponent = () => {
   }
 
   return (
-    <Box
-      background="dark-1"
-      flex
-      height={{ min: '100vh' }}
-      align="center"
-      justify="center"
-      pad="medium"
-    >
+    <Background>
       <Box width="medium" margin={{ bottom: 'medium' }}>
         <LoginCard
           name={name}
@@ -146,7 +140,7 @@ const LoginPage: FunctionComponent = () => {
           here
         </LinkAnchor>
       </Text>
-    </Box>
+    </Background>
   );
 };
 

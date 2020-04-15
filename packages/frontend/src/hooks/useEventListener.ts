@@ -7,7 +7,7 @@ const isRef = <TElement>(
 ): element is RefObject<TElement> => 'current' in element;
 
 export const useEventListener = <
-  TElement extends HTMLElement | Document | null,
+  TElement extends HTMLElement | Document | Window | null,
   TEvent extends keyof HTMLElementEventMap
 >(
   element: RefOrElement<TElement>,
