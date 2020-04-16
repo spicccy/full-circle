@@ -1,4 +1,4 @@
-import { checkChains, checkFinished, randomSplice } from './helpers';
+import { shuffle } from '../util';
 
 /*
 Things to consider
@@ -10,56 +10,58 @@ export enum Allocation {
   ORDERED = 1,
 }
 
-export const allocate = (
-  result: string[][],
-  r: number,
-  c: number,
-  possible: string[]
-): string[][] | undefined => {
-  const row = result.length;
-  const randomPossible = randomSplice(possible);
+type UnfilledChains = (string | undefined)[][];
+type Chains = string[][];
 
-  for (let i = 0; i < possible.length; i++) {
-    const val = randomPossible[i];
-    result[r][c] = val;
+const arr = (n: number) => [...Array(n)];
 
-    if (checkFinished(result)) {
-      return result;
-    }
+export const randomChain = (ids: string[]): Chains => {
+  const len = ids.length;
 
-    if (checkChains(result)) {
-      if (r >= row - 1) {
-        const resultA = allocate(result, 0, c + 1, possible);
-        if (resultA) {
-          return resultA;
-        }
-      } else {
-        const resultB = allocate(result, r + 1, c, possible);
-        if (resultB) {
-          return resultB;
+  const fill = (array: UnfilledChains): boolean => {
+    const len = array.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        if (!array[i][j]) {
+          const allIds = new Set(ids);
+          const row = array[i];
+          const column = array.map((row) => row[j]);
+          const picked = [...row, ...column];
+          picked.forEach((id) => id && allIds.delete(id));
+
+          const options = shuffle([...allIds]);
+          for (const option of options) {
+            array[i][j] = option;
+            if (fill(array)) {
+              return true;
+            }
+            array[i][j] = undefined;
+          }
+          return false;
         }
       }
     }
+
+    return true;
+  };
+
+  const chains: UnfilledChains = arr(len).map(() =>
+    arr(len).map(() => undefined)
+  );
+
+  for (let i = 0; i < len; i++) {
+    chains[i][0] = ids[i];
   }
-  result[r][c] = '';
-  return undefined;
+
+  if (fill(chains)) {
+    return chains as Chains;
+  } else {
+    throw new Error('Failed to generate chain');
+  }
 };
 
-export const randomChain = (ids: string[]): string[][] | undefined => {
-  const numIds = ids.length;
-  const chainLength = Math.floor((numIds - 1) / 2) * 2;
-  //initialise
-  const result = [];
-  for (let i = 0; i < numIds; i++) {
-    result.push([...[ids[i]], ...Array(chainLength)]);
-  }
-  //allocate
-  const allocatedChains = allocate(result, 0, 1, ids);
-  return allocatedChains;
-};
-
-export const orderedChain = (ids: string[]): string[][] => {
-  const chains: string[][] = [];
+export const orderedChain = (ids: string[]): Chains => {
+  const chains: Chains = [];
   const n = ids.length;
   for (let i = 0; i < n; i++) {
     const chain = [];

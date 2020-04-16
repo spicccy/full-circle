@@ -1,4 +1,4 @@
-import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
+import { MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import {
   curatorReveal,
@@ -9,9 +9,9 @@ import {
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { IChain, ILink } from '@full-circle/shared/lib/roomState/chain';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
-  IChain,
   IPlayer,
   IRoomStateSynced,
   RoomErrorType,
@@ -21,16 +21,27 @@ import { Client } from 'colyseus';
 import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import { Allocation, getAllocation } from '../util/sortPlayers/sortPlayers';
+import { closeEnough, shuffle } from '../util/util';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
-import Chain from './subSchema/chain';
-import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-import RoundData from './subSchema/roundData';
+
+const initialPrompts = [
+  'cat',
+  'dog',
+  'mouse',
+  'turd',
+  'chicken',
+  'computer',
+  'p90x',
+  'car',
+  'screaming rock',
+  'a rockin wave',
+];
 
 /**
  * These are functions that each specific state will need to implement.
@@ -62,22 +73,16 @@ export interface IRoomStateBackend {
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
-  sendReveal: () => void;
-
-  setRevealer: () => void;
+  sendReveal: () => boolean;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
   getRound: () => number;
 
-  allocate: () => void;
-  readonly currChains: ArraySchema<Chain>;
-
+  generateChains: () => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
-
-  sendCurrDrawings: () => void;
-  sendCurrPrompts: () => void;
+  sendRoundData: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -133,9 +138,6 @@ class RoomState extends Schema
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
 
-  @type([RoundData])
-  roundData = new ArraySchema<RoundData>();
-
   @type({ map: 'string' })
   warnings = new MapSchema<string>();
 
@@ -144,7 +146,7 @@ class RoomState extends Schema
 
   displayChain = 0;
 
-  chains = new ArraySchema<Chain>();
+  chains: IChain[] = [];
 
   // =====================================
   // IRoomStateBackend Api
@@ -259,30 +261,16 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
-  setRevealer = () => {
-    const itr = this.displayChain;
-    const chains = this.chains;
-    if (itr < chains.length) {
-      this.revealer = chains[itr].id;
-      return;
-    }
-    this.revealer = '';
-  };
-
   sendReveal = () => {
-    const curator = this.curator;
-    const itr = this.displayChain++;
-    if (itr < this.chains.length) {
-      const chain = this.chains[itr];
-      const links = chain.links;
-      const payload: IChain = {
-        id: chain.id,
-        links: links.map((val) => {
-          return val.link;
-        }),
-      };
-      this.sendAction(curator, curatorReveal(payload));
+    if (this.displayChain < this.chains.length) {
+      const chain = this.chains[this.displayChain];
+      this.revealer = chain.owner;
+      this.sendAction(this.curator, curatorReveal(chain));
+      this.displayChain++;
+      return true;
     }
+
+    return false;
   };
 
   incrementRound = () => {
@@ -301,57 +289,45 @@ class RoomState extends Schema
   // Chain management
   // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
-  get currChains() {
-    return this.chains;
-  }
-
-  allocate = () => {
-    this.chains = new ArraySchema<Chain>();
-    const allocation = getAllocation(
-      this.options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
-    );
+  generateChains = () => {
     const ids = objectValues(this.players).map((val) => val.id);
-    const chainOrder = allocation(ids);
-    if (!chainOrder) return;
-    this.setChains(chainOrder);
-  };
+    const chainOrder = getAllocation(
+      this.options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
+    )(ids);
 
-  setChains = (chainOrder: string[][]) => {
-    const somePrompts = [
-      'cat',
-      'dog',
-      'mouse',
-      'turd',
-      'chicken',
-      'computer',
-      'p90x',
-      'car',
-      'screaming rock',
-      'a rockin wave',
-    ];
-    let i = 0;
-    for (const currChain of chainOrder) {
-      const owner = currChain[0];
-      const newChain = new Chain(owner);
-      const numLinks = currChain.length;
-      newChain.addLink(new Link(owner, ''));
-      for (let j = 1; j < numLinks - 1; j += 2) {
-        const guesser = currChain[j];
-        const drawer = currChain[j + 1];
-        newChain.addLink(new Link(drawer, guesser));
-      }
-      newChain.links[0].prompt.setText(somePrompts[i++]);
-      this.chains.push(newChain);
+    if (!chainOrder) {
+      throw new Error('Chain allocation failed!');
     }
+
+    const prompts = shuffle(initialPrompts);
+    this.chains = chainOrder.map((chainIds) => {
+      const owner = chainIds[0];
+      const links = chainIds.map<ILink>((playerId, j) => ({
+        type: j % 2 ? 'prompt' : 'image',
+        id: `${owner}-${j}`,
+        playerId,
+      }));
+
+      const initialPrompt = prompts.pop() ?? '';
+      const initialLink: ILink = {
+        type: 'prompt',
+        id: `${owner}-start`,
+        data: initialPrompt,
+        playerId: '',
+      };
+
+      return {
+        owner,
+        links: [initialLink, ...links],
+      };
+    });
   };
 
   storeGuess = (id: string, guess: string): boolean => {
-    const round = this.round;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const prompt = chain.getLinks[round].prompt;
-      if (prompt.playerId === id) {
-        prompt.setText(guess);
+    for (const chain of this.chains) {
+      const link = chain.links[this.round];
+      if (link.playerId === id) {
+        link.data = guess;
         return true;
       }
     }
@@ -359,58 +335,54 @@ class RoomState extends Schema
   };
 
   storeDrawing = (id: string, drawing: CanvasAction[]): boolean => {
-    const round = this.round;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const image = chain.getLinks[round - 1].image;
-      if (image.playerId === id) {
-        image.setImage(JSON.stringify(drawing));
+    for (const chain of this.chains) {
+      const link = chain.links[this.round];
+      if (link.playerId === id) {
+        link.data = JSON.stringify(drawing);
         return true;
       }
     }
     return false;
   };
 
-  sendCurrPrompts = () => {
-    this.roundData = new ArraySchema<RoundData>();
-    const round = this.round - 1;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const data = chain.getLinks[round].prompt.text;
-      const id = chain.getLinks[round].image.playerId;
-      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
-      this.sendAction(id, displayPrompt(data));
-    }
-  };
-
-  sendCurrDrawings = () => {
-    this.roundData = new ArraySchema<RoundData>();
-    const round = this.round - 1;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const data = chain.getLinks[round].image.imageData;
-      const id = chain.getLinks[round + 1].prompt.playerId;
-      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
-      this.sendAction(id, displayDrawing(data));
+  sendRoundData = () => {
+    for (const chain of this.chains) {
+      const previousLink = chain.links[this.round - 1];
+      const link = chain.links[this.round];
+      if (previousLink.type === 'image') {
+        if (previousLink.data) {
+          this.sendAction(link.playerId, displayDrawing(previousLink.data));
+        } else {
+          // handle no data
+          this.sendAction(link.playerId, displayDrawing(''));
+        }
+      } else {
+        if (previousLink.data) {
+          this.sendAction(link.playerId, displayPrompt(previousLink.data));
+        } else {
+          // handle no data
+          this.sendAction(link.playerId, displayPrompt(''));
+        }
+      }
     }
   };
 
   updatePlayerScores = () => {
     // reset scores so this function is idempotent
     for (const id in this.players) {
-      (this.players[id] as Player).score = 0;
+      this.players[id].score = 0;
     }
 
     for (const chain of this.chains) {
-      for (let i = 1; i < chain.links.length; i++) {
+      for (let i = 2; i < chain.links.length; i++) {
         if (
-          chain.links[i].prompt.text.toLowerCase().trim() ===
-          chain.links[i - 1].prompt.text.toLowerCase().trim()
+          chain.links[i].type === 'prompt' &&
+          closeEnough(chain.links[i].data, chain.links[i - 2].data)
         ) {
-          const goodDrawer = chain.links[i - 1].image.playerId;
-          const correctGuesser = chain.links[i].prompt.playerId;
-          (this.players[correctGuesser] as Player).score++;
-          (this.players[goodDrawer] as Player).score++;
+          const goodDrawer = chain.links[i - 1].playerId;
+          const correctGuesser = chain.links[i].playerId;
+          this.players[correctGuesser].score++;
+          this.players[goodDrawer].score++;
         }
       }
     }
@@ -420,16 +392,7 @@ class RoomState extends Schema
   // Game state management
   // ===========================================================================
   get gameIsOver() {
-    // TODO: implement checking of the room's configured round length
-    let phasesElapsed = this.round * 2;
-    if (this.phase.phaseType === PhaseType.GUESS) {
-      phasesElapsed += 1;
-    }
-    if (phasesElapsed > this.numPlayers) {
-      return true;
-    }
-
-    return false;
+    return this.round === this.numPlayers;
   }
 
   // State-transition helpers

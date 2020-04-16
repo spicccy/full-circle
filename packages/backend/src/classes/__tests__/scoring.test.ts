@@ -25,16 +25,16 @@ describe('room scoring', () => {
   it('should award a point to guesser and drawer when the guess matches the prompt', () => {
     roomState.advanceState();
 
-    const chain1Links = roomState.currChains[0].links;
-    const chain1Prompt1 = chain1Links[0].prompt.text;
-    const chain1Drawer1 = chain1Links[0].image.playerId;
-    const chain1Guesser1 = chain1Links[1].prompt.playerId;
+    const chain1Links = roomState.chains[0].links;
+    const chain1Prompt1 = chain1Links[0].data;
+    const chain1Drawer1 = chain1Links[1].playerId;
+    const chain1Guesser1 = chain1Links[2].playerId;
     roomState.storeDrawing('0_id', []);
     roomState.storeDrawing('1_id', []);
     roomState.storeDrawing('2_id', []);
     roomState.advanceState();
 
-    roomState.storeGuess(chain1Guesser1, chain1Prompt1);
+    roomState.storeGuess(chain1Guesser1, chain1Prompt1 ?? '');
     roomState.advanceState();
 
     expect(roomState.players[chain1Drawer1].score).toBe(1);
@@ -44,8 +44,8 @@ describe('room scoring', () => {
   it('should not-award a point to players who do not match the previous prompt', () => {
     roomState.advanceState();
 
-    const chain1Links = roomState.currChains[0].links;
-    const chain1Guesser1 = chain1Links[1].prompt.playerId;
+    const chain1Links = roomState.chains[0].links;
+    const chain1Guesser1 = chain1Links[2].playerId;
     roomState.storeDrawing('0_id', []);
     roomState.storeDrawing('1_id', []);
     roomState.storeDrawing('2_id', []);
@@ -62,20 +62,20 @@ describe('room scoring', () => {
 
     // use the fact that we are using predictable chains to know who is guessing who's drawings
 
-    const chain1Links = roomState.currChains[0].links;
-    const chain1Prompt = chain1Links[0].prompt.text;
-    const chain2Links = roomState.currChains[1].links;
-    const chain2Prompt = chain2Links[0].prompt.text;
-    const chain3Links = roomState.currChains[2].links;
-    const chain3Prompt = chain3Links[0].prompt.text;
+    const chain1Links = roomState.chains[0].links;
+    const chain1Prompt = chain1Links[0].data;
+    const chain2Links = roomState.chains[1].links;
+    const chain2Prompt = chain2Links[0].data;
+    const chain3Links = roomState.chains[2].links;
+    const chain3Prompt = chain3Links[0].data;
 
     roomState.storeDrawing('0_id', []);
     roomState.storeDrawing('1_id', []);
     roomState.storeDrawing('2_id', []);
     roomState.advanceState();
 
-    roomState.storeGuess('1_id', chain1Prompt);
-    roomState.storeGuess('2_id', chain2Prompt);
+    roomState.storeGuess('1_id', chain1Prompt ?? '');
+    roomState.storeGuess('2_id', chain2Prompt ?? '');
     roomState.storeGuess(
       '0_id',
       chain3Prompt + 'this extra bit ensures this guess is wrong'

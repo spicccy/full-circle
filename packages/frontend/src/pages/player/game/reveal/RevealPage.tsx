@@ -1,12 +1,12 @@
+import { revealChain } from '@full-circle/shared/lib/actions/client';
 import { Colour } from '@full-circle/shared/lib/canvas';
 import { Box, Button } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { BaseButton } from 'src/components/BaseButton';
 import { Card } from 'src/components/Card/Card';
+import { useRoom } from 'src/contexts/RoomContext';
 import { ThumbDown, ThumbUp } from 'src/icons';
 import styled from 'styled-components';
-import { useRoom } from 'src/contexts/RoomContext';
-import { revealChain } from '@full-circle/shared/lib/actions/client';
 
 import { Background } from '../components/Background';
 

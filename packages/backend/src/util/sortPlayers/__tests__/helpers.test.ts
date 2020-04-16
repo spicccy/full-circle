@@ -77,8 +77,9 @@ describe('CheckChains', () => {
 describe('CheckFinished', () => {
   it('if repeated val in column return false', () => {
     const testVals = [
-      ['a', 'b', 'c', 'a'],
-      ['b', 'd', 'e', 'a'],
+      ['a', 'b', 'a'],
+      ['b', 'c', 'a'],
+      ['c', 'a', 'b'],
     ];
 
     expect(checkFinished(testVals)).toBe(false);
@@ -86,8 +87,9 @@ describe('CheckFinished', () => {
 
   it('if no repeated val in column return true', () => {
     const testVals = [
-      ['a', 'b', 'c', 'd'],
-      ['b', 'd', 'e', 'a'],
+      ['a', 'b', 'c'],
+      ['b', 'c', 'a'],
+      ['c', 'a', 'b'],
     ];
 
     expect(checkFinished(testVals)).toBe(true);
@@ -95,8 +97,18 @@ describe('CheckFinished', () => {
 
   it('if undefined val in column or row return false', () => {
     const testVals = [
-      ['', 'b', '', 'd'],
-      ['', '', 'e', 'a'],
+      ['a', 'b', 'c'],
+      ['b', '', 'a'],
+      ['c', 'a', 'b'],
+    ];
+
+    expect(checkFinished(testVals)).toBe(false);
+  });
+
+  it('if not square return false', () => {
+    const testVals = [
+      ['a', 'b', 'c'],
+      ['b', 'c', 'a'],
     ];
 
     expect(checkFinished(testVals)).toBe(false);

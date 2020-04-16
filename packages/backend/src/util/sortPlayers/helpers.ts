@@ -37,6 +37,10 @@ export const checkChains = (result: string[][]): boolean => {
 export const checkFinished = (result: string[][]): boolean => {
   const row = result.length;
   const column = result[0].length;
+  if (row !== column) {
+    return false;
+  }
+
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < column; j++) {
       const curr = result[i][j];
@@ -45,6 +49,7 @@ export const checkFinished = (result: string[][]): boolean => {
       }
     }
   }
+
   return checkChains(result);
 };
 
