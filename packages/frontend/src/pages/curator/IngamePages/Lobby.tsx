@@ -10,6 +10,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 import logo from 'src/images/fullcircle.png';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
+import { Scoreboard } from '../../../components/Scoreboard';
 
 interface ILobbyProps {
   startGame(): void;
@@ -23,7 +24,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 
   return (
-    <Box css={{ position: 'relative' }} fill>
+    <Box css={{ position: 'relative' }} flex>
       <PlayerBackground />
       <LinkButton
         alignSelf="start"

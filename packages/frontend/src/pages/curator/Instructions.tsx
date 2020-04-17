@@ -4,7 +4,7 @@ import { Navbar } from 'src/components/Navbar';
 
 const Instructions: FunctionComponent = () => {
   return (
-    <Box background="light-2" fill>
+    <Box background="light-2" flex>
       <Navbar />
       <Box align="center" justify="start">
         <Box width="medium" align="center">

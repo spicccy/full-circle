@@ -1,6 +1,7 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 import { Fragment, FunctionComponent, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -8,11 +9,11 @@ import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { useRoomMessage } from '../../../hooks/useRoomListeners';
+import { EndPage } from './EndPage';
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
 import { IngameReveal } from './IngameReveal';
 import { Lobby } from './Lobby';
-import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 /* 
 TODO:
 The page constantly renders as the phasetimer
@@ -58,6 +59,8 @@ const CuratorGamePage: FunctionComponent = () => {
         return <IngameGuess />;
       case PhaseType.REVEAL:
         return <IngameReveal chain={chain} />;
+      case PhaseType.END:
+        return <EndPage />;
       default:
         return <div>Loading</div>;
     }

@@ -6,15 +6,11 @@ import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import React, { FunctionComponent, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
-import {
-  MessageHandler,
-  useRoomLeave,
-  useRoomMessage,
-} from 'src/hooks/useRoomListeners';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
 import { getType } from 'typesafe-actions';
 
+import { Background } from './components/Background';
 import { DrawPage } from './draw/DrawPage';
 import { GuessPage } from './guess/GuessPage';
 import { Lobby } from './lobby/LobbyPage';
@@ -26,13 +22,7 @@ const PlayerGamePage: FunctionComponent = () => {
   const [currentPrompt, setCurrentPrompt] = useState<string>('');
   const [currentDrawing, setCurrentDrawing] = useState<CanvasAction[]>([]);
 
-  const { addToast } = useToasts();
-
-  useRoomLeave(() => {
-    addToast('You have been disconnected', { appearance: 'error' });
-  });
-
-  const msgHandler: MessageHandler = (message) => {
+  useRoomMessage((message) => {
     switch (message.type) {
       case getType(displayPrompt):
         setCurrentPrompt(message.payload);
@@ -43,9 +33,7 @@ const PlayerGamePage: FunctionComponent = () => {
       default:
         console.warn('Unhandled message');
     }
-  };
-
-  useRoomMessage(msgHandler);
+  });
 
   if (!room) {
     return <Redirect to="/" />;
@@ -69,7 +57,7 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     default: {
-      return <div>Loading...</div>;
+      return <Background />;
     }
   }
 };
