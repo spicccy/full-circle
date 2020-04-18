@@ -29,6 +29,7 @@ global.it = async function (name, func) {
       await currPage.screenshot({
         path: screenshotDir().concat(screenshotName('.failure.png')),
       });
+      browser.close();
       throw e;
     }
   });

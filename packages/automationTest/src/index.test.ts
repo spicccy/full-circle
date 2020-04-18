@@ -9,7 +9,7 @@ const roomCode = '8722';
 
 describe('Full Circle', () => {
   beforeAll(async () => {
-    jest.setTimeout(20000);
+    jest.setTimeout(200000);
     await fetch('http://localhost:2567/test-reset');
     await page.setViewport({
       width: 1024,
@@ -26,9 +26,9 @@ describe('Full Circle', () => {
   });
 
   it('should successfully navigate to the room creation page', async () => {
-    await page.waitForSelector("[data-testid='newGame']");
+    await page.waitForSelector("[data-testid='newGamea']");
     await Promise.all([
-      page.click("[data-testid='newGamea']"),
+      page.click("[data-testid='newGame']"),
       page.waitForNavigation(),
     ]);
     await expect(page).toMatch('Create a Room');
