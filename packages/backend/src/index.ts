@@ -5,13 +5,13 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import seedrandom from 'seedrandom';
 
 // import socialRoutes from "@colyseus/social/express"
 import { MyRoom } from './MyRoom';
 
 const port = Number(process.env.PORT || BACKEND_PORT);
 const app = express();
-var seedrandom = require('seedrandom');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', '..', 'frontend', 'build')));

@@ -32,11 +32,3 @@ export const compareSnapshot = async (currPage: Page, imageName: string) => {
     failureThresholdType: 'percent',
   });
 };
-
-export const removeElements = async (currPage: Page) => {
-  await currPage.evaluate(() => {
-    (
-      document.querySelectorAll("[data-testHidden='true']") || []
-    ).forEach((el) => el.remove());
-  });
-};
