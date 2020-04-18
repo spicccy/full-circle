@@ -1,6 +1,6 @@
 import 'styled-components/macro';
 
-import { IChain, ILink } from '@full-circle/shared/lib/roomState/chain';
+import { IChain, ILink } from '@full-circle/shared/lib/roomState';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';

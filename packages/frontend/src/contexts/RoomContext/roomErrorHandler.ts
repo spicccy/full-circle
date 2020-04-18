@@ -1,6 +1,6 @@
 import { RoomError } from '@full-circle/shared/lib/actions';
 import { clientError } from '@full-circle/shared/lib/actions/client';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { MatchMakeError } from 'colyseus.js/lib/Client';
 import invariant from 'tiny-invariant';
 

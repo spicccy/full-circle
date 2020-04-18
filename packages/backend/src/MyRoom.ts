@@ -1,6 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
+import { IRoomMetadata } from '@full-circle/shared/lib/roomState';
 import { Client, Room } from 'colyseus';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';

@@ -1,6 +1,6 @@
 import 'styled-components/macro';
 
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { IPlayer } from '@full-circle/shared/lib/roomState';
 import { Box, Grommet, Heading, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 

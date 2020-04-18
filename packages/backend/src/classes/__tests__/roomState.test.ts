@@ -1,8 +1,4 @@
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { mocked } from 'ts-jest/utils';
 
 import { addPlayers, mockRoom } from '../helpers/testHelper';
@@ -158,46 +154,43 @@ describe('Room state', () => {
     });
   });
 
-  describe('should send the correct round', () => {
+  describe('should updates round data', () => {
     let roomState: RoomState;
-    let sendActionSpy: jest.SpyInstance;
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom);
+      addPlayers(roomState, 3);
       const mockedVal = [
-        ['a', 'b', 'c', 'd', 'e'],
-        ['e', 'd', 'b', 'a', 'c'],
+        ['0_id', '1_id', '2_id'],
+        ['1_id', '2_id', '0_id'],
+        ['2_id', '0_id', '1_id'],
       ];
       mocked(getAllocation).mockReturnValue(() => {
         return mockedVal;
       });
 
-      sendActionSpy = jest.spyOn(roomState, 'sendAction');
-
       roomState.advanceState();
-      roomState.storeDrawing('a', { lol: '1' } as any);
-      roomState.storeDrawing('e', { lol: '2' } as any);
+      roomState.storeDrawing('0_id', { lol: '1' } as any);
+      roomState.storeDrawing('1_id', { lol: '2' } as any);
     });
 
-    it('image data', () => {
+    it.only('image data', () => {
       roomState.advanceState();
-      expect(sendActionSpy).toHaveBeenCalledWith(
-        'b',
-        displayDrawing('{"lol":"1"}')
+      expect(roomState.getPlayer('1_id')?.roundData?.data).toEqual(
+        JSON.stringify({ lol: '1' })
       );
-      expect(sendActionSpy).toHaveBeenCalledWith(
-        'd',
-        displayDrawing('{"lol":"2"}')
+      expect(roomState.getPlayer('2_id')?.roundData?.data).toEqual(
+        JSON.stringify({ lol: '2' })
       );
     });
 
     it('prompt data', () => {
       roomState.advanceState();
-      roomState.storeGuess('b', 'prompt1');
-      roomState.storeGuess('d', 'prompt2');
+      roomState.storeGuess('1_id', 'prompt1');
+      roomState.storeGuess('2_id', 'prompt2');
       roomState.advanceState();
-      expect(sendActionSpy).toHaveBeenCalledWith('c', displayPrompt('prompt1'));
-      expect(sendActionSpy).toHaveBeenCalledWith('b', displayPrompt('prompt2'));
+      expect(roomState.getPlayer('2_id')?.roundData?.data).toEqual('prompt1');
+      expect(roomState.getPlayer('0_id')?.roundData?.data).toEqual('prompt2');
     });
   });
 });

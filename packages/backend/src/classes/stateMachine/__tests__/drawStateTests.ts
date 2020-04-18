@@ -1,4 +1,4 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 
 import { IRoom } from '../../../interfaces';
 import { addPlayers, mockRoom } from '../../helpers/testHelper';

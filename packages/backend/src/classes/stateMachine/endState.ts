@@ -1,8 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 
 import { IClient } from '../../interfaces';
 import { IRoomStateBackend, IState } from '../roomState';

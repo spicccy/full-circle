@@ -1,7 +1,6 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import { IChain } from '@full-circle/shared/lib/roomState/chain';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { IChain, PhaseType } from '@full-circle/shared/lib/roomState';
 import { Fragment, FunctionComponent, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import { Colour } from '@full-circle/shared/lib/canvas';
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { IPlayer } from '@full-circle/shared/lib/roomState';
 import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
 import React from 'react';

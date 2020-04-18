@@ -14,10 +14,10 @@ import { GuessCard } from './GuessCard';
 import { GuessSubmittedCard } from './GuessSubmittedCard';
 
 interface IGuessPage {
-  drawing: CanvasAction[];
+  drawing?: CanvasAction[];
 }
 
-const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
+const GuessPage: FunctionComponent<IGuessPage> = ({ drawing = [] }) => {
   const { room } = useRoom();
   const { hasSubmitted } = useRoomHelpers();
 

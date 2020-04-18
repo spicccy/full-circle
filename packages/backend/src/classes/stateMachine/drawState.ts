@@ -2,8 +2,7 @@ import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { forceSubmit, warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
@@ -56,7 +55,7 @@ class DrawState implements IState {
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
-    this.roomState.sendRoundData();
+    this.roomState.updateRoundData();
   };
 
   onStateEnd = () => {

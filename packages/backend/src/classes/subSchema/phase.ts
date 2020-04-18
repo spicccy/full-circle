@@ -1,6 +1,5 @@
 import { Schema, type } from '@colyseus/schema';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { IPhase } from '@full-circle/shared/lib/roomState/interfaces';
+import { IPhase, PhaseType } from '@full-circle/shared/lib/roomState';
 
 export const DEFAULT_DRAW_PHASE_LENGTH = 60000;
 export const DEFAULT_GUESS_PHASE_LENGTH = 30000;

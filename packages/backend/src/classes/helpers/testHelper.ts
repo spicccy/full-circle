@@ -1,4 +1,4 @@
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { IPlayer } from '@full-circle/shared/lib/roomState';
 
 import { IClient, IClock, IRoom } from '../../interfaces';
 import RoomState from '../roomState';
