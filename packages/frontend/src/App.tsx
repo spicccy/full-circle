@@ -18,6 +18,7 @@ import {
 } from './pages';
 import { IngameReveal } from './pages/curator/IngamePages/IngameReveal';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
+import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
 
@@ -45,6 +46,9 @@ export const App: FunctionComponent = () => {
                 <Route exact path="/instructions" component={Instructions} />
                 <Route exact path="/team" component={Team} />
                 <Route exact path="/revealtest" component={IngameReveal} />
+                <Route exact path="/canvastest">
+                  <DrawPage prompt="prompt" />
+                </Route>
                 <Route path="/" component={Error404} />
               </Switch>
             </PageContainer>
