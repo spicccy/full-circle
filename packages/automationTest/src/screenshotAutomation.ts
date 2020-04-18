@@ -1,4 +1,5 @@
 import { Page } from 'puppeteer';
+import path from 'path';
 
 let imgCounter = 0;
 let dir = 'create_and_join_game';
@@ -9,7 +10,7 @@ export function changeDir(newDir: string) {
 }
 
 export function screenshotDir() {
-  return 'screenshots/'.concat(dir).concat('/');
+  return path.resolve('screenshots', dir);
 }
 
 export function screenshotName(name: string) {
@@ -18,7 +19,7 @@ export function screenshotName(name: string) {
 }
 
 export function diffDir() {
-  return screenshotDir().concat('diff/');
+  return path.resolve('screenshots', dir, 'diff');
 }
 
 export const compareSnapshot = async (currPage: Page, imageName: string) => {
