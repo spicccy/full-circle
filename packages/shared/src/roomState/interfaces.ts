@@ -1,25 +1,5 @@
 import { PhaseType } from './constants';
 
-export interface IPrompt {
-  text: string;
-  playerId: string;
-}
-
-export interface IImage {
-  imageData: string;
-  playerId: string;
-}
-
-export interface ILink {
-  prompt: IPrompt;
-  image: IImage;
-}
-
-export interface IChain {
-  id: string;
-  links: ILink[];
-}
-
 export interface IPlayer {
   id: string;
   username: string;
@@ -41,19 +21,12 @@ export interface IRoomMetadata {
   roomCode: string;
 }
 
-export interface IRoundData {
-  id: string;
-  data: string;
-}
-
 export interface IRoomStateSynced {
   curator: string;
-  chains: IChain[];
   players: Record<string, IPlayer>;
   round: number;
   phase: IPhase;
   submittedPlayers: Record<string, boolean>;
-  roundData: IRoundData[];
   revealer: string;
 }
 

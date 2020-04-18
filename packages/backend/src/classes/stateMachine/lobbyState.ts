@@ -85,7 +85,7 @@ class LobbyState implements IState {
   };
 
   advanceState = () => {
-    this.roomState.allocate();
+    this.roomState.generateChains();
     this.roomState.incrementRound();
     this.roomState.setDrawState();
   };

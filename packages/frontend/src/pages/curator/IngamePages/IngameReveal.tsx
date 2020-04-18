@@ -1,6 +1,6 @@
 import 'styled-components/macro';
 
-import { IChain, ILink } from '@full-circle/shared/lib/roomState/interfaces';
+import { IChain, ILink } from '@full-circle/shared/lib/roomState/chain';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
@@ -18,29 +18,25 @@ interface IInGameReveal {
 }
 
 const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
+  if (link.type === 'image') {
+    const canvasActions = link.data ? JSON.parse(link.data) : [];
+    return (
+      <Box height="small" width="small" background="red" margin="medium">
+        <ViewCanvas canvasActions={canvasActions} />
+      </Box>
+    );
+  }
+
   return (
-    <Box direction="row">
-      <Box>
-        <Box
-          height="small"
-          width="small"
-          background="red"
-          margin="medium"
-          align="center"
-          justify="center"
-        >
-          <Text>{link.prompt.text}</Text>
-        </Box>
-        {/* <Text textAlign="center">{link.prompt.playerId}</Text> // TODO:
-        display usernames*/}
-      </Box>
-      <Box>
-        <Box height="small" width="small" background="red" margin="medium">
-          <ViewCanvas canvasActions={JSON.parse(link.image.imageData || '')} />
-        </Box>
-        {/* <Text textAlign="center">{link.image.playerId}</Text> // TODO:
-        display usernames*/}
-      </Box>
+    <Box
+      height="small"
+      width="small"
+      background="red"
+      margin="medium"
+      align="center"
+      justify="center"
+    >
+      <Text>{link.data ?? 'X'}</Text>
     </Box>
   );
 };
@@ -52,7 +48,7 @@ const RenderChain: FunctionComponent<IRenderChainProps> = ({ chain }) => {
 
   return (
     <Box background="black" fill>
-      <Text textAlign="center">{chain.id}</Text>
+      <Text textAlign="center">{chain.owner}</Text>
       <Box direction="row" wrap>
         {links}
       </Box>
@@ -64,7 +60,7 @@ const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
   // const { syncedState } = useRoom();
   // const arrayOfPlayers = objectValues(syncedState?.players ?? {});
 
-  return <Box fill>{chain ? <RenderChain chain={chain} /> : <></>}</Box>;
+  return <Box fill>{chain && <RenderChain chain={chain} />}</Box>;
 };
 
 export { IngameReveal };

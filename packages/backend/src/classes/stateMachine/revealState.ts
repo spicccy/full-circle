@@ -31,12 +31,13 @@ class RevealState implements IState {
     this.roomState.playerDisconnected(client.id);
   };
 
-  onReceive = (client: IClient, message: ClientAction) => {
-    console.log(client, message);
+  onReceive = (_client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(revealChain): {
-        this.roomState.sendReveal();
-        this.roomState.setRevealState();
+        const revealed = this.roomState.sendReveal();
+        if (!revealed) {
+          this.advanceState();
+        }
         return;
       }
     }
@@ -50,7 +51,7 @@ class RevealState implements IState {
 
   onStateStart = () => {
     this.roomState.setPhase(new Phase(PhaseType.REVEAL));
-    this.roomState.setRevealer();
+    this.roomState.sendReveal();
   };
 
   onStateEnd = () => {

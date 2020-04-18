@@ -65,13 +65,14 @@ class DrawState implements IState {
       DEFAULT_DRAW_PHASE_LENGTH
     );
     this.roomState.clearSubmittedPlayers();
-    this.roomState.sendCurrPrompts();
+    this.roomState.sendRoundData();
   };
 
   onStateEnd = () => {
     this.timerHandle?.clear();
     this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
+    this.roomState.updatePlayerScores();
   };
 
   startBuffer = () => {
@@ -90,6 +91,7 @@ class DrawState implements IState {
       this.roomState.setRevealState();
       return;
     }
+    this.roomState.incrementRound();
     this.roomState.setGuessState();
   };
 }

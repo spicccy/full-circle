@@ -27,6 +27,6 @@ describe('Guess State', () => {
   it('advances to draw phase', () => {
     roomState.advanceState();
     expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
-    expect(roomState.round).toBe(2);
+    expect(roomState.round).toBe(3);
   });
 });
