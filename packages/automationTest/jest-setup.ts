@@ -1,9 +1,8 @@
 import { Page } from 'puppeteer';
-
-import { screenshotName, screenshotDir } from './src/screenshotAutomation';
+import { screenshotName, screenshotDir, dir } from './src/screenshotAutomation';
+import path from 'path';
 
 let currPage = page;
-
 require('expect-puppeteer');
 const { toMatchImageSnapshot } = require('jest-image-snapshot');
 expect.extend({ toMatchImageSnapshot });
@@ -26,8 +25,13 @@ global.it = async function (name, func) {
     try {
       await func();
     } catch (e) {
+      // await currPage.screenshot({
+      //   path: screenshotDir()
+      //     .concat('/')
+      //     .concat(screenshotName('.failure.png')),
+      // });
       await currPage.screenshot({
-        path: screenshotDir().concat(screenshotName('.failure.png')),
+        path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });
       browser.close();
       throw e;

@@ -45,7 +45,7 @@ const CopyLink: FunctionComponent<ICopyLink> = ({ url }) => {
       }}
       round="xsmall"
     >
-      <Link data-testHidden="true">{url}</Link>
+      <Link>{url}</Link>
       <ClipboardButton data-clipboard-text={url}>
         <ClipboardIcon color={Colour.BLACK} />
       </ClipboardButton>

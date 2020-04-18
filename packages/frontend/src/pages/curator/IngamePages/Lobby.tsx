@@ -37,14 +37,10 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
           <img alt="Full Circle" width={100} height={100} src={logo} />
           <Heading>Full Circle</Heading>
           <Box align="center" margin="medium">
-            <Heading level="3" data-testid="roomID" data-testHidden="true">
+            <Heading level="3" data-testid="roomID">
               Room: {roomCode}
             </Heading>
-            <QR
-              value={joinUrl}
-              about={`Join room ${roomCode}`}
-              data-testHidden="true"
-            ></QR>
+            <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
             <Paragraph size="small">Quick join QR code</Paragraph>
             <Paragraph size="small">
               Copy this link to your friends

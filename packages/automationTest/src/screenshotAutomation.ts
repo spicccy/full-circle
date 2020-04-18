@@ -2,7 +2,7 @@ import path from 'path';
 import { Page } from 'puppeteer';
 
 let imgCounter = 0;
-let dir = 'create_and_join_game';
+export let dir = 'create_and_join_game';
 
 export function changeDir(newDir: string) {
   imgCounter = 0;
@@ -15,7 +15,7 @@ export function screenshotDir() {
 
 export function screenshotName(name: string) {
   imgCounter += 1;
-  return imgCounter.toString(10).concat('_').concat(name);
+  return `${imgCounter.toString(10)}_${name}`;
 }
 
 export function diffDir() {
@@ -23,6 +23,7 @@ export function diffDir() {
 }
 
 export const compareSnapshot = async (currPage: Page, imageName: string) => {
+  await removeElements(currPage);
   const image = await currPage.screenshot();
   expect(image).toMatchImageSnapshot({
     customSnapshotsDir: screenshotDir(),
@@ -31,5 +32,13 @@ export const compareSnapshot = async (currPage: Page, imageName: string) => {
     noColors: true,
     failureThreshold: 0.0025,
     failureThresholdType: 'percent',
+  });
+};
+
+export const removeElements = async (currPage: Page) => {
+  await currPage.evaluate(() => {
+    (
+      document.querySelectorAll("[data-testHidden='true']") || []
+    ).forEach((el) => el.remove());
   });
 };

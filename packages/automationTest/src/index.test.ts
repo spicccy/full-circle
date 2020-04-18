@@ -13,7 +13,7 @@ describe('Full Circle', () => {
     jest.setTimeout(200000);
     await fetch('http://localhost:2567/test-reset');
     await page.setViewport({
-      width: 1024,
+      width: 1366,
       height: 768,
       deviceScaleFactor: 1,
     });
@@ -27,7 +27,7 @@ describe('Full Circle', () => {
   });
 
   it('should successfully navigate to the room creation page', async () => {
-    await page.waitForSelector("[data-testid='newGame']");
+    await page.waitForSelector("[data-testid='newGamea']");
     await Promise.all([
       page.click("[data-testid='newGame']"),
       page.waitForNavigation(),

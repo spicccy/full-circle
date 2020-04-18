@@ -11,8 +11,8 @@ export const joinGame = async (
 ) => {
   setCurrPage(newPage);
   await newPage.setViewport({
-    width: 1024,
-    height: 768,
+    width: 720,
+    height: 1280,
     deviceScaleFactor: 1,
   });
   await newPage.goto('localhost:3000/');
