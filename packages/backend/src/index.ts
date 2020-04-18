@@ -11,7 +11,7 @@ import { MyRoom } from './MyRoom';
 
 const port = Number(process.env.PORT || BACKEND_PORT);
 const app = express();
-
+var seedrandom = require('seedrandom');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', '..', 'frontend', 'build')));
@@ -37,6 +37,11 @@ app.use('/colyseus', monitor());
 
 app.get('/ping', (_req, res) => {
   return res.send('pong');
+});
+
+app.get('/test-reset', (_req, res) => {
+  seedrandom('test', { global: true });
+  return res.sendStatus(200);
 });
 
 app.get('*', (_req, res) => {

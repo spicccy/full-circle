@@ -14,9 +14,11 @@
     "prettylint": "yarn typecheck && yarn lint && yarn prettier"
   },
   "dependencies": {
+    "@types/seedrandom": "^2.4.28",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "express-jwt": "^5.3.1"
+    "express-jwt": "^5.3.1",
+    "seedrandom": "^3.0.5"
   },
   "devDependencies": {
     "@colyseus/loadtest": "^0.12.0",

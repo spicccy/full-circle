@@ -44,7 +44,7 @@ const Lobby: FunctionComponent = () => {
             margin={{ right: 'small' }}
             src={logo}
           />
-          <Heading level="2" textAlign="center">
+          <Heading level="2" textAlign="center" data-testHidden="true">
             {roomCode ? `Joined room ${roomCode}` : `Joining room...`}
           </Heading>
           <Heading level="3" textAlign="center">

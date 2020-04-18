@@ -1,34 +1,38 @@
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
-import { changeDir, screenshotName } from './screenshotAutomation';
+import { changeDir, compareSnapshot } from './screenshotAutomation';
+import fetch from 'node-fetch';
 
 const pageList = [page];
+const roomCode = '8722';
 
 describe('Full Circle', () => {
   beforeAll(async () => {
-    jest.setTimeout(200000);
+    jest.setTimeout(20000);
+    await fetch('http://localhost:2567/test-reset');
+    await page.setViewport({
+      width: 1024,
+      height: 768,
+      deviceScaleFactor: 1,
+    });
     await page.goto('localhost:3000/');
   });
 
   it('should display the login page with links to join/create a room', async () => {
     await expect(page).toMatch('Full Circle');
     await expect(page).toMatch('OR create a new game here');
-    await page.screenshot({
-      path: screenshotName('login_page.png'),
-    });
+    await compareSnapshot(page, 'login_page');
   });
 
   it('should successfully navigate to the room creation page', async () => {
     await page.waitForSelector("[data-testid='newGame']");
     await Promise.all([
-      page.click("[data-testid='newGame']"),
+      page.click("[data-testid='newGamea']"),
       page.waitForNavigation(),
     ]);
     await expect(page).toMatch('Create a Room');
-    await page.screenshot({
-      path: screenshotName('home_page.png'),
-    });
+    await compareSnapshot(page, 'home_page');
   });
 
   it('should be able to successfully create a room', async () => {
@@ -38,19 +42,10 @@ describe('Full Circle', () => {
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
     await expect(page).toMatch('Room');
-    await page.screenshot({
-      path: screenshotName('lobby_no_players.png'),
-    });
+    await compareSnapshot(page, 'lobby_no_players');
   });
 
   it('should be able to join the room with 3 other browser instances', async () => {
-    await page.waitForXPath("//h3[@data-testid='roomID']");
-    const [element] = await page.$x("//h3[@data-testid='roomID']");
-    const codeString = await page.evaluate(
-      (element) => element.textContent,
-      element
-    );
-    const roomCode = codeString.replace('Room: ', '');
     const context1 = await browser.createIncognitoBrowserContext();
     const playerPage1 = await context1.newPage();
     pageList.push(playerPage1);
@@ -66,10 +61,9 @@ describe('Full Circle', () => {
     await expect(page).toMatch('Player 1');
     await expect(page).toMatch('Player 2');
     await expect(page).toMatch('Player 3');
-    await page.screenshot({
-      path: screenshotName('lobby_with_player.png'),
-    });
+    await compareSnapshot(page, 'lobby_with_player');
   });
+
   it('should be able to play the first draw/guess rounds successfully', async () => {
     changeDir('draw_guess_round_1');
     await page.waitForSelector("[data-testid='startGame']");
@@ -88,12 +82,5 @@ describe('Full Circle', () => {
     await drawImage(pageList[1], 'drawing_player_1', 'green (t)');
     await drawImage(pageList[2], 'drawing_player_2', 'purple (y)');
     await drawImage(pageList[3], 'drawing_player_3', 'orange (d)');
-  });
-
-  it('should be able to successfully finish the game', async () => {
-    changeDir('end_game');
-    await page.screenshot({
-      path: screenshotName('game_over'),
-    });
   });
 });
