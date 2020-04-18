@@ -26,7 +26,7 @@ describe('Full Circle', () => {
   });
 
   it('should successfully navigate to the room creation page', async () => {
-    await page.waitForSelector("[data-testid='newGamea']");
+    await page.waitForSelector("[data-testid='newGame']");
     await Promise.all([
       page.click("[data-testid='newGame']"),
       page.waitForNavigation(),
