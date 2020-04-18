@@ -1,6 +1,7 @@
 import { RoomError } from '@full-circle/shared/lib/actions';
 import { clientError } from '@full-circle/shared/lib/actions/client';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { MatchMakeError } from 'colyseus.js/lib/Client';
 import invariant from 'tiny-invariant';
 
 export const parseServerError = (error: unknown): RoomError => {
@@ -11,9 +12,13 @@ export const parseServerError = (error: unknown): RoomError => {
   }
 
   // Error from colyseus
-  if (typeof error === 'object') {
-    console.warn('colyseus error', error);
-    return clientError(RoomErrorType.ROOM_NOT_FOUND);
+  if (error instanceof MatchMakeError) {
+    switch (error.code) {
+      case 4214:
+        return clientError(RoomErrorType.RECONNECT_ERROR);
+      default:
+        return clientError(RoomErrorType.ROOM_NOT_FOUND);
+    }
   }
 
   // Error from backend

@@ -1,9 +1,14 @@
 import { MapSchema, Schema, type } from '@colyseus/schema';
-import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
+import {
+  ClientAction,
+  RoomError,
+  ServerAction,
+} from '@full-circle/shared/lib/actions';
 import {
   curatorReveal,
   displayDrawing,
   displayPrompt,
+  reconnect,
   warn,
 } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
@@ -50,7 +55,7 @@ const initialPrompts = [
 export interface IState {
   onReceive: (client: IClient, message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
-  onLeave: (client: IClient, consented: boolean) => void;
+  onLeave: (client: IClient, consented: boolean) => boolean;
   onClientReady: (clientId: string) => void;
   onStateStart: () => void;
   onStateEnd: () => void;
@@ -74,6 +79,7 @@ export interface IRoomStateBackend {
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => boolean;
+  throwJoinRoomError: (action: RoomError) => never;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -94,9 +100,9 @@ export interface IRoomStateBackend {
   readonly unsubmittedPlayerIds: string[];
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
-  playerDisconnected: (id: string) => void;
-  playerReconnected: (id: string) => void;
-  attemptReconnection: (id: string) => string | null;
+  setPlayerDisconnected: (id: string) => void;
+  setPlayerReconnected: (id: string) => void;
+  attemptReconnection: (username: string) => void;
 
   updatePlayerScores: () => void;
 }
@@ -227,25 +233,23 @@ class RoomState extends Schema
     }
   };
 
-  playerDisconnected = (id: string): void => {
+  setPlayerDisconnected = (id: string): void => {
     const player: Player = this.players[id];
     player.disconnected = true;
   };
 
-  playerReconnected = (id: string): void => {
+  setPlayerReconnected = (id: string): void => {
     const player: Player = this.players[id];
     player.disconnected = false;
   };
 
-  attemptReconnection = (username: string): string | null => {
+  attemptReconnection = (username: string) => {
     for (const id in this.players) {
       const player: Player = this.players[id];
       if (player.username === username && player.disconnected) {
-        return player.id;
+        this.throwJoinRoomError(reconnect(player.id));
       }
     }
-
-    return null;
   };
 
   // Communication with frontend
@@ -259,6 +263,10 @@ class RoomState extends Schema
 
   sendWarning = (clientId: string, warning: RoomErrorType) => {
     this.sendAction(clientId, warn(warning));
+  };
+
+  throwJoinRoomError = (action: RoomError) => {
+    throw new Error(JSON.stringify(action));
   };
 
   sendReveal = () => {
@@ -443,7 +451,7 @@ class RoomState extends Schema
   };
 
   onLeave = (client: IClient, consented: boolean) => {
-    this.currState.onLeave(client, consented);
+    return this.currState.onLeave(client, consented);
   };
 
   onStateStart = () => {
