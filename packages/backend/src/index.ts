@@ -5,13 +5,13 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import seedrandom from 'seedrandom';
 
 // import socialRoutes from "@colyseus/social/express"
 import { MyRoom } from './MyRoom';
 
 const port = Number(process.env.PORT || BACKEND_PORT);
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', '..', 'frontend', 'build')));
@@ -37,6 +37,11 @@ app.use('/colyseus', monitor());
 
 app.get('/ping', (_req, res) => {
   return res.send('pong');
+});
+
+app.get('/test-reset', (_req, res) => {
+  seedrandom('test', { global: true });
+  return res.sendStatus(200);
 });
 
 app.get('*', (_req, res) => {

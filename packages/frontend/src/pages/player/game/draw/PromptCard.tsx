@@ -11,7 +11,7 @@ interface IPromptCardProps {
 const PromptCard: FunctionComponent<IPromptCardProps> = ({ prompt }) => (
   <Card>
     <Box align="center">
-      <Heading>Draw!</Heading>
+      <Heading data-testHidden="true">Draw!</Heading>
       <Heading level="2" margin={{ top: 'none', bottom: 'large' }}>
         {prompt}
       </Heading>
