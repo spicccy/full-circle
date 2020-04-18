@@ -6,13 +6,8 @@ import {
   ICoord,
   Pen,
 } from '@full-circle/shared/lib/canvas';
-import React, {
-  FunctionComponent,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { objectValues } from '@full-circle/shared/lib/helpers';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
 
@@ -39,6 +34,10 @@ const CanvasContainer = styled.div`
   }
 `;
 
+interface ITouch {
+  path: ICoord[];
+}
+
 interface ICanvasProps {
   pen: Pen;
   canvasActions: CanvasAction[];
@@ -54,52 +53,51 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
   const hoverCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  const drawingCtx = drawingCanvasRef.current?.getContext('2d');
-  const hoverCtx = hoverCanvasRef.current?.getContext('2d');
-
   const currentPath = useRef<ICoord[]>([]);
+  const ongoingTouches = useRef<Record<number, ITouch>>({});
 
   const [isDrawing, setIsDrawing] = useState(false);
 
-  const redrawDrawingCanvas = useCallback(
-    (canvasActions: CanvasAction[]) => {
-      if (drawingCtx) {
-        redrawCanvas(drawingCtx, canvasActions);
-      }
-    },
-    [drawingCtx]
-  );
+  const redrawDrawingCanvas = () => {
+    const drawingCtx = drawingCanvasRef.current?.getContext('2d');
+    if (drawingCtx) {
+      const ongoingPaths = [
+        currentPath.current,
+        ...objectValues(ongoingTouches.current).map((touch) => touch.path),
+      ];
 
-  const handleHoverCanvas = useCallback(
-    (pen: Pen, coord?: ICoord) => {
-      if (hoverCtx) {
-        handleHover(hoverCtx, pen, coord);
-      }
-    },
-    [hoverCtx]
-  );
+      const allCanvasActions = [
+        ...canvasActions,
+        ...ongoingPaths.map((path) => drawStroke({ pen, points: path })),
+      ];
 
-  useLayoutEffect(() => {
-    redrawDrawingCanvas(canvasActions);
-  }, [canvasActions, redrawDrawingCanvas]);
+      redrawCanvas(drawingCtx, allCanvasActions);
+    }
+  };
+
+  const handleHoverCanvas = (pen: Pen, coord?: ICoord) => {
+    const hoverCtx = hoverCanvasRef.current?.getContext('2d');
+    if (hoverCtx) {
+      handleHover(hoverCtx, pen, coord);
+    }
+  };
+
+  useEffect(() => {
+    redrawDrawingCanvas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasActions, pen]);
 
   // Mouse events
   useEventListener(canvasContainerRef, 'mousedown', (e) => {
     setIsDrawing(true);
     currentPath.current.push(getMousePosition(e, drawingCanvasRef.current));
-    redrawDrawingCanvas([
-      ...canvasActions,
-      drawStroke({ pen, points: currentPath.current }),
-    ]);
+    redrawDrawingCanvas();
   });
 
   useEventListener(document, 'mousemove', (e) => {
     if (isDrawing) {
       currentPath.current.push(getMousePosition(e, drawingCanvasRef.current));
-      redrawDrawingCanvas([
-        ...canvasActions,
-        drawStroke({ pen, points: currentPath.current }),
-      ]);
+      redrawDrawingCanvas();
     }
   });
 
@@ -125,33 +123,39 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
 
   // Touch events
   useEventListener(canvasContainerRef, 'touchstart', (e) => {
-    setIsDrawing(true);
-    currentPath.current.push(getTouchPosition(e, drawingCanvasRef.current));
-    redrawDrawingCanvas([
-      ...canvasActions,
-      drawStroke({ pen, points: currentPath.current }),
-    ]);
+    for (const touch of e.changedTouches) {
+      ongoingTouches.current[touch.identifier] = {
+        path: [getTouchPosition(touch, drawingCanvasRef.current)],
+      };
+    }
+
+    redrawDrawingCanvas();
   });
 
-  useEventListener(document, 'touchmove', (e) => {
-    if (isDrawing) {
-      currentPath.current.push(getTouchPosition(e, drawingCanvasRef.current));
-      redrawDrawingCanvas([
-        ...canvasActions,
-        drawStroke({ pen, points: currentPath.current }),
-      ]);
+  useEventListener(canvasContainerRef, 'touchmove', (e) => {
+    for (const touch of e.changedTouches) {
+      const ongoingTouch = ongoingTouches.current[touch.identifier];
+      if (ongoingTouch) {
+        ongoingTouch.path.push(
+          getTouchPosition(touch, drawingCanvasRef.current)
+        );
+      }
     }
+
+    redrawDrawingCanvas();
   });
 
-  useEventListener(document, 'touchend', () => {
-    if (isDrawing) {
-      setIsDrawing(false);
-      setCanvasActions([
-        ...canvasActions,
-        drawStroke({ pen, points: currentPath.current }),
-      ]);
-      currentPath.current = [];
+  useEventListener(canvasContainerRef, 'touchend', (e) => {
+    const strokes: CanvasAction[] = [];
+    for (const touch of e.changedTouches) {
+      const ongoingTouch = ongoingTouches.current[touch.identifier];
+      if (ongoingTouch) {
+        strokes.push(drawStroke({ pen, points: ongoingTouch.path }));
+        delete ongoingTouches.current[touch.identifier];
+      }
     }
+
+    setCanvasActions([...canvasActions, ...strokes]);
   });
 
   return (

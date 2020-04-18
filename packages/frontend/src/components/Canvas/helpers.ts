@@ -128,7 +128,10 @@ export const handleHover = (
 };
 
 // https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
-const convertCoords = (coord: ICoord, canvas: HTMLCanvasElement): ICoord => {
+export const convertCoords = (
+  coord: ICoord,
+  canvas: HTMLCanvasElement
+): ICoord => {
   const { left, top, width, height } = canvas.getBoundingClientRect();
   const scaleX = canvas.width / width;
   const scaleY = canvas.height / height;
@@ -151,12 +154,12 @@ export const getMousePosition = (
 };
 
 export const getTouchPosition = (
-  e: TouchEvent,
+  touch: Touch,
   canvas: HTMLCanvasElement | null
 ): ICoord => {
   const clientCoord: ICoord = {
-    x: e.touches[0].clientX,
-    y: e.touches[0].clientY,
+    x: touch.clientX,
+    y: touch.clientY,
   };
 
   return canvas ? convertCoords(clientCoord, canvas) : clientCoord;
