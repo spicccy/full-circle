@@ -1,4 +1,4 @@
-import { RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { Box, Heading } from 'grommet';
 import { Home } from 'grommet-icons';
 import React, { FunctionComponent, useEffect, useState } from 'react';
