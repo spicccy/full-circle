@@ -38,5 +38,6 @@ export enum RoomErrorType {
   ROOM_NOT_FOUND = 'No room with a matching code was found',
   ROOM_INITIALISATION_ERROR = 'Unable to initialise the room',
   NETWORK_ERROR = 'Network error',
+  RECONNECT_ERROR = 'Failed to reconnect',
   UNKNOWN_ERROR = 'An unknown error occured',
 }

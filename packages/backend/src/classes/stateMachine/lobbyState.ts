@@ -1,9 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import {
-  sendReconnect,
-  throwServerWarning,
-} from '@full-circle/shared/lib/actions/server';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
@@ -28,24 +25,17 @@ class LobbyState implements IState {
 
     const player = new Player(clientId, username);
 
-    // see if the player had previously been in the lobby
-    const maybeExistingId = this.roomState.attemptReconnection(username);
-    if (maybeExistingId) {
-      // throw an error since we can't message them till they are in the room
-      sendReconnect(maybeExistingId);
-    }
-
     const error = this.roomState.addPlayer(player);
     if (error) {
-      throwServerWarning(error);
+      this.roomState.throwJoinRoomError(warn(error));
     }
 
     this.roomState.addSubmittedPlayer(player.id);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    // for lobby state this should be removePlayer
-    this.roomState.playerDisconnected(client.id);
+    this.roomState.removePlayer(client.id);
+    return false;
   };
 
   onReceive = (client: IClient, message: ClientAction) => {

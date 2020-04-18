@@ -1,5 +1,6 @@
+import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
-import { Box, Button, Heading } from 'grommet';
+import { Box, Heading } from 'grommet';
 import { Home } from 'grommet-icons';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
@@ -20,6 +21,7 @@ import { Background } from './components/Background';
 export const ReconnectManager: FunctionComponent = ({ children }) => {
   const {
     room,
+    syncedState,
     isLoading,
     roomError,
     reconnectToRoomById,
@@ -66,7 +68,7 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
         }
 
         default: {
-          addToast("Room doesn't exist anymore", { appearance: 'error' });
+          addToast(roomError.payload, { appearance: 'error' });
           setReconnecting(false);
           removeStorage(LocalStorageKey.SESSION_ID);
           removeStorage(LocalStorageKey.ROOM_ID);
@@ -77,11 +79,12 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
 
   // Add current room ids to localstorage
   useEffect(() => {
-    if (room) {
+    const currentPhase = syncedState?.phase.phaseType;
+    if (room && currentPhase && currentPhase !== PhaseType.LOBBY) {
       setStorage(LocalStorageKey.SESSION_ID, room.sessionId);
       setStorage(LocalStorageKey.ROOM_ID, room.id);
     }
-  }, [room]);
+  }, [room, syncedState]);
 
   useRoomLeave((code) => {
     switch (code) {

@@ -13,11 +13,4 @@ export const reconnect = createAction('@server/reconnect')<string>();
 
 export const forceSubmit = createAction('@server/forceSubmit')();
 
-export const throwServerWarning = (error: RoomErrorType) => {
-  throw new Error(JSON.stringify(warn(error)));
-};
-
-export const sendReconnect = (clientId: string) => {
-  throw new Error(JSON.stringify(reconnect(clientId)));
-};
 export const curatorReveal = createAction('@server/curatorReveal')<IChain>();

@@ -32,12 +32,14 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     if (client.id === this.state.curator) {
       this.disconnect();
     } else {
-      this.state.onLeave(client, consented);
-      try {
-        await this.allowReconnection(client);
-        this.state.playerReconnected(client.id);
-      } catch (e) {
-        this.state.removePlayer(client.id);
+      const canReconnect = this.state.onLeave(client, consented);
+      if (canReconnect) {
+        try {
+          await this.allowReconnection(client);
+          this.state.setPlayerReconnected(client.id);
+        } catch (e) {
+          this.state.removePlayer(client.id);
+        }
       }
     }
   }
