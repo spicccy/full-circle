@@ -1,6 +1,5 @@
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { mocked } from 'ts-jest/utils';
 

@@ -6,21 +6,20 @@ import {
 } from '@full-circle/shared/lib/actions';
 import {
   curatorReveal,
-  displayDrawing,
-  displayPrompt,
   reconnect,
   warn,
 } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IChain, ILink } from '@full-circle/shared/lib/roomState/chain';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
 import {
+  IChain,
   IPlayer,
   IRoomStateSynced,
+  LinkType,
+  PhaseType,
   RoomErrorType,
-} from '@full-circle/shared/lib/roomState/interfaces';
+} from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
 import { MAX_PLAYERS } from '../constants';
@@ -32,6 +31,7 @@ import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
+import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
 
@@ -88,7 +88,7 @@ export interface IRoomStateBackend {
   generateChains: () => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
-  sendRoundData: () => void;
+  updateRoundData: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -310,19 +310,22 @@ class RoomState extends Schema
     const prompts = shuffle(initialPrompts);
     this.chains = chainOrder.map((chainIds) => {
       const owner = chainIds[0];
-      const links = chainIds.map<ILink>((playerId, j) => ({
-        type: j % 2 ? 'prompt' : 'image',
-        id: `${owner}-${j}`,
-        playerId,
-      }));
+      const links = chainIds.map(
+        (playerId, j) =>
+          new Link({
+            type: j % 2 ? LinkType.PROMPT : LinkType.IMAGE,
+            id: `${owner}-${j}`,
+            playerId,
+          })
+      );
 
       const initialPrompt = prompts.pop() ?? '';
-      const initialLink: ILink = {
-        type: 'prompt',
+      const initialLink = new Link({
+        type: LinkType.PROMPT,
         id: `${owner}-start`,
         data: initialPrompt,
         playerId: '',
-      };
+      });
 
       return {
         owner,
@@ -353,25 +356,17 @@ class RoomState extends Schema
     return false;
   };
 
-  sendRoundData = () => {
+  updateRoundData = () => {
+    for (const playerId in this.players) {
+      const player = this.getPlayer(playerId);
+      player.roundData = undefined;
+    }
+
     for (const chain of this.chains) {
       const previousLink = chain.links[this.round - 1];
       const link = chain.links[this.round];
-      if (previousLink.type === 'image') {
-        if (previousLink.data) {
-          this.sendAction(link.playerId, displayDrawing(previousLink.data));
-        } else {
-          // handle no data
-          this.sendAction(link.playerId, displayDrawing(''));
-        }
-      } else {
-        if (previousLink.data) {
-          this.sendAction(link.playerId, displayPrompt(previousLink.data));
-        } else {
-          // handle no data
-          this.sendAction(link.playerId, displayPrompt(''));
-        }
-      }
+      const player = this.getPlayer(link.playerId);
+      player.roundData = previousLink;
     }
   };
 

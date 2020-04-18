@@ -1,14 +1,8 @@
-import {
-  displayDrawing,
-  displayPrompt,
-} from '@full-circle/shared/lib/actions/server';
-import { CanvasAction } from '@full-circle/shared/lib/canvas';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import React, { FunctionComponent, useState } from 'react';
+import { LinkType, PhaseType } from '@full-circle/shared/lib/roomState';
+import React, { FunctionComponent } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useRoom } from 'src/contexts/RoomContext';
-import { useRoomMessage } from 'src/hooks/useRoomListeners';
-import { getType } from 'typesafe-actions';
+import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 
 import { Background } from './components/Background';
 import { DrawPage } from './draw/DrawPage';
@@ -18,22 +12,9 @@ import { RevealPage } from './reveal/RevealPage';
 
 const PlayerGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
+  const { playerData } = useRoomHelpers();
 
-  const [currentPrompt, setCurrentPrompt] = useState<string>('');
-  const [currentDrawing, setCurrentDrawing] = useState<CanvasAction[]>([]);
-
-  useRoomMessage((message) => {
-    switch (message.type) {
-      case getType(displayPrompt):
-        setCurrentPrompt(message.payload);
-        break;
-      case getType(displayDrawing):
-        setCurrentDrawing(JSON.parse(message.payload));
-        break;
-      default:
-        console.warn('Unhandled message');
-    }
-  });
+  const roundData = playerData?.roundData;
 
   if (!room) {
     return <Redirect to="/" />;
@@ -45,11 +26,19 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      return <DrawPage prompt={currentPrompt} />;
+      const prompt =
+        roundData?.type === LinkType.PROMPT ? roundData.data : undefined;
+
+      return <DrawPage prompt={prompt} />;
     }
 
     case PhaseType.GUESS: {
-      return <GuessPage drawing={currentDrawing} />;
+      const drawing =
+        roundData?.type === LinkType.IMAGE && roundData.data
+          ? JSON.parse(roundData.data)
+          : undefined;
+
+      return <GuessPage drawing={drawing} />;
     }
 
     case PhaseType.REVEAL: {

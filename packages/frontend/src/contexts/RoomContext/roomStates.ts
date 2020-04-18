@@ -1,5 +1,5 @@
 import { RoomError } from '@full-circle/shared/lib/actions';
-import { IRoomStateSynced } from '@full-circle/shared/lib/roomState/interfaces';
+import { IRoomStateSynced } from '@full-circle/shared/lib/roomState';
 import { Room } from 'colyseus.js';
 
 export type RoomStateWithFn = IRoomStateSynced & {

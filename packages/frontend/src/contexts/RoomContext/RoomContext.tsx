@@ -6,7 +6,7 @@ import {
   IRoomMetadata,
   IRoomStateSynced,
   RoomErrorType,
-} from '@full-circle/shared/lib/roomState/interfaces';
+} from '@full-circle/shared/lib/roomState';
 import React, {
   createContext,
   FunctionComponent,

@@ -2,7 +2,7 @@ import {
   displayDrawing,
   displayPrompt,
 } from '@full-circle/shared/lib/actions/server';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { mocked } from 'ts-jest/utils';
 
 import { addPlayers, mockRoom } from '../helpers/testHelper';

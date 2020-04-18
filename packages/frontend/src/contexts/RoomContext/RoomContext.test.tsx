@@ -1,5 +1,5 @@
 import { warn } from '@full-circle/shared/lib/actions/server';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { render, wait, waitForDomChange } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

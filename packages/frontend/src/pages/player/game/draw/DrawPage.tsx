@@ -21,10 +21,10 @@ import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
 interface IDrawPage {
-  prompt: string;
+  prompt?: string;
 }
 
-const DrawPage: FunctionComponent<IDrawPage> = ({ prompt }) => {
+const DrawPage: FunctionComponent<IDrawPage> = ({ prompt = '' }) => {
   const { room } = useRoom();
   const { hasSubmitted } = useRoomHelpers();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);

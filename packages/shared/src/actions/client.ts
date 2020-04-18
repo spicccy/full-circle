@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
 import { CanvasAction } from '../canvas';
-import { RoomErrorType } from '../roomState/interfaces';
+import { RoomErrorType } from '../roomState';
 
 export const submitDrawing = createAction('@client/submitDrawing')<
   CanvasAction[]
