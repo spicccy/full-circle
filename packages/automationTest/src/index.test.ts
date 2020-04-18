@@ -1,8 +1,9 @@
+import fetch from 'node-fetch';
+
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
 import { changeDir, compareSnapshot } from './screenshotAutomation';
-import fetch from 'node-fetch';
 
 const pageList = [page];
 const roomCode = '8722';
