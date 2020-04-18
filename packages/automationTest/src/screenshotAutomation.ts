@@ -1,5 +1,5 @@
-import { Page } from 'puppeteer';
 import path from 'path';
+import { Page } from 'puppeteer';
 
 let imgCounter = 0;
 let dir = 'create_and_join_game';
