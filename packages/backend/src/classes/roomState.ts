@@ -200,7 +200,7 @@ class RoomState extends Schema
     delete this.submittedPlayers[playerId];
   };
 
-  getPlayer = (id: string): IPlayer => {
+  getPlayer = (id: string): IPlayer | undefined => {
     return this.players[id];
   };
 
@@ -359,14 +359,18 @@ class RoomState extends Schema
   updateRoundData = () => {
     for (const playerId in this.players) {
       const player = this.getPlayer(playerId);
-      player.roundData = undefined;
+      if (player) {
+        player.roundData = undefined;
+      }
     }
 
     for (const chain of this.chains) {
       const previousLink = chain.links[this.round - 1];
       const link = chain.links[this.round];
       const player = this.getPlayer(link.playerId);
-      player.roundData = previousLink;
+      if (player) {
+        player.roundData = previousLink;
+      }
     }
   };
 
