@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-import { screenshotName, screenshotDir, dir } from './src/screenshotAutomation';
+import { screenshotName, dir } from './src/screenshotAutomation';
 import path from 'path';
 
 let currPage = page;
@@ -25,11 +25,6 @@ global.it = async function (name, func) {
     try {
       await func();
     } catch (e) {
-      // await currPage.screenshot({
-      //   path: screenshotDir()
-      //     .concat('/')
-      //     .concat(screenshotName('.failure.png')),
-      // });
       await currPage.screenshot({
         path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });

@@ -22,6 +22,14 @@ export function diffDir() {
   return path.resolve('screenshots', dir, 'diff');
 }
 
+export const removeElements = async (currPage: Page) => {
+  await currPage.evaluate(() => {
+    (
+      document.querySelectorAll("[data-testHidden='true']") || []
+    ).forEach((el) => el.remove());
+  });
+};
+
 export const compareSnapshot = async (currPage: Page, imageName: string) => {
   await removeElements(currPage);
   const image = await currPage.screenshot();
@@ -32,13 +40,5 @@ export const compareSnapshot = async (currPage: Page, imageName: string) => {
     noColors: true,
     failureThreshold: 0.0025,
     failureThresholdType: 'percent',
-  });
-};
-
-export const removeElements = async (currPage: Page) => {
-  await currPage.evaluate(() => {
-    (
-      document.querySelectorAll("[data-testHidden='true']") || []
-    ).forEach((el) => el.remove());
   });
 };
