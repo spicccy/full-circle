@@ -1,6 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
-import { IChain, RoomErrorType } from '../roomState/interfaces';
+import { IChain } from '../roomState/chain';
+import { RoomErrorType } from '../roomState/interfaces';
 
 export const displayDrawing = createAction('@server/displayDrawing')<string>();
 
