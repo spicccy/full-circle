@@ -8,6 +8,7 @@
     "start:FE": "lerna run start --scope @full-circle/frontend --stream",
     "start:BE": "lerna run start --scope @full-circle/backend --stream",
     "start:prod": "lerna run start:prod --scope @full-circle/backend --stream",
+    "start:ci": "lerna run start:ci --parallel --no-bail",
     "build": "lerna run build --stream",
     "build:shared": "lerna run build --scope @full-circle/shared --stream",
     "prettylint": "yarn build:shared && lerna run prettylint --parallel --no-bail",
@@ -16,7 +17,7 @@
     "BE": "yarn workspace @full-circle/backend",
     "FE": "yarn workspace @full-circle/frontend",
     "AT": "yarn workspace @full-circle/automation-test",
-    "test:e2e": "start-server-and-test start 3000 'yarn AT test:e2e'"
+    "test:e2e": "start-server-and-test start:ci 3000 'yarn AT test:e2e'"
   },
   "husky": {
     "hooks": {
