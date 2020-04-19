@@ -15,7 +15,7 @@ export const joinGame = async (
     height: 1280,
     deviceScaleFactor: 1,
   });
-  await newPage.goto('localhost:3000/');
+  await newPage.goto('http://localhost:3000');
   await newPage.waitForSelector('[data-testid=playerNameInput]');
   await newPage.click('input[data-testid=playerNameInput]');
   await newPage.type('input[data-testid=playerNameInput]', playerName);
