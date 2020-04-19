@@ -1,5 +1,7 @@
+import 'styled-components/macro';
+
 import { PromptCategories } from '@full-circle/shared/lib/prompts';
-import { Box, Heading, Select } from 'grommet';
+import { Box, FormField, Heading, Paragraph, Select } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
@@ -24,20 +26,29 @@ const CreatePage: FunctionComponent = () => {
       <Box flex align="center" justify="center" background="light-2">
         <Box
           pad="medium"
-          width="large"
+          width="medium"
           background="light-1"
           round="small"
           elevation="small"
         >
           <Heading level={2}>Choose Room Settings</Heading>
-          <Box flex>
-            <Select
-              value={promptSet}
-              options={PromptCategories}
-              onChange={({ option }) => {
-                setPromptSet(option);
-              }}
-            ></Select>
+          <Box css={{ marginTop: 10, marginBottom: 10 }} flex>
+            <FormField label="Prompt Pack" htmlFor="select-prompts">
+              <Select
+                data-testid="select-prompts"
+                id="select-prompts"
+                value={promptSet}
+                options={PromptCategories}
+                onChange={({ option }) => {
+                  setPromptSet(option);
+                }}
+              ></Select>
+            </FormField>
+            <Paragraph size="small" fill>
+              There are more features coming here to let you customise the game
+              the way you find it fun. Custom game modes, user-submitted prompt
+              packs and random challenges are being added soon.
+            </Paragraph>
           </Box>
           <LinkButton
             data-testid="createGame"
