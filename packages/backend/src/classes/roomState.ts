@@ -5,6 +5,7 @@ import {
   ServerAction,
 } from '@full-circle/shared/lib/actions';
 import {
+  becomeCurator,
   curatorReveal,
   reconnect,
   warn,
@@ -20,7 +21,7 @@ import {
 } from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
-import { MAX_PLAYERS } from '../constants';
+import { CURATOR_USERNAME, MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import { closeEnough } from '../util/util';
 import ChainManager from './managers/chainManager/chainManager';
@@ -87,6 +88,8 @@ export interface IRoomStateBackend {
   setPlayerDisconnected: (id: string) => void;
   setPlayerReconnected: (id: string) => void;
   attemptReconnection: (username: string) => void;
+  curatorDisconnected: () => void;
+  curatorRejoined: () => void;
 
   updatePlayerScores: () => void;
 }
@@ -134,9 +137,11 @@ class RoomState extends Schema
   @type('string')
   revealer = '';
 
-  displayChain = 0;
+  private displayChain = 0;
 
   chainManager = new ChainManager();
+
+  private waitingCuratorRejoin = false;
 
   // =====================================
   // IRoomStateBackend Api
@@ -157,7 +162,19 @@ class RoomState extends Schema
     return this.room.clients.find((client) => client.id === clientId);
   };
 
+  curatorDisconnected = () => {
+    this.waitingCuratorRejoin = true;
+  };
+
+  curatorRejoined = () => {
+    this.waitingCuratorRejoin = false;
+  };
+
   addPlayer = (player: IPlayer): RoomErrorType | null => {
+    if (player.username === CURATOR_USERNAME) {
+      return RoomErrorType.RESERVED_USERNAME;
+    }
+
     if (this.numPlayers >= MAX_PLAYERS) {
       return RoomErrorType.TOO_MANY_PLAYERS;
     }
@@ -387,7 +404,13 @@ class RoomState extends Schema
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {
-    this.currState.onJoin(client, options);
+    if (options.username === CURATOR_USERNAME && this.waitingCuratorRejoin) {
+      this.setCurator(client.id);
+      this.curatorRejoined();
+      this.sendAction(client.id, becomeCurator());
+    } else {
+      this.currState.onJoin(client, options);
+    }
   };
 
   onLeave = (client: IClient, consented: boolean) => {

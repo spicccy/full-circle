@@ -20,5 +20,8 @@ export enum RoomErrorType {
   ROOM_INITIALISATION_ERROR = 'Unable to initialise the room',
   NETWORK_ERROR = 'Network error',
   RECONNECT_ERROR = 'Failed to reconnect',
+  CURATOR_DISCONNECTED = 'The curator has disconnected',
+  CURATOR_DISCONNECTED_NO_REJOIN = 'Curator disconnected and did not rejoin',
+  RESERVED_USERNAME = 'Sorry! You cannot use that reserved username :/',
   UNKNOWN_ERROR = 'An unknown error occured',
 }
