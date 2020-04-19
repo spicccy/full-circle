@@ -1,12 +1,12 @@
 import 'styled-components/macro';
 
+import { Colour } from '@full-circle/shared/lib/canvas';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Launch } from 'grommet-icons';
 import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
-import logo from 'src/images/fullcircle.png';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
 
@@ -23,7 +23,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 
   return (
-    <Box>
+    <Box pad="large">
       <LinkButton
         alignSelf="start"
         label="Back"
@@ -31,18 +31,20 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
         onClick={leaveRoom}
       />
       <Box flex align="center" justify="center">
-        <Box width="medium" align="center">
-          <img alt="Full Circle" width={100} height={100} src={logo} />
-          <Heading>Full Circle</Heading>
-          <Heading level="3" data-testid="roomID">
-            Room: {roomCode}
-          </Heading>
-          <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
-          <Paragraph size="small">Quick join QR code</Paragraph>
-          <Paragraph size="small">
-            Copy this link to your friends
-            <CopyLink url={joinUrl} />
-          </Paragraph>
+        <Box width="large" justify="between" flex direction="column">
+          <Box align="center" pad="large">
+            <Heading color={Colour.BLUE} level="1" data-testid="roomID">
+              Room: {roomCode}
+            </Heading>
+            <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
+            <Paragraph color={Colour.DARK_GRAY} size="small">
+              Quick join QR code
+            </Paragraph>
+            <Paragraph color={Colour.DARK_GRAY} size="small">
+              Copy this link to your friends
+              <CopyLink url={joinUrl} />
+            </Paragraph>
+          </Box>
           <Button
             alignSelf="center"
             label="Start Game"
