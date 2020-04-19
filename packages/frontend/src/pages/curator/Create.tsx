@@ -1,7 +1,6 @@
 import { Box, Heading, Paragraph } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
-import { HomePagegBackground } from 'src/components/HomePageBackground';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { Navbar } from 'src/components/Navbar';
 import { useRoom } from 'src/contexts/RoomContext';
