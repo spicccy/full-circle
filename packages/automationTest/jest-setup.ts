@@ -1,6 +1,7 @@
 import { Page } from 'puppeteer';
 import { screenshotName, dir } from './src/screenshotAutomation';
 import path from 'path';
+import assert from 'assert';
 
 let currPage = page;
 require('expect-puppeteer');
@@ -28,7 +29,7 @@ global.it = async function (name, func) {
       await currPage.screenshot({
         path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });
-      browser.close();
+      await assert(1 > 2);
       throw e;
     }
   });
