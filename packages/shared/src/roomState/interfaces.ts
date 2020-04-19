@@ -1,4 +1,4 @@
-import { LinkType, PhaseType } from './constants';
+import { LinkType, PhaseType, StickyNoteColour } from './constants';
 
 export type ILink = {
   type: LinkType;
@@ -17,6 +17,7 @@ export interface IPlayer {
   username: string;
   disconnected: boolean;
   score: number;
+  stickyNoteColour: StickyNoteColour;
   roundData?: ILink;
 }
 

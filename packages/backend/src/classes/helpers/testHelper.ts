@@ -1,5 +1,3 @@
-import { IPlayer } from '@full-circle/shared/lib/roomState';
-
 import { IClient, IClock, IRoom } from '../../interfaces';
 import RoomState from '../roomState';
 import Player from '../subSchema/player';
@@ -24,7 +22,7 @@ export const mockClient: IClient = {
   },
 };
 
-export const createTestPlayer = (num: number): IPlayer => {
+export const createTestPlayer = (num: number): Player => {
   return new Player(`${num}_id`, `${num}_username`);
 };
 

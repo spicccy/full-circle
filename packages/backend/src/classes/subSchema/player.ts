@@ -1,5 +1,5 @@
 import { Schema, type } from '@colyseus/schema';
-import { IPlayer } from '@full-circle/shared/lib/roomState';
+import { IPlayer, StickyNoteColour } from '@full-circle/shared/lib/roomState';
 
 import Link from './link';
 
@@ -18,6 +18,9 @@ class Player extends Schema implements IPlayer {
 
   @type(Link)
   roundData?: Link;
+
+  @type('string')
+  stickyNoteColour = StickyNoteColour.GRAY;
 
   constructor(id: string, username: string) {
     super();
