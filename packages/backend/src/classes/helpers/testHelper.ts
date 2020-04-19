@@ -24,7 +24,7 @@ export const mockClient: IClient = {
   },
 };
 
-export const createTestPlayer = (num: number): IPlayer => {
+export const createTestPlayer = (num: number): Player => {
   return new Player(`${num}_id`, `${num}_username`);
 };
 
