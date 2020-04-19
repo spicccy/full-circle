@@ -1,13 +1,13 @@
-import { IChain, LinkType, IPlayer } from '@full-circle/shared/lib/roomState';
 import { Schema } from '@colyseus/schema';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
+import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
 
-import { shuffle } from '../../../util/util';
-import { RoomOptions } from '../../roomState';
 import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
+import { shuffle } from '../../../util/util';
+import { RoomOptions } from '../../roomState';
 import Link from '../../subSchema/link';
 
 const initialPrompts = [
