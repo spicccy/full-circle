@@ -1,5 +1,6 @@
 **/node_modules
 **/lib
+packages/backend/src/**/*.txt
 
 .vscode/settings.json
 .DS_Store
