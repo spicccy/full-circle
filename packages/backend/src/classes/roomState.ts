@@ -13,10 +13,8 @@ import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import {
-  IChain,
   IPlayer,
   IRoomStateSynced,
-  LinkType,
   PhaseType,
   RoomErrorType,
 } from '@full-circle/shared/lib/roomState';
@@ -24,29 +22,15 @@ import { Client } from 'colyseus';
 
 import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
-import { Allocation, getAllocation } from '../util/sortPlayers/sortPlayers';
-import { closeEnough, shuffle } from '../util/util';
+import { closeEnough } from '../util/util';
+import ChainManager from './managers/chainManager/chainManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
-import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-
-const initialPrompts = [
-  'cat',
-  'dog',
-  'mouse',
-  'turd',
-  'chicken',
-  'computer',
-  'p90x',
-  'car',
-  'screaming rock',
-  'a rockin wave',
-];
 
 /**
  * These are functions that each specific state will need to implement.
@@ -152,7 +136,7 @@ class RoomState extends Schema
 
   displayChain = 0;
 
-  chains: IChain[] = [];
+  chainManager = new ChainManager();
 
   // =====================================
   // IRoomStateBackend Api
@@ -298,63 +282,20 @@ class RoomState extends Schema
   // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
   generateChains = () => {
-    const ids = objectValues(this.players).map((val) => val.id);
-    const chainOrder = getAllocation(
-      this.options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
-    )(ids);
-
-    if (!chainOrder) {
-      throw new Error('Chain allocation failed!');
-    }
-
-    const prompts = shuffle(initialPrompts);
-    this.chains = chainOrder.map((chainIds) => {
-      const owner = chainIds[0];
-      const links = chainIds.map(
-        (playerId, j) =>
-          new Link({
-            type: j % 2 ? LinkType.PROMPT : LinkType.IMAGE,
-            id: `${owner}-${j}`,
-            playerId,
-          })
-      );
-
-      const initialPrompt = prompts.pop() ?? '';
-      const initialLink = new Link({
-        type: LinkType.PROMPT,
-        id: `${owner}-start`,
-        data: initialPrompt,
-        playerId: '',
-      });
-
-      return {
-        owner,
-        links: [initialLink, ...links],
-      };
-    });
+    this.chainManager.generateChains(objectValues(this.players), this.options);
   };
 
   storeGuess = (id: string, guess: string): boolean => {
-    for (const chain of this.chains) {
-      const link = chain.links[this.round];
-      if (link.playerId === id) {
-        link.data = guess;
-        return true;
-      }
-    }
-    return false;
+    return this.chainManager.storeGuess(id, guess, this.round);
   };
 
   storeDrawing = (id: string, drawing: CanvasAction[]): boolean => {
-    for (const chain of this.chains) {
-      const link = chain.links[this.round];
-      if (link.playerId === id) {
-        link.data = JSON.stringify(drawing);
-        return true;
-      }
-    }
-    return false;
+    return this.chainManager.storeDrawing(id, drawing, this.round);
   };
+
+  get chains() {
+    return this.chainManager.chains;
+  }
 
   updateRoundData = () => {
     for (const playerId in this.players) {
