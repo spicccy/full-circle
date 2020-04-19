@@ -29,7 +29,7 @@ global.it = async function (name, func) {
       await currPage.screenshot({
         path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });
-      await assert(1 > 2);
+      assert(1 > 2);
       throw e;
     }
   });
