@@ -20,4 +20,4 @@ jobs:
       - run: yarn build:shared
       - run: yarn prettylint
       - run: yarn test
-      - run: yarn test:e2e
+      #- run: yarn test:e2e
