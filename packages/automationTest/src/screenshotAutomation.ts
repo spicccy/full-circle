@@ -3,6 +3,7 @@ import { Page } from 'puppeteer';
 
 let imgCounter = 0;
 export let dir = 'create_and_join_game';
+const threshold = 0.99;
 
 export function changeDir(newDir: string) {
   imgCounter = 0;
@@ -37,8 +38,8 @@ export const compareSnapshot = async (currPage: Page, imageName: string) => {
     customSnapshotsDir: screenshotDir(),
     customDiffDir: diffDir(),
     customSnapshotIdentifier: screenshotName(imageName),
-    noColors: true,
-    failureThreshold: 0.0025,
+    failureThreshold: threshold,
     failureThresholdType: 'percent',
+    noColors: true,
   });
 };

@@ -28,7 +28,6 @@ global.it = async function (name, func) {
       await currPage.screenshot({
         path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });
-      browser.close();
       throw e;
     }
   });

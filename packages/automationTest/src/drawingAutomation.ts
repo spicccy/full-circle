@@ -32,16 +32,10 @@ export const drawImage = async (
   await playerPage.waitForSelector(colourSelector);
   await playerPage.click(colourSelector);
   const bBox = await canvas.boundingBox();
-  await playerPage.waitFor(2000);
   if (bBox != null) {
+    await playerPage.waitFor(1000);
     await drawLine(playerPage, bBox, [1.5, 2, 1.5, 3]);
     await playerPage.waitFor(1000);
-    await drawLine(playerPage, bBox, [3, 2, 3, 3]);
-    await playerPage.waitFor(1000);
-    await drawLine(playerPage, bBox, [1.5, 2, 3, 2]);
-    await playerPage.waitFor(1000);
-    await drawLine(playerPage, bBox, [1.5, 3, 3, 3]);
-    await playerPage.waitFor(2000);
   }
   await compareSnapshot(playerPage, snapshot);
 
