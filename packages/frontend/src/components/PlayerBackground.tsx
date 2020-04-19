@@ -2,7 +2,7 @@ import 'styled-components/macro';
 
 import { objectKeys, objectValues } from '@full-circle/shared/lib/helpers';
 import { Box } from 'grommet';
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useRef, useState } from 'react';
 import React from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 import { Whiteboard } from 'src/icons';
@@ -18,7 +18,6 @@ import {
 } from './StickyNote';
 
 const arrayOfAngles: number[] = [10, 30, 170, 150, 190, 210, 330, 350];
-const usedAngles = new Set<number>();
 
 const WhiteboardBackground = styled(Whiteboard)`
   height: 100%;
@@ -31,6 +30,7 @@ interface IPlayerData {
 }
 
 export const PlayerBackground: FunctionComponent = () => {
+  const usedAngles = useRef(new Set<number>());
   const [allPlayerData, setAllPlayerData] = useState<
     Record<string, IPlayerData>
   >({});
@@ -44,16 +44,18 @@ export const PlayerBackground: FunctionComponent = () => {
       for (const playerId of objectKeys(clonedData)) {
         if (!players[playerId]) {
           const playerData = clonedData[playerId];
-          usedAngles.delete(playerData.angle);
+          usedAngles.current.delete(playerData.angle);
           delete clonedData[playerId];
         }
       }
 
       for (const playerId of objectKeys(players)) {
         if (!clonedData[playerId]) {
-          const angle = arrayOfAngles.find((angle) => !usedAngles.has(angle));
+          const angle = arrayOfAngles.find(
+            (angle) => !usedAngles.current.has(angle)
+          );
           invariant(angle, 'Free angle not found');
-          usedAngles.add(angle);
+          usedAngles.current.add(angle);
           clonedData[playerId] = {
             angle,
             randomData: {
