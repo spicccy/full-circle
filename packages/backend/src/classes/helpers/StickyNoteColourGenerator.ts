@@ -2,7 +2,7 @@ import { objectValues } from '@full-circle/shared/lib/helpers';
 import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { shuffle } from 'lodash';
 
-class RoomCodeGenerator {
+class StickyNoteColourGenerator {
   private usedColours = new Set<StickyNoteColour>();
 
   getColour = (): StickyNoteColour => {
@@ -27,4 +27,4 @@ class RoomCodeGenerator {
   };
 }
 
-export default new RoomCodeGenerator();
+export default new StickyNoteColourGenerator();
