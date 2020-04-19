@@ -20,10 +20,7 @@ const CreatePage: FunctionComponent = () => {
   return (
     <Box css={{ position: 'relative' }} flex>
       <Navbar />
-
       <Box flex align="center" justify="center">
-        <HomePagegBackground />
-
         <Box width="medium" align="center">
           <Heading>Create a Room</Heading>
           <Box align="center">
