@@ -1,8 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import {
+  changeRoomSetting,
+  notifyPlayerReady,
+} from '@full-circle/shared/lib/actions/client';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { RoomSettingRequestType } from '@full-circle/shared/lib/roomSettings';
 import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
@@ -48,6 +52,15 @@ class LobbyState implements IState {
         this.onClientReady(client.id);
         return;
       }
+
+      case getType(changeRoomSetting): {
+        const { payload } = message;
+        switch (payload.setting) {
+          case RoomSettingRequestType.PROMPT_PACK:
+            this.settingsManager.setPromptPack(payload.value);
+        }
+        return;
+      }
     }
   };
 
@@ -66,8 +79,10 @@ class LobbyState implements IState {
     this.roomState.clearSubmittedPlayers();
 
     // assume settings have been configured
-    const promptManager = this.settingsManager.getPromptManager();
-    this.roomState.generateChains(promptManager);
+    const prompts = this.settingsManager.getInitialPrompts(
+      this.roomState.numPlayers
+    );
+    this.roomState.generateChains(prompts);
   };
 
   validateLobby = (): boolean => {

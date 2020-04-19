@@ -7,13 +7,12 @@ import {
 } from '../../../util/sortPlayers/sortPlayers';
 import { RoomOptions } from '../../roomState';
 import Link from '../../subSchema/link';
-import { PromptManager } from '../promptManager/promptManager';
 
 export interface IChainManager {
   readonly chains: IChain[];
   generateChains: (
     players: IPlayer[],
-    promptManager: PromptManager,
+    initialPrompts: string[],
     options?: RoomOptions
   ) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
@@ -25,7 +24,7 @@ class ChainManager implements IChainManager {
 
   generateChains = (
     players: IPlayer[],
-    promptManager: PromptManager,
+    initialPrompts: string[],
     options?: RoomOptions
   ) => {
     const ids = players.map((val) => val.id);
@@ -37,7 +36,6 @@ class ChainManager implements IChainManager {
       throw new Error('Chain allocation failed!');
     }
 
-    const prompts = promptManager.getInitialPrompts(players.length);
     this._chains = chainOrder.map((chainIds) => {
       const owner = chainIds[0];
       const links = chainIds.map(
@@ -49,7 +47,7 @@ class ChainManager implements IChainManager {
           })
       );
 
-      const initialPrompt = prompts.pop() ?? '';
+      const initialPrompt = initialPrompts.pop() ?? '';
       const initialLink = new Link({
         type: LinkType.PROMPT,
         id: `${owner}-start`,

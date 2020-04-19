@@ -8,7 +8,9 @@ describe('Room state', () => {
       const roomState = new RoomState(mockRoom, { predictableChains: true });
       addPlayers(roomState, 3);
 
-      roomState.generateChains(new PromptManager());
+      roomState.generateChains(
+        new PromptManager({ testing: true }).getInitialPrompts(3)
+      );
       const chains = roomState.chains;
 
       const chain1 = chains[0];

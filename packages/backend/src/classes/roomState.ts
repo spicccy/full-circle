@@ -20,7 +20,6 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
-import { PromptManager } from './managers/promptManager/promptManager';
 import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -66,7 +65,7 @@ export interface IRoomStateBackend {
   incrementRound: () => void;
   getRound: () => number;
 
-  generateChains: (promptManager: PromptManager) => void;
+  generateChains: (prompts: string[]) => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
   updateRoundData: () => void;
@@ -253,10 +252,10 @@ class RoomState extends Schema
   // Chain management
   // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
-  generateChains = (promptManager: PromptManager) => {
+  generateChains = (initialPrompts: string[]) => {
     this.chainManager.generateChains(
       objectValues(this.players),
-      promptManager,
+      initialPrompts,
       this.options
     );
   };
