@@ -19,7 +19,7 @@ export enum Category {
   FASTFOOD = 'FASTFOOD',
 }
 
-export const getPrompts = (category: Category): PromptList => {
+export const getPrompts = (category: Category | string): PromptList => {
   switch (category) {
     case Category.LEAGUE:
       return league;
