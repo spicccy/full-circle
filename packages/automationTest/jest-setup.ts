@@ -1,7 +1,6 @@
 import { Page } from 'puppeteer';
 import { screenshotName, dir } from './src/screenshotAutomation';
 import path from 'path';
-import assert from 'assert';
 
 let currPage = page;
 require('expect-puppeteer');

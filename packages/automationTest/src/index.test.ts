@@ -19,7 +19,6 @@ describe('Full Circle', () => {
       deviceScaleFactor: 1,
     });
     await page.goto('http://localhost:3000');
-    console.log('navigated to page');
   });
 
   it('should display the login page with links to join/create a room', async () => {
