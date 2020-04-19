@@ -1,4 +1,3 @@
-import { Schema } from '@colyseus/schema';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
 
@@ -6,24 +5,29 @@ import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
-import { shuffle } from '../../../util/util';
 import { RoomOptions } from '../../roomState';
 import Link from '../../subSchema/link';
-import { genPrompts } from '../../../util/genPrompts/genPrompts';
-import { MAX_PLAYERS } from '../../../constants';
-import { Category } from '../../../util/genPrompts/prompts';
+import { PromptManager } from '../promptManager/promptManager';
 
-interface IChainManager {
+export interface IChainManager {
   readonly chains: IChain[];
-  generateChains: (players: IPlayer[], options?: RoomOptions) => void;
+  generateChains: (
+    players: IPlayer[],
+    promptManager: PromptManager,
+    options?: RoomOptions
+  ) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
 }
 
-class ChainManager extends Schema implements IChainManager {
+class ChainManager implements IChainManager {
   _chains: IChain[] = [];
 
-  generateChains = (players: IPlayer[], options?: RoomOptions) => {
+  generateChains = (
+    players: IPlayer[],
+    promptManager: PromptManager,
+    options?: RoomOptions
+  ) => {
     const ids = players.map((val) => val.id);
     const chainOrder = getAllocation(
       options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
@@ -33,7 +37,7 @@ class ChainManager extends Schema implements IChainManager {
       throw new Error('Chain allocation failed!');
     }
 
-    const prompts = genPrompts(MAX_PLAYERS, Category.GENERIC);
+    const prompts = promptManager.getInitialPrompts(players.length);
     this._chains = chainOrder.map((chainIds) => {
       const owner = chainIds[0];
       const links = chainIds.map(

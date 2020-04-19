@@ -1,4 +1,5 @@
 import { addPlayers, mockRoom } from '../helpers/testHelper';
+import { PromptManager } from '../managers/promptManager/promptManager';
 import RoomState from '../roomState';
 
 describe('Room state', () => {
@@ -7,7 +8,7 @@ describe('Room state', () => {
       const roomState = new RoomState(mockRoom, { predictableChains: true });
       addPlayers(roomState, 3);
 
-      roomState.generateChains();
+      roomState.generateChains(new PromptManager());
       const chains = roomState.chains;
 
       const chain1 = chains[0];
