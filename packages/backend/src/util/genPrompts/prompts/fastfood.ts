@@ -27,7 +27,7 @@ export const fastfood: PromptList = [
   },
   {
     id: 6,
-    prompt: 'DOMINO\u2019S',
+    prompt: "DOMINO'S",
   },
   {
     id: 7,
@@ -351,7 +351,7 @@ export const fastfood: PromptList = [
   },
   {
     id: 87,
-    prompt: 'BRIOCHE DOR\u00c9E',
+    prompt: 'BRIOCHE DOREE',
   },
   {
     id: 88,

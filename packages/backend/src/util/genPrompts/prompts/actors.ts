@@ -15,7 +15,7 @@ export const actors: PromptList = [
   },
   {
     id: 3,
-    prompt: 'REN\u00c9E ADOR\u00c9E',
+    prompt: 'RENEE ADOREE',
   },
   {
     id: 4,
@@ -159,7 +159,7 @@ export const actors: PromptList = [
   },
   {
     id: 39,
-    prompt: 'VILMA B\u00c1NKY',
+    prompt: 'VILMA BANKY',
   },
   {
     id: 40,
@@ -839,7 +839,7 @@ export const actors: PromptList = [
   },
   {
     id: 209,
-    prompt: 'PEN\u00c9LOPE CRUZ',
+    prompt: 'PENELOPE CRUZ',
   },
   {
     id: 210,
@@ -967,7 +967,7 @@ export const actors: PromptList = [
   },
   {
     id: 241,
-    prompt: 'DOLORES DEL R\u00cdO',
+    prompt: 'DOLORES DEL RIO',
   },
   {
     id: 242,
@@ -1203,7 +1203,7 @@ export const actors: PromptList = [
   },
   {
     id: 300,
-    prompt: 'JOS\u00c9 FERRER',
+    prompt: 'JOSE FERRER',
   },
   {
     id: 301,
@@ -1323,7 +1323,7 @@ export const actors: PromptList = [
   },
   {
     id: 330,
-    prompt: 'ANDY GARC\u00cdA',
+    prompt: 'ANDY GARCIA',
   },
   {
     id: 331,
@@ -2423,7 +2423,7 @@ export const actors: PromptList = [
   },
   {
     id: 605,
-    prompt: 'MICH\u00c8LE MORGAN',
+    prompt: 'MICHELE MORGAN',
   },
   {
     id: 606,
@@ -3375,7 +3375,7 @@ export const actors: PromptList = [
   },
   {
     id: 843,
-    prompt: 'LUPE V\u00c9LEZ',
+    prompt: 'LUPE VELEZ',
   },
   {
     id: 844,
@@ -3603,6 +3603,6 @@ export const actors: PromptList = [
   },
   {
     id: 900,
-    prompt: 'REN\u00c9E ZELLWEGER',
+    prompt: 'RENEE ZELLWEGER',
   },
 ];
