@@ -6,7 +6,6 @@ def main():
     prompts = []
     counter = 0
     while(prompt != ''):
-        print(prompt)
         prompt = prompt.replace('\n','')
         prompts.append({
             'id': counter,
