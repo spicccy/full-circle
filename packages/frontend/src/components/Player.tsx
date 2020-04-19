@@ -2,7 +2,7 @@ import { Colour } from '@full-circle/shared/lib/canvas';
 import { IPlayer, StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { FunctionComponent } from 'react';
 import React from 'react';
-import { useRoom } from 'src/hooks/useRoomHelpers';
+import { useRoom } from 'src/contexts/RoomContext';
 import styled from 'styled-components';
 
 import { IRandomStickyNoteData, StickyNote } from './StickyNote';
@@ -26,7 +26,7 @@ export const Player: FunctionComponent<IPlayerProps> = ({
   // TODO: change player location if player submitted
   // const playerSubmitted = Boolean(syncedState?.submittedPlayers?.[player.id]);
 
-  const playerState = syncedState?.players?.[player.id];
+  const playerState = syncedState?.playerManager?.playerMap?.[player.id];
   const disconnected = Boolean(playerState?.disconnected);
   const stickyNoteColour =
     playerState?.stickyNoteColour ?? StickyNoteColour.GRAY;

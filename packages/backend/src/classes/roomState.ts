@@ -19,18 +19,16 @@ import { Client } from 'colyseus';
 import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
-<<<<<<< HEAD
+import PlayerManager from './managers/playerManager/playerManager';
 import { PromptManager } from './managers/promptManager/promptManager';
 import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
-=======
-import PlayerManager from './managers/playerManager/playerManager';
->>>>>>> refactored players out of the backend
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
+import Player from './subSchema/player';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -136,8 +134,6 @@ class RoomState extends Schema
   playerManager = new PlayerManager();
 
   private displayChain = 0;
-
-  chainManager = new ChainManager();
 
   private waitingCuratorRejoin = false;
 

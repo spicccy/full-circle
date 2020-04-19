@@ -36,7 +36,7 @@ export const PlayerBackground: FunctionComponent = () => {
   >({});
 
   const { syncedState } = useRoom();
-  const players = syncedState?.players ?? {};
+  const players = syncedState?.playerManager?.playerMap ?? {};
 
   useEffect(() => {
     setAllPlayerData((data) => {

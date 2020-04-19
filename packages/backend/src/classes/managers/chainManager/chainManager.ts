@@ -1,9 +1,6 @@
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
 
-import { MAX_PLAYERS } from '../../../constants';
-import { genPrompts } from '../../../util/genPrompts/genPrompts';
-import { Category } from '../../../util/genPrompts/prompts';
 import {
   Allocation,
   getAllocation,
