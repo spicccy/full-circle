@@ -1,5 +1,5 @@
-import { SHUFFLE_NUM } from '../../../constants';
-import { shuffle } from '../../../util/util';
+import { shuffle } from 'lodash';
+
 import { Category, getPrompts } from '.';
 
 export class PromptManager {
@@ -19,12 +19,7 @@ export class PromptManager {
     if (this._testing) {
       return prompts.slice(0, numPlayers).map((val) => val.prompt);
     }
-
-    let shuffled = shuffle(prompts);
-    for (let i = 0; i < SHUFFLE_NUM; i++) {
-      shuffled = shuffle(shuffled);
-    }
-
+    const shuffled = shuffle(prompts);
     return shuffled.slice(0, numPlayers).map((val) => val.prompt);
   };
 }
