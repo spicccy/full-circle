@@ -9,3 +9,5 @@ export const reconnect = createAction('@server/reconnect')<string>();
 export const forceSubmit = createAction('@server/forceSubmit')();
 
 export const curatorReveal = createAction('@server/curatorReveal')<IChain>();
+
+export const becomeCurator = createAction('@server/becomeCurator')();

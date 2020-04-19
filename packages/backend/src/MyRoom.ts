@@ -1,6 +1,10 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IRoomMetadata } from '@full-circle/shared/lib/roomState';
+import {
+  IRoomMetadata,
+  RoomErrorType,
+} from '@full-circle/shared/lib/roomState';
 import { Client, Room } from 'colyseus';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
@@ -29,8 +33,11 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   async onLeave(client: Client, consented: boolean) {
     console.log(`${client.id} left ${this.roomId}.`);
+    // special case to be handled at room level, don't delegate to currState
+
     if (client.id === this.state.curator) {
-      this.disconnect();
+      this.state.curatorDisconnected();
+      this.broadcast(warn(RoomErrorType.CURATOR_DISCONNECTED));
     } else {
       const canReconnect = this.state.onLeave(client, consented);
       if (canReconnect) {
