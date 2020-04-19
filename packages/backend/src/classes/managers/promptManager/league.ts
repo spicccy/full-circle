@@ -1,4 +1,4 @@
-import { PromptList } from './../prompts/index';
+import { PromptList } from './index';
 
 export const league: PromptList = [
   {

@@ -26,6 +26,7 @@ import { IClient, IClock, IRoom } from '../interfaces';
 import { closeEnough } from '../util/util';
 import StickyNoteColourGenerator from './helpers/StickyNoteColourGenerator';
 import ChainManager from './managers/chainManager/chainManager';
+import { PromptManager } from './managers/promptManager/promptManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -71,7 +72,7 @@ export interface IRoomStateBackend {
   incrementRound: () => void;
   getRound: () => number;
 
-  generateChains: () => void;
+  generateChains: (promptManager: PromptManager) => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
   updateRoundData: () => void;
@@ -104,11 +105,13 @@ class RoomState extends Schema
   currState: IState = new LobbyState(this);
   clock: IClock;
   options?: RoomOptions;
+  chainManager: ChainManager;
 
   constructor(private room: IRoom, options?: RoomOptions) {
     super();
     this.clock = room.clock;
     this.options = options;
+    this.chainManager = new ChainManager();
   }
 
   //==================================================================================
@@ -139,8 +142,6 @@ class RoomState extends Schema
   revealer = '';
 
   private displayChain = 0;
-
-  chainManager = new ChainManager();
 
   private waitingCuratorRejoin = false;
 
@@ -301,8 +302,12 @@ class RoomState extends Schema
   // Chain management
   // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
-  generateChains = () => {
-    this.chainManager.generateChains(objectValues(this.players), this.options);
+  generateChains = (promptManager: PromptManager) => {
+    this.chainManager.generateChains(
+      objectValues(this.players),
+      promptManager,
+      this.options
+    );
   };
 
   storeGuess = (id: string, guess: string): boolean => {
