@@ -9,19 +9,9 @@ import {
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
 import Link from '../../subSchema/link';
-
-const initialPrompts = [
-  'cat',
-  'dog',
-  'mouse',
-  'turd',
-  'chicken',
-  'computer',
-  'p90x',
-  'car',
-  'screaming rock',
-  'a rockin wave',
-];
+import { genPrompts } from '../../../util/genPrompts/genPrompts';
+import { MAX_PLAYERS } from '../../../constants';
+import { Category } from '../../../util/genPrompts/prompts';
 
 interface IChainManager {
   readonly chains: IChain[];
@@ -43,7 +33,7 @@ class ChainManager extends Schema implements IChainManager {
       throw new Error('Chain allocation failed!');
     }
 
-    const prompts = shuffle(initialPrompts);
+    const prompts = genPrompts(MAX_PLAYERS, Category.GENERIC);
     this._chains = chainOrder.map((chainIds) => {
       const owner = chainIds[0];
       const links = chainIds.map(
