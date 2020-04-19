@@ -26,7 +26,7 @@ export const Player: FunctionComponent<IPlayerProps> = ({
   // TODO: change player location if player submitted
   // const playerSubmitted = Boolean(syncedState?.submittedPlayers?.[player.id]);
 
-  const playerState = syncedState?.players?.[player.id];
+  const playerState = syncedState?.playerManager?.playerMap?.[player.id];
   const disconnected = Boolean(playerState?.disconnected);
   const stickyNoteColour =
     playerState?.stickyNoteColour ?? StickyNoteColour.GRAY;

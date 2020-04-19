@@ -8,6 +8,7 @@ import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
 import { SettingsManager } from '../managers/settingsManager/settingsManager';
+import { throwJoinRoomError } from '../../util/util';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
@@ -30,7 +31,7 @@ class LobbyState implements IState {
 
     const error = this.roomState.addPlayer(player);
     if (error) {
-      this.roomState.throwJoinRoomError(warn(error));
+      throwJoinRoomError(warn(error));
     }
 
     this.roomState.addSubmittedPlayer(player.id);

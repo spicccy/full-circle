@@ -35,11 +35,15 @@ export interface IRoomMetadata {
   roomCode: string;
 }
 
+export interface IPlayerManagerData {
+  playerMap: Record<string, IPlayer>;
+  submittedPlayers: Record<string, boolean>;
+}
+
 export interface IRoomStateSynced {
   curator: string;
-  players: Record<string, IPlayer>;
   round: number;
   phase: IPhase;
-  submittedPlayers: Record<string, boolean>;
   revealer: string;
+  playerManager: IPlayerManagerData;
 }

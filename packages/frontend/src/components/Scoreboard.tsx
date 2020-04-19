@@ -13,11 +13,11 @@ const Scoreboard: FunctionComponent = () => {
   if (!syncedState) {
     return null;
   }
-  const { players } = syncedState;
+  const players = syncedState.playerManager.playerMap;
 
   const playerScores: IPlayer[] = [];
 
-  for (const id in syncedState.players) {
+  for (const id in syncedState.playerManager.playerMap) {
     const player: IPlayer = players[id];
     playerScores.push(player);
   }
