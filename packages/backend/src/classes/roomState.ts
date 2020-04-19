@@ -24,9 +24,9 @@ import { Client } from 'colyseus';
 import { CURATOR_USERNAME, MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import { closeEnough } from '../util/util';
-import StickyNoteColourGenerator from './helpers/StickyNoteColourGenerator';
 import ChainManager from './managers/chainManager/chainManager';
 import { PromptManager } from './managers/promptManager/promptManager';
+import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -106,6 +106,7 @@ class RoomState extends Schema
   clock: IClock;
   options?: RoomOptions;
   chainManager: ChainManager;
+  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomOptions) {
     super();
@@ -184,7 +185,7 @@ class RoomState extends Schema
       }
     }
 
-    player.stickyNoteColour = StickyNoteColourGenerator.getColour();
+    player.stickyNoteColour = this.stickyNoteColourManager.getColour();
     const { id } = player;
     this.players[id] = player;
     this.submittedPlayers[id] = false;
@@ -198,7 +199,7 @@ class RoomState extends Schema
     }
     const player = this.getPlayer(playerId);
     if (player) {
-      StickyNoteColourGenerator.releaseColour(player.stickyNoteColour);
+      this.stickyNoteColourManager.releaseColour(player.stickyNoteColour);
     }
 
     delete this.players[playerId];

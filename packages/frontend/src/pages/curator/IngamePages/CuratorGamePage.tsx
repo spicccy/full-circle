@@ -1,10 +1,12 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { IChain, PhaseType } from '@full-circle/shared/lib/roomState';
-import { Fragment, FunctionComponent, useState } from 'react';
+import { Box } from 'grommet';
+import { FunctionComponent, useState } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
+import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { useRoomMessage } from '../../../hooks/useRoomListeners';
@@ -51,11 +53,26 @@ const CuratorGamePage: FunctionComponent = () => {
   const renderBody = () => {
     switch (syncedState?.phase.phaseType) {
       case PhaseType.LOBBY:
-        return <Lobby startGame={startGame} />;
+        return (
+          <Box flex>
+            <PlayerBackground />
+            <Lobby startGame={startGame} />
+          </Box>
+        );
       case PhaseType.DRAW:
-        return <IngameDraw />;
+        return (
+          <Box flex>
+            <PlayerBackground />
+            <IngameDraw />
+          </Box>
+        );
       case PhaseType.GUESS:
-        return <IngameGuess />;
+        return (
+          <Box flex>
+            <PlayerBackground />
+            <IngameGuess />
+          </Box>
+        );
       case PhaseType.REVEAL:
         return <IngameReveal chain={chain} />;
       case PhaseType.END:
@@ -65,7 +82,7 @@ const CuratorGamePage: FunctionComponent = () => {
     }
   };
 
-  return <Fragment>{renderBody()}</Fragment>;
+  return renderBody();
 };
 
 export { CuratorGamePage };
