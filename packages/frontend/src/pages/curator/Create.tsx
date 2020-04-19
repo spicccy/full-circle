@@ -17,7 +17,7 @@ const CreatePage: FunctionComponent = () => {
   };
 
   return (
-    <Box background="light-2" flex>
+    <Box css={{ position: 'relative' }} flex>
       <Navbar />
       <Box flex align="center" justify="center">
         <Box width="medium" align="center">

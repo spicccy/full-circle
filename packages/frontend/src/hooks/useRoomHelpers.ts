@@ -6,6 +6,7 @@ interface IUseRoomHelpers {
   playerData?: IPlayer;
   hasSubmitted: boolean;
   allSubmitted: boolean;
+  getUsername(playerId: string): string | undefined;
 }
 
 export const useRoomHelpers = (): IUseRoomHelpers => {
@@ -17,10 +18,14 @@ export const useRoomHelpers = (): IUseRoomHelpers => {
   const allSubmitted = Boolean(
     syncedState && objectValues(syncedState.submittedPlayers).every(Boolean)
   );
+  const getUsername = (playerId: string) => {
+    return syncedState?.players[playerId]?.username;
+  };
 
   return {
     playerData,
     hasSubmitted,
     allSubmitted,
+    getUsername,
   };
 };
