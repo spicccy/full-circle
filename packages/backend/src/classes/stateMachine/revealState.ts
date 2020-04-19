@@ -7,6 +7,7 @@ import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
+import { throwJoinRoomError } from '../../util/util';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 
@@ -15,7 +16,7 @@ class RevealState implements IState {
 
   onJoin = (_client: IClient, options: IJoinOptions) => {
     this.roomState.attemptReconnection(formatUsername(options.username));
-    this.roomState.throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
+    throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
   };
 
   onLeave = (client: IClient, _consented: boolean) => {

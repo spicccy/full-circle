@@ -1,9 +1,5 @@
 import { MapSchema, Schema, type } from '@colyseus/schema';
-import {
-  ClientAction,
-  RoomError,
-  ServerAction,
-} from '@full-circle/shared/lib/actions';
+import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import {
   becomeCurator,
   curatorReveal,
@@ -21,19 +17,21 @@ import {
 } from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
-import { CURATOR_USERNAME, MAX_PLAYERS } from '../constants';
+import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
-import { closeEnough } from '../util/util';
 import ChainManager from './managers/chainManager/chainManager';
+<<<<<<< HEAD
 import { PromptManager } from './managers/promptManager/promptManager';
 import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
+=======
+import PlayerManager from './managers/playerManager/playerManager';
+>>>>>>> refactored players out of the backend
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
-import Player from './subSchema/player';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -66,7 +64,6 @@ export interface IRoomStateBackend {
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => boolean;
-  throwJoinRoomError: (action: RoomError) => never;
 
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -124,9 +121,6 @@ class RoomState extends Schema
   @type('string')
   curator = '';
 
-  @type({ map: Player })
-  players = new MapSchema<Player>();
-
   @type({ map: 'boolean' })
   submittedPlayers = new MapSchema<boolean>();
 
@@ -143,6 +137,10 @@ class RoomState extends Schema
   revealer = '';
 
   private displayChain = 0;
+
+  chainManager = new ChainManager();
+
+  playerManager = new PlayerManager();
 
   private waitingCuratorRejoin = false;
 
@@ -173,89 +171,52 @@ class RoomState extends Schema
     this.waitingCuratorRejoin = false;
   };
 
-  addPlayer = (player: Player): RoomErrorType | null => {
-    if (this.numPlayers >= MAX_PLAYERS) {
-      return RoomErrorType.TOO_MANY_PLAYERS;
-    }
-
-    for (const id in this.players) {
-      const existingPlayer: Player = this.players[id];
-      if (player.username === existingPlayer.username) {
-        return RoomErrorType.CONFLICTING_USERNAMES;
-      }
-    }
-
-    player.stickyNoteColour = this.stickyNoteColourManager.getColour();
-    const { id } = player;
-    this.players[id] = player;
-    this.submittedPlayers[id] = false;
-    return null;
+  addPlayer = (player: IPlayer): RoomErrorType | null => {
+    return this.playerManager.addPlayer(player);
   };
 
   removePlayer = (playerId: string) => {
-    if (playerId === this.curator) {
-      // TODO: handle closing the room better
-      this.currState = new EndState(this);
-    }
-    const player = this.getPlayer(playerId);
-    if (player) {
-      this.stickyNoteColourManager.releaseColour(player.stickyNoteColour);
-    }
-
-    delete this.players[playerId];
-    delete this.submittedPlayers[playerId];
+    this.playerManager.removePlayer(playerId);
   };
 
   getPlayer = (id: string): IPlayer | undefined => {
-    return this.players[id];
+    return this.playerManager.getPlayer(id);
   };
 
+  get players() {
+    return this.playerManager.players;
+  }
+
   get numPlayers() {
-    return Object.keys(this.players).length;
+    return this.playerManager.numPlayers;
   }
 
   get allPlayersSubmitted(): boolean {
-    return objectValues(this.submittedPlayers).every(Boolean);
+    return this.playerManager.allPlayersSubmitted;
   }
 
   get unsubmittedPlayerIds(): string[] {
-    const ids = [];
-    for (const playerId in this.submittedPlayers) {
-      if (!this.submittedPlayers[playerId]) {
-        ids.push(playerId);
-      }
-    }
-
-    return ids;
+    return this.playerManager.unsubmittedPlayerIds;
   }
 
   addSubmittedPlayer = (id: string): void => {
-    this.submittedPlayers[id] = true;
+    this.playerManager.addSubmittedPlayer(id);
   };
 
   clearSubmittedPlayers = (): void => {
-    for (const playerId in this.submittedPlayers) {
-      this.submittedPlayers[playerId] = false;
-    }
+    this.playerManager.clearSubmittedPlayers();
   };
 
   setPlayerDisconnected = (id: string): void => {
-    const player: Player = this.players[id];
-    player.disconnected = true;
+    this.playerManager.setPlayerDisconnected(id);
   };
 
   setPlayerReconnected = (id: string): void => {
-    const player: Player = this.players[id];
-    player.disconnected = false;
+    this.playerManager.setPlayerReconnected(id);
   };
 
   attemptReconnection = (username: string) => {
-    for (const id in this.players) {
-      const player: Player = this.players[id];
-      if (player.username === username && player.disconnected) {
-        this.throwJoinRoomError(reconnect(player.id));
-      }
-    }
+    this.playerManager.attemptReconnection(username);
   };
 
   // Communication with frontend
@@ -269,10 +230,6 @@ class RoomState extends Schema
 
   sendWarning = (clientId: string, warning: RoomErrorType) => {
     this.sendAction(clientId, warn(warning));
-  };
-
-  throwJoinRoomError = (action: RoomError) => {
-    throw new Error(JSON.stringify(action));
   };
 
   sendReveal = () => {
@@ -324,42 +281,11 @@ class RoomState extends Schema
   }
 
   updateRoundData = () => {
-    for (const playerId in this.players) {
-      const player = this.getPlayer(playerId);
-      if (player) {
-        player.roundData = undefined;
-      }
-    }
-
-    for (const chain of this.chains) {
-      const previousLink = chain.links[this.round - 1];
-      const link = chain.links[this.round];
-      const player = this.getPlayer(link.playerId);
-      if (player) {
-        player.roundData = previousLink;
-      }
-    }
+    this.playerManager.updateRoundData(this.chains, this.round);
   };
 
   updatePlayerScores = () => {
-    // reset scores so this function is idempotent
-    for (const id in this.players) {
-      this.players[id].score = 0;
-    }
-
-    for (const chain of this.chains) {
-      for (let i = 2; i < chain.links.length; i++) {
-        if (
-          chain.links[i].type === 'prompt' &&
-          closeEnough(chain.links[i].data, chain.links[i - 2].data)
-        ) {
-          const goodDrawer = chain.links[i - 1].playerId;
-          const correctGuesser = chain.links[i].playerId;
-          this.players[correctGuesser].score++;
-          this.players[goodDrawer].score++;
-        }
-      }
-    }
+    this.playerManager.updatePlayerScores(this.chains);
   };
 
   // ===========================================================================
