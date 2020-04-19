@@ -3,3 +3,9 @@ export const objectValues = <T extends object>(obj: T) =>
 
 export const objectKeys = <T extends object>(obj: T) =>
   Object.keys(obj) as [keyof T];
+
+export const formatUsername = (username: string): string => {
+  return String(username ?? '')
+    .replace(/\s/, '')
+    .toLowerCase();
+};

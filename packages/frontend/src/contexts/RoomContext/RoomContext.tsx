@@ -81,7 +81,8 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState(loading());
 
     try {
-      const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME);
+      const options: IJoinOptions = { username: '' };
+      const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME, options);
       const roomCode = await getRoomCode(room.id);
       if (!roomCode) {
         const roomState = fail(
