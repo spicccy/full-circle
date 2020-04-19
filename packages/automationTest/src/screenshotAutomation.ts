@@ -38,7 +38,5 @@ export const compareSnapshot = async (currPage: Page, imageName: string) => {
     customDiffDir: diffDir(),
     customSnapshotIdentifier: screenshotName(imageName),
     noColors: true,
-    failureThreshold: 1,
-    failureThresholdType: 'percent',
   });
 };

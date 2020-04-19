@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test:e2e": "jest",
     "lint": "eslint --fix src/**/*.ts",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier --write src/**/*.ts",
