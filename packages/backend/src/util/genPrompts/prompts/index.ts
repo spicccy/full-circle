@@ -1,4 +1,6 @@
+import { actors } from './actors';
 import { csgo } from './csgo';
+import { fastfood } from './fastfood';
 import { generic } from './generic';
 import { league } from './league';
 
@@ -13,6 +15,8 @@ export enum Category {
   LEAGUE = 'LEAGUE',
   CSGO = 'CSGO',
   GENERIC = 'GENERIC',
+  ACTORS = 'ACTORS',
+  FASTFOOD = 'FASTFOOD',
 }
 
 export const getPrompts = (category: Category): PromptList => {
@@ -23,6 +27,10 @@ export const getPrompts = (category: Category): PromptList => {
       return csgo;
     case Category.GENERIC:
       return generic;
+    case Category.ACTORS:
+      return actors;
+    case Category.FASTFOOD:
+      return fastfood;
     default:
       return generic;
   }
