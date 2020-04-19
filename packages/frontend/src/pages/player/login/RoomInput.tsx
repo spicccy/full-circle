@@ -6,7 +6,6 @@ const RoomInputWrapper = styled(Box)`
   position: relative;
   height: 50px;
   width: 120px;
-  user-select: none;
 `;
 
 const Label = styled.label`
@@ -29,6 +28,7 @@ const TransparentInput = styled.input`
   height: 100%;
   width: 100%;
   color: transparent;
+  font-size: 1px;
   background: none;
   border: none;
   outline: none;
