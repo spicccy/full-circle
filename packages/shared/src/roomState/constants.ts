@@ -25,3 +25,17 @@ export enum RoomErrorType {
   RESERVED_USERNAME = 'Sorry! You cannot use that reserved username :/',
   UNKNOWN_ERROR = 'An unknown error occured',
 }
+
+export enum StickyNoteColour {
+  // disconnected
+  GRAY = '#bcbcbc',
+
+  RED = '#ffb1b1',
+  ORANGE = '#ffc693',
+  YELLOW = '#ffeb61',
+  GREEN = '#adff91',
+  CYAN = '#9affec',
+  BLUE = '#9ab5ff',
+  PURPLE = '#b79aff',
+  PINK = '#ffc8fb',
+}

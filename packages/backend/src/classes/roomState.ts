@@ -24,6 +24,7 @@ import { Client } from 'colyseus';
 import { CURATOR_USERNAME, MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import { closeEnough } from '../util/util';
+import StickyNoteColourGenerator from './helpers/StickyNoteColourGenerator';
 import ChainManager from './managers/chainManager/chainManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -56,7 +57,7 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: IPlayer) => RoomErrorType | null;
+  addPlayer: (player: Player) => RoomErrorType | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
@@ -170,11 +171,7 @@ class RoomState extends Schema
     this.waitingCuratorRejoin = false;
   };
 
-  addPlayer = (player: IPlayer): RoomErrorType | null => {
-    if (player.username === CURATOR_USERNAME) {
-      return RoomErrorType.RESERVED_USERNAME;
-    }
-
+  addPlayer = (player: Player): RoomErrorType | null => {
     if (this.numPlayers >= MAX_PLAYERS) {
       return RoomErrorType.TOO_MANY_PLAYERS;
     }
@@ -186,6 +183,7 @@ class RoomState extends Schema
       }
     }
 
+    player.stickyNoteColour = StickyNoteColourGenerator.getColour();
     const { id } = player;
     this.players[id] = player;
     this.submittedPlayers[id] = false;
@@ -197,6 +195,11 @@ class RoomState extends Schema
       // TODO: handle closing the room better
       this.currState = new EndState(this);
     }
+    const player = this.getPlayer(playerId);
+    if (player) {
+      StickyNoteColourGenerator.releaseColour(player.stickyNoteColour);
+    }
+
     delete this.players[playerId];
     delete this.submittedPlayers[playerId];
   };
