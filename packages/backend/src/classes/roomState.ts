@@ -13,10 +13,8 @@ import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import {
-  IChain,
   IPlayer,
   IRoomStateSynced,
-  LinkType,
   PhaseType,
   RoomErrorType,
 } from '@full-circle/shared/lib/roomState';
@@ -24,14 +22,13 @@ import { Client } from 'colyseus';
 
 import { MAX_PLAYERS } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
+import { closeEnough } from '../util/util';
 import ChainManager from './managers/chainManager/chainManager';
-import { closeEnough, shuffle } from '../util/util';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
-import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
 
