@@ -17,7 +17,7 @@ export const Navbar: FunctionComponent = () => {
   const size = React.useContext(ResponsiveContext);
   const [show, setShow] = useState(false);
   return (
-    <Header background="light-2" pad="medium">
+    <Header pad="medium">
       <Box direction="row" align="center">
         <Link to="/">
           <img alt="Full Circle" width={50} height={50} src={logo} />

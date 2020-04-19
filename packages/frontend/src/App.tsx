@@ -21,6 +21,7 @@ import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
+import { RenderChain } from './components/RenderChain';
 
 export const App: FunctionComponent = () => {
   try {
@@ -49,6 +50,7 @@ export const App: FunctionComponent = () => {
                 <Route exact path="/canvastest">
                   <DrawPage prompt="prompt" />
                 </Route>
+                <Route exact path="/renderchain" component={RenderChain} />
                 <Route path="/" component={Error404} />
               </Switch>
             </PageContainer>

@@ -8,3 +8,5 @@ export { ReactComponent as ThumbUpOutline } from './thumb-up-outline.svg';
 export { ReactComponent as ThumbUp } from './thumb-up.svg';
 export { ReactComponent as Undo } from './undo.svg';
 export { ReactComponent as Whiteboard } from './whiteboard.svg';
+export { ReactComponent as NoteBookClosed } from './notebook-closed.svg';
+export { ReactComponent as NoteBookOpen } from './notebook-open.svg';

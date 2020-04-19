@@ -24,7 +24,7 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
         <Box
           height="small"
           width="small"
-          background="red"
+          background="orange"
           margin="medium"
           align="center"
           justify="center"
