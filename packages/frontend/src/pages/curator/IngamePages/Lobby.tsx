@@ -5,7 +5,6 @@ import { Launch } from 'grommet-icons';
 import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
-import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
 import logo from 'src/images/fullcircle.png';
 
@@ -23,8 +22,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 
   return (
-    <Box css={{ position: 'relative' }} flex>
-      <PlayerBackground />
+    <Box>
       <LinkButton
         alignSelf="start"
         label="Back"
