@@ -3,13 +3,16 @@ import { shuffle } from 'lodash';
 import { Category, getPrompts } from '.';
 
 export class PromptManager {
-  _category: Category;
+  _category: Category = Category.GENERIC;
   _testing = false;
 
-  constructor(category: Category, testing?: boolean) {
-    this._category = category;
+  constructor(category?: Category, testing?: boolean) {
+    if (category) {
+      this._category = category;
+    }
     if (testing) {
       this._testing = testing;
+      this._category = Category.GENERIC;
     }
   }
 

@@ -1,4 +1,4 @@
-import { shuffle } from '../util';
+import { shuffle } from 'lodash';
 
 /*
 Things to consider
