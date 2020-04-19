@@ -7,25 +7,36 @@ interface IUseRoomHelpers {
   hasSubmitted: boolean;
   allSubmitted: boolean;
   getUsername(playerId: string): string | undefined;
+  isDisconnected: boolean;
 }
 
 export const useRoomHelpers = (): IUseRoomHelpers => {
   const { room, syncedState } = useRoom();
 
+  const playerManager = syncedState?.playerManager;
+  const submittedPlayers = playerManager?.submittedPlayers;
+
   const id = room?.sessionId;
-  const playerData = id ? syncedState?.players[id] : undefined;
-  const hasSubmitted = Boolean(id && syncedState?.submittedPlayers[id]);
+  const playerData = id
+    ? syncedState?.playerManager?.playerMap?.[id]
+    : undefined;
+  const hasSubmitted = Boolean(id && submittedPlayers?.[id]);
   const allSubmitted = Boolean(
-    syncedState && objectValues(syncedState.submittedPlayers).every(Boolean)
+    submittedPlayers && objectValues(submittedPlayers).every(Boolean)
   );
   const getUsername = (playerId: string) => {
-    return syncedState?.players[playerId]?.username;
+    return playerManager?.playerMap?.[playerId]?.username;
   };
+
+  const isDisconnected = Boolean(
+    id && playerManager?.playerMap?.[id]?.disconnected
+  );
 
   return {
     playerData,
     hasSubmitted,
     allSubmitted,
     getUsername,
+    isDisconnected,
   };
 };

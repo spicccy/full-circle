@@ -17,7 +17,8 @@ interface ILobbyProps {
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { syncedState, roomCode, leaveRoom } = useRoom();
 
-  const nPlayers = Object.keys(syncedState?.players ?? {}).length;
+  const nPlayers = Object.keys(syncedState?.playerManager.playerMap ?? {})
+    .length;
 
   const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 

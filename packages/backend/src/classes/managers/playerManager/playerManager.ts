@@ -4,6 +4,7 @@ import { objectValues } from '@full-circle/shared/lib/helpers';
 import {
   IChain,
   IPlayer,
+  IPlayerManagerData,
   RoomErrorType,
 } from '@full-circle/shared/lib/roomState';
 
@@ -15,6 +16,7 @@ interface IPlayerManager {
   readonly numPlayers: number;
   readonly allPlayersSubmitted: boolean;
   readonly unsubmittedPlayerIds: string[];
+  readonly players: MapSchema<Player>;
   addPlayer: (player: IPlayer) => RoomErrorType | null;
   removePlayer: (playerId: string) => void;
   getPlayer: (id: string) => void;
@@ -26,19 +28,20 @@ interface IPlayerManager {
   updatePlayerScores: (chain: IChain[]) => void;
 }
 
-class PlayerManager extends Schema implements IPlayerManager {
+class PlayerManager extends Schema
+  implements IPlayerManager, IPlayerManagerData {
   @type({ map: Player })
-  _players = new MapSchema<Player>();
+  playerMap = new MapSchema<Player>();
 
   @type({ map: 'boolean' })
   submittedPlayers = new MapSchema<boolean>();
 
   get players() {
-    return this._players;
+    return this.playerMap;
   }
 
   get numPlayers() {
-    return Object.keys(this.players).length;
+    return Object.keys(this.playerMap).length;
   }
 
   get allPlayersSubmitted(): boolean {
@@ -65,26 +68,26 @@ class PlayerManager extends Schema implements IPlayerManager {
       return RoomErrorType.TOO_MANY_PLAYERS;
     }
 
-    for (const id in this.players) {
-      const existingPlayer: Player = this.players[id];
+    for (const id in this.playerMap) {
+      const existingPlayer: Player = this.playerMap[id];
       if (player.username === existingPlayer.username) {
         return RoomErrorType.CONFLICTING_USERNAMES;
       }
     }
 
     const { id } = player;
-    this.players[id] = player;
+    this.playerMap[id] = player;
     this.submittedPlayers[id] = false;
     return null;
   };
 
   removePlayer = (playerId: string) => {
-    delete this.players[playerId];
+    delete this.playerMap[playerId];
     delete this.submittedPlayers[playerId];
   };
 
   getPlayer = (id: string): IPlayer | undefined => {
-    return this.players[id];
+    return this.playerMap[id];
   };
 
   addSubmittedPlayer = (id: string): void => {
@@ -98,18 +101,18 @@ class PlayerManager extends Schema implements IPlayerManager {
   };
 
   setPlayerDisconnected = (id: string): void => {
-    const player: Player = this.players[id];
+    const player: Player = this.playerMap[id];
     player.disconnected = true;
   };
 
   setPlayerReconnected = (id: string): void => {
-    const player: Player = this.players[id];
+    const player: Player = this.playerMap[id];
     player.disconnected = false;
   };
 
   attemptReconnection = (username: string) => {
-    for (const id in this.players) {
-      const player: Player = this.players[id];
+    for (const id in this.playerMap) {
+      const player: Player = this.playerMap[id];
       if (player.username === username && player.disconnected) {
         throwJoinRoomError(reconnect(player.id));
       }
@@ -118,8 +121,8 @@ class PlayerManager extends Schema implements IPlayerManager {
 
   updatePlayerScores = (chains: IChain[]) => {
     // reset scores so this function is idempotent
-    for (const id in this.players) {
-      this.players[id].score = 0;
+    for (const id in this.playerMap) {
+      this.playerMap[id].score = 0;
     }
 
     for (const chain of chains) {
@@ -130,15 +133,15 @@ class PlayerManager extends Schema implements IPlayerManager {
         ) {
           const goodDrawer = chain.links[i - 1].playerId;
           const correctGuesser = chain.links[i].playerId;
-          this.players[correctGuesser].score++;
-          this.players[goodDrawer].score++;
+          this.playerMap[correctGuesser].score++;
+          this.playerMap[goodDrawer].score++;
         }
       }
     }
   };
 
   updateRoundData = (chains: IChain[], round: number) => {
-    for (const playerId in this.players) {
+    for (const playerId in this.playerMap) {
       const player = this.getPlayer(playerId);
       if (player) {
         player.roundData = undefined;

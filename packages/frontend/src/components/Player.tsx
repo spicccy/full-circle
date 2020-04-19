@@ -2,7 +2,7 @@ import { Colour } from '@full-circle/shared/lib/canvas';
 import { IPlayer, StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { FunctionComponent } from 'react';
 import React from 'react';
-import { useRoom } from 'src/contexts/RoomContext';
+import { useRoom } from 'src/hooks/useRoomHelpers';
 import styled from 'styled-components';
 
 import { IRandomStickyNoteData, StickyNote } from './StickyNote';

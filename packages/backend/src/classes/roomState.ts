@@ -3,7 +3,6 @@ import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import {
   becomeCurator,
   curatorReveal,
-  reconnect,
   warn,
 } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
@@ -121,9 +120,6 @@ class RoomState extends Schema
   @type('string')
   curator = '';
 
-  @type({ map: 'boolean' })
-  submittedPlayers = new MapSchema<boolean>();
-
   @type('number')
   round = 0;
 
@@ -136,11 +132,12 @@ class RoomState extends Schema
   @type('string')
   revealer = '';
 
+  @type(PlayerManager)
+  playerManager = new PlayerManager();
+
   private displayChain = 0;
 
   chainManager = new ChainManager();
-
-  playerManager = new PlayerManager();
 
   private waitingCuratorRejoin = false;
 
