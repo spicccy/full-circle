@@ -1,7 +1,6 @@
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
-
-import { shuffle } from '../../util/util';
+import { shuffle } from 'lodash-es';
 
 class RoomCodeGenerator {
   private usedColours = new Set<StickyNoteColour>();
