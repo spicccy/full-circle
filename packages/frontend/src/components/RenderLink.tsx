@@ -14,31 +14,34 @@ interface IRenderLinkProps {
 
 export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
   const { getUsername } = useRoomHelpers();
-  const promptPlayerUsername =
-    getUsername(link.prompt.playerId) ?? 'Starting Prompt';
-  const guessPlayerUsername =
-    getUsername(link.image.playerId) ?? 'User Not Found';
-  return (
-    <Box direction="row">
-      <Box>
-        <Box
-          height="small"
-          width="small"
-          background="orange"
-          margin="medium"
-          align="center"
-          justify="center"
-        >
-          <Text>{link.prompt.text}</Text>
-        </Box>
-        <Text textAlign="center">{promptPlayerUsername}</Text>
-      </Box>
+
+  if (link.type === 'image') {
+    const guessPlayerUsername = getUsername(link.playerId) ?? 'User Not Found';
+    const canvasActions = link.data ? JSON.parse(link.data) : [];
+    return (
       <Box>
         <Box height="small" width="small" background="red" margin="medium">
-          <ViewCanvas canvasActions={JSON.parse(link.image.imageData || '')} />
+          <ViewCanvas canvasActions={canvasActions} />
         </Box>
         <Text textAlign="center">{guessPlayerUsername}</Text>
       </Box>
+    );
+  }
+
+  const promptPlayerUsername = getUsername(link.playerId) ?? 'Starting Prompt';
+  return (
+    <Box>
+      <Box
+        height="small"
+        width="small"
+        background="orange"
+        margin="medium"
+        align="center"
+        justify="center"
+      >
+        <Text>{link.data}</Text>
+      </Box>
+      <Text textAlign="center">{promptPlayerUsername}</Text>
     </Box>
   );
 };

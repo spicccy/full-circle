@@ -15,7 +15,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = () => {
     <RenderLink link={link} key={index} />
   ));
   const { getUsername } = useRoomHelpers();
-  const chainStarter = getUsername(mockChain.id) ?? 'No Player Found';
+  const chainStarter = getUsername(mockChain.owner) ?? 'No Player Found';
   return (
     <Box fill pad="medium" justify="center" align="center">
       {chainStarter}
