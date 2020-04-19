@@ -1,10 +1,10 @@
 import fetch from 'node-fetch';
 
+import { setCurrPage } from '../jest-setup';
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
 import { changeDir, compareSnapshot } from './screenshotAutomation';
-import { setCurrPage } from '../jest-setup';
 
 const pageList = [page];
 const roomCode = '8722';
