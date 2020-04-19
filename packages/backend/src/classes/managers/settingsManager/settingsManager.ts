@@ -1,19 +1,17 @@
 import { Category } from '@full-circle/shared/lib/prompts';
 
 import { Allocation } from '../../../util/sortPlayers/sortPlayers';
-import { PromptManager } from '../promptManager/promptManager';
 
-export interface ISettingsManager {
-  getInitialPrompts: (players: number) => string[];
-  setPromptPack: (type: string | Category) => void;
-}
+//export interface ISettingsManager {}
 
 export type IRoomConfig = {
   chainAllocationMethod?: Allocation;
   initialPromptSet?: Category;
 };
 
-export class SettingsManager implements ISettingsManager {
+// this may not be needed. will delete if that's the case but leave around for now
+// Not being used
+export class SettingsManagerDEPRECATED {
   _chainAllocationMethod: Allocation = Allocation.RAND;
   _promptSet: string | Category = Category.GENERIC;
 
@@ -30,13 +28,4 @@ export class SettingsManager implements ISettingsManager {
       }
     }
   }
-
-  getInitialPrompts = (players: number) => {
-    const promptManager = new PromptManager({ category: this._promptSet });
-    return promptManager.getInitialPrompts(players);
-  };
-
-  setPromptPack = (type: string | Category) => {
-    this._promptSet = type;
-  };
 }

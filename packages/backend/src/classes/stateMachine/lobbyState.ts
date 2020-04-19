@@ -1,25 +1,19 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import {
-  changeRoomSetting,
-  notifyPlayerReady,
-} from '@full-circle/shared/lib/actions/client';
+import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { RoomSettingRequestType } from '@full-circle/shared/lib/roomSettings';
 import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import { SettingsManager } from '../managers/settingsManager/settingsManager';
 import { throwJoinRoomError } from '../../util/util';
+import { PromptManager } from '../managers/promptManager/promptManager';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
 
 class LobbyState implements IState {
-  settingsManager = new SettingsManager();
-
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (client: IClient, options: IJoinOptions) => {
@@ -52,15 +46,6 @@ class LobbyState implements IState {
         this.onClientReady(client.id);
         return;
       }
-
-      case getType(changeRoomSetting): {
-        const { payload } = message;
-        switch (payload.setting) {
-          case RoomSettingRequestType.PROMPT_PACK:
-            this.settingsManager.setPromptPack(payload.value);
-        }
-        return;
-      }
     }
   };
 
@@ -79,9 +64,11 @@ class LobbyState implements IState {
     this.roomState.clearSubmittedPlayers();
 
     // assume settings have been configured
-    const prompts = this.settingsManager.getInitialPrompts(
-      this.roomState.numPlayers
-    );
+    const prompts = new PromptManager({
+      category: this.roomState.settings.promptPack,
+      testing: this.roomState.settings.predictableRandomness,
+    }).getInitialPrompts(this.roomState.numPlayers);
+
     this.roomState.generateChains(prompts);
   };
 

@@ -1,6 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IRoomMetadata,
   RoomErrorType,
@@ -12,14 +13,14 @@ import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
 export class MyRoom extends Room<RoomState, IRoomMetadata> {
-  onCreate(_options: any) {
+  onCreate(options: RoomSettings) {
     // Create an easy 4-letter code for joining rooms
     const roomCode = RoomCodeGenerator.getNewCode();
     this.setMetadata({ roomCode });
     console.log(`MyRoom ${this.roomId} created with code ${roomCode}.`);
 
     // Create a new state instance
-    this.setState(new RoomState(this));
+    this.setState(new RoomState(this, options));
   }
 
   onJoin(client: IClient, options: IJoinOptions) {

@@ -1,7 +1,6 @@
 import { createAction } from 'typesafe-actions';
 
 import { CanvasAction } from '../canvas';
-import { RoomSettingRequest } from '../roomSettings';
 import { RoomErrorType } from '../roomState';
 
 export const submitDrawing = createAction('@client/submitDrawing')<
@@ -15,7 +14,3 @@ export const notifyPlayerReady = createAction('@client/notifyPlayerReady')();
 export const clientError = createAction('@client/warn')<RoomErrorType>();
 
 export const revealChain = createAction('@client/revealChain')();
-
-export const changeRoomSetting = createAction('@client/changeRoomSetting')<
-  RoomSettingRequest
->();

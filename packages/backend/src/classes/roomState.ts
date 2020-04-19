@@ -8,6 +8,7 @@ import {
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IPlayer,
   IRoomStateSynced,
@@ -56,6 +57,7 @@ export interface IRoomStateBackend {
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
+  readonly settings: RoomSettings;
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
@@ -89,22 +91,18 @@ export interface IRoomStateBackend {
   updatePlayerScores: () => void;
 }
 
-export type RoomOptions = {
-  predictableChains: boolean;
-};
-
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
-  options?: RoomOptions;
+  _settings: RoomSettings;
   chainManager: ChainManager;
   stickyNoteColourManager = new StickyNoteColourManager();
 
-  constructor(private room: IRoom, options?: RoomOptions) {
+  constructor(private room: IRoom, options?: RoomSettings) {
     super();
     this.clock = room.clock;
-    this.options = options;
+    this._settings = options ?? {};
     this.chainManager = new ChainManager();
   }
 
@@ -248,6 +246,10 @@ class RoomState extends Schema
     this.phase = phase;
   };
 
+  get settings() {
+    return this._settings;
+  }
+
   // ===========================================================================
   // Chain management
   // TODO: refactor chain management into its own class (SRP)
@@ -256,7 +258,7 @@ class RoomState extends Schema
     this.chainManager.generateChains(
       objectValues(this.players),
       initialPrompts,
-      this.options
+      this.settings
     );
   };
 

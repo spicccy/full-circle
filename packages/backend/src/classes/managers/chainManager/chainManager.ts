@@ -1,11 +1,11 @@
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
 
 import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
-import { RoomOptions } from '../../roomState';
 import Link from '../../subSchema/link';
 
 export interface IChainManager {
@@ -13,7 +13,7 @@ export interface IChainManager {
   generateChains: (
     players: IPlayer[],
     initialPrompts: string[],
-    options?: RoomOptions
+    options?: RoomSettings
   ) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
@@ -25,11 +25,11 @@ class ChainManager implements IChainManager {
   generateChains = (
     players: IPlayer[],
     initialPrompts: string[],
-    options?: RoomOptions
+    options?: RoomSettings
   ) => {
     const ids = players.map((val) => val.id);
     const chainOrder = getAllocation(
-      options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
+      options?.predictableRandomness ? Allocation.ORDERED : Allocation.RAND
     )(ids);
 
     if (!chainOrder) {

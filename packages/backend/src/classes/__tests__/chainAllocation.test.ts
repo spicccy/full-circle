@@ -5,7 +5,9 @@ import RoomState from '../roomState';
 describe('Room state', () => {
   describe('chain allocation ordered', () => {
     it('can generate chains correctly', () => {
-      const roomState = new RoomState(mockRoom, { predictableChains: true });
+      const roomState = new RoomState(mockRoom, {
+        predictableRandomness: true,
+      });
       addPlayers(roomState, 3);
 
       roomState.generateChains(
