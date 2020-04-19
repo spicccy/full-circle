@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+
 import { setCurrPage } from '../jest-setup';
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
@@ -18,14 +19,12 @@ describe('Full Circle', () => {
       deviceScaleFactor: 1,
     });
     await page.goto('http://localhost:3000');
+    console.log('navigated to page');
   });
 
   it('should display the login page with links to join/create a room', async () => {
-    console.log('navigated to page');
     await expect(page).toMatch('Full Circle');
-    console.log("found 'Full Circle");
     await expect(page).toMatch('OR create a new game here');
-    console.log('found a way to create a game');
     await compareSnapshot(page, 'login_page');
   });
 
