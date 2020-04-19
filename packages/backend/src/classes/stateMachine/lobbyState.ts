@@ -1,6 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
 import { warn } from '@full-circle/shared/lib/actions/server';
+import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
@@ -14,7 +15,7 @@ class LobbyState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (client: IClient, options: IJoinOptions) => {
-    const username = options.username;
+    const username = formatUsername(options.username);
     const clientId = client.id;
 
     if (!this.roomState.getCurator()) {

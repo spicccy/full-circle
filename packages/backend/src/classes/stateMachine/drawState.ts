@@ -1,6 +1,7 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
 import { forceSubmit, warn } from '@full-circle/shared/lib/actions/server';
+import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { Delayed } from 'colyseus';
@@ -18,7 +19,7 @@ class DrawState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (_client: IClient, options: IJoinOptions) => {
-    this.roomState.attemptReconnection(options.username);
+    this.roomState.attemptReconnection(formatUsername(options.username));
     this.roomState.throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
   };
 
