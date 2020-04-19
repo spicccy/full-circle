@@ -10,8 +10,6 @@ interface IRenderLinkProps {
   link: ILink;
 }
 
-// const LinkLocation = styled.div<>``;
-
 export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
   const { getUsername } = useRoomHelpers();
 
