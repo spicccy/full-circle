@@ -1,12 +1,12 @@
 import 'styled-components/macro';
 
 import { Colour } from '@full-circle/shared/lib/canvas';
-import { Box, Button, Heading, Text } from 'grommet';
+import { Box, Heading } from 'grommet';
 import React, { FunctionComponent } from 'react';
+import { Card } from 'src/components/Card/Card';
 import { Navbar } from 'src/components/Navbar';
+import { RenderChain } from 'src/components/RenderChain';
 
-import { Card } from '../../components/Card/Card';
-import { RenderChain } from '../../components/RenderChain';
 import { mockChain } from '../curator/IngamePages/mockChain';
 
 const Instructions: FunctionComponent = () => {

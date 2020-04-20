@@ -6,10 +6,11 @@ import { FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
-import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
 
-import { useRoomMessage } from '../../../hooks/useRoomListeners';
+import { PlayerBackground } from './components/PlayerBackground';
 import { EndPage } from './EndPage';
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
@@ -39,6 +40,8 @@ const CuratorGamePage: FunctionComponent = () => {
   const chain = syncedState?.chainManager?.revealedChain ?? null;
 
   useRoomMessage(curatorMessageHandler);
+
+  useConfirmLeave();
 
   if (!room) {
     return <Redirect to="/create" />;

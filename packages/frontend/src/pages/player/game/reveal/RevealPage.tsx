@@ -2,9 +2,9 @@ import { revealChain } from '@full-circle/shared/lib/actions/client';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { Card } from 'src/components/Card/Card';
+import { RenderChain } from 'src/components/RenderChain';
 import { useRoom } from 'src/contexts/RoomContext';
 
-import { RenderChain } from '../../../../components/RenderChain';
 import { Background } from '../components/Background';
 
 const RevealPage: FunctionComponent = () => {
