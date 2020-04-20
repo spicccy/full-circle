@@ -4,7 +4,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 interface IUseRoomHelpers {
   playerData?: IPlayer;
   hasSubmitted: boolean;
-  getUsername(playerId: string): string | undefined;
+  getPlayer(playerId: string): IPlayer | undefined;
   isDisconnected: boolean;
 }
 
@@ -21,14 +21,14 @@ export const useRoomHelpers = (): IUseRoomHelpers => {
   const hasSubmitted = Boolean(playerData?.submitted);
   const isDisconnected = Boolean(playerData?.disconnected);
 
-  const getUsername = (playerId: string) => {
-    return playerManager?.playerMap?.[playerId]?.username;
+  const getPlayer = (playerId: string) => {
+    return playerManager?.playerMap?.[playerId];
   };
 
   return {
     playerData,
     hasSubmitted,
-    getUsername,
+    getPlayer,
     isDisconnected,
   };
 };

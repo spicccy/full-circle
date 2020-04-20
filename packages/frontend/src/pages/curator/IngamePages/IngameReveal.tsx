@@ -1,9 +1,8 @@
 import 'styled-components/macro';
 
 import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
-import { Box } from 'grommet';
+import { Box, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { AllPlayersCircle } from 'src/components/AllPlayersCircle';
 import { RenderChain } from 'src/components/RenderChain';
 
 interface IInGameReveal {
@@ -11,7 +10,14 @@ interface IInGameReveal {
 }
 
 const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
-  return <Box fill>{chain ? <RenderChain chain={chain} /> : <></>}</Box>;
+  if (chain === null) {
+    return (
+      <Box flex align="center" justify="center">
+        <Paragraph> We will be seeing the Reveal Screen shortly</Paragraph>
+      </Box>
+    );
+  }
+  return <Box fill>{<RenderChain chain={chain} />}</Box>;
 };
 
 export { IngameReveal };

@@ -4,9 +4,12 @@ import { usePhaseTimer } from 'src/hooks/usePhaseTimer';
 
 export const CuratorTimer: FunctionComponent = () => {
   const phaseTimer = usePhaseTimer();
+
   if (phaseTimer === undefined) {
     return null;
   }
-
+  if (phaseTimer < -1) {
+    return null;
+  }
   return <Text data-testid="curatorTimer"> Timer: {phaseTimer}</Text>;
 };

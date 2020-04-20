@@ -9,6 +9,7 @@ import { Whiteboard } from 'src/icons';
 import styled from 'styled-components/macro';
 import invariant from 'tiny-invariant';
 
+import { AllPlayersCircle } from './AllPlayersCircle';
 import { CirclePositioner } from './CirclePositioner';
 import { Player } from './Player';
 import {
@@ -16,7 +17,6 @@ import {
   getRandomRotation,
   IRandomStickyNoteData,
 } from './StickyNote';
-
 const arrayOfAngles: number[] = [10, 30, 170, 150, 190, 210, 330, 350];
 
 const WhiteboardBackground = styled(Whiteboard)`
@@ -96,6 +96,7 @@ export const PlayerBackground: FunctionComponent = () => {
       align="center"
       justify="center"
     >
+      <AllPlayersCircle />
       <WhiteboardBackground preserveAspectRatio="none" />
       {playerBoxes}
     </Box>
