@@ -42,18 +42,19 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
             </Paragraph>
             <Paragraph color={Colour.DARK_GRAY} size="small">
               Copy this link to your friends
-              <CopyLink url={joinUrl} />
             </Paragraph>
+            <CopyLink url={joinUrl} />
+
+            <Button
+              alignSelf="center"
+              label="Start Game"
+              icon={<Launch />}
+              onClick={startGame}
+              data-testid="startGame"
+              disabled={nPlayers < 3}
+              size="large"
+            />
           </Box>
-          <Button
-            alignSelf="center"
-            label="Start Game"
-            icon={<Launch />}
-            onClick={startGame}
-            data-testid="startGame"
-            disabled={nPlayers < 3}
-            size="large"
-          />
         </Box>
       </Box>
     </Box>
