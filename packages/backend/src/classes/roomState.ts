@@ -94,7 +94,9 @@ class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
-  _settings: RoomSettings;
+  private _settings: RoomSettings;
+  private displayChain = 0;
+  private waitingCuratorRejoin = false;
   chainManager: ChainManager;
 
   constructor(private room: IRoom, options?: RoomSettings) {
@@ -119,9 +121,6 @@ class RoomState extends Schema
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
 
-  @type({ map: 'string' })
-  warnings = new MapSchema<string>();
-
   @type('string')
   revealer = '';
 
@@ -130,10 +129,6 @@ class RoomState extends Schema
 
   @type(PlayerManager)
   playerManager = new PlayerManager();
-
-  private displayChain = 0;
-
-  private waitingCuratorRejoin = false;
 
   // =====================================
   // IRoomStateBackend Api
@@ -253,13 +248,12 @@ class RoomState extends Schema
 
   // ===========================================================================
   // Chain management
-  // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
   generateChains = (initialPrompts: string[]) => {
     this.chainManager.generateChains(
       objectValues(this.players),
       initialPrompts,
-      this.settings
+      this._settings
     );
   };
 

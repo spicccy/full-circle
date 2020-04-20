@@ -43,8 +43,15 @@ const Scoreboard: FunctionComponent = () => {
 
   return (
     <Grommet theme={notepadTheme}>
-      <Box flex width="medium" pad="small" round="small" elevation="medium">
-        <Heading level="3" textAlign="center">
+      <Box
+        flex
+        width="medium"
+        pad="small"
+        round="small"
+        elevation="medium"
+        background="light-1"
+      >
+        <Heading level="2" textAlign="center">
           Scoreboard
         </Heading>
         {renderScoreboardRows()}

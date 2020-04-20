@@ -28,7 +28,6 @@ const CuratorGamePage: FunctionComponent = () => {
 
   const { addToast } = useToasts();
 
-  // TODO: ALEX expand this in upcoming PR
   const curatorMessageHandler = (msg: ServerAction) => {
     switch (msg.type) {
       case '@server/warn':
