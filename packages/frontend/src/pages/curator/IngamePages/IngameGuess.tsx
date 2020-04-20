@@ -2,9 +2,11 @@ import 'styled-components/macro';
 
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { CuratorTimer } from 'src/components/CuratorTimer';
-import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+
+import { BackButton } from './components/BackButton';
+import { CuratorTimer } from './components/CuratorTimer';
+import { RoomCodeBox } from './components/RoomCodeBox';
 
 const IngameGuess: FunctionComponent = () => {
   const { syncedState } = useRoom();
@@ -28,10 +30,11 @@ const IngameGuess: FunctionComponent = () => {
   };
 
   return (
-    <Box css={{ position: 'relative' }} flex>
+    <Box flex>
+      <BackButton />
+      <RoomCodeBox />
       <Box flex align="center" justify="center">
         {renderBody()}
-        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
       </Box>
     </Box>
   );

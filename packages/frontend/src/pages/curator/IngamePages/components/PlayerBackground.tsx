@@ -4,6 +4,11 @@ import { objectKeys, objectValues } from '@full-circle/shared/lib/helpers';
 import { Box } from 'grommet';
 import { FunctionComponent, useEffect, useRef, useState } from 'react';
 import React from 'react';
+import {
+  getRandomCornerBend,
+  getRandomRotation,
+  IRandomStickyNoteData,
+} from 'src/components/StickyNote';
 import { useRoom } from 'src/contexts/RoomContext';
 import { Whiteboard } from 'src/icons';
 import styled from 'styled-components/macro';
@@ -12,11 +17,7 @@ import invariant from 'tiny-invariant';
 import { AllPlayersCircle } from './AllPlayersCircle';
 import { CirclePositioner } from './CirclePositioner';
 import { Player } from './Player';
-import {
-  getRandomCornerBend,
-  getRandomRotation,
-  IRandomStickyNoteData,
-} from './StickyNote';
+
 const arrayOfAngles: number[] = [10, 30, 170, 150, 190, 210, 330, 350];
 
 const WhiteboardBackground = styled(Whiteboard)`

@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 import { Navbar } from 'src/components/Navbar';
 
 import { Card } from '../../components/Card/Card';
-import { RenderChain } from '../../components/RenderChain';
+import { RenderChain } from '../curator/IngamePages/components/RenderChain';
 import { mockChain } from '../curator/IngamePages/mockChain';
 
 const Instructions: FunctionComponent = () => {

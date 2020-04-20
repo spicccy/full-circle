@@ -3,12 +3,12 @@ import { Colour } from '@full-circle/shared/lib/canvas';
 import { IChain, ILink } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { CuratorSvg } from 'src/components/CuratorSvg';
+import { BaseButton } from 'src/components/BaseButton';
+import { useRoom } from 'src/contexts/RoomContext';
+import { ThumbDown, ThumbUp } from 'src/icons';
 import styled from 'styled-components';
 
-import { useRoom } from '../contexts/RoomContext';
-import { ThumbDown, ThumbUp } from '../icons';
-import { BaseButton } from './BaseButton';
+import { CuratorSvg } from './CuratorSvg';
 import { RenderLink } from './RenderLink';
 
 interface IRenderChainProps {

@@ -3,7 +3,8 @@ import 'styled-components/macro';
 import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { RenderChain } from 'src/components/RenderChain';
+
+import { RenderChain } from './components/RenderChain';
 
 interface IInGameReveal {
   chain: IChain | null;

@@ -7,6 +7,7 @@ import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
 import { useRoomLeave } from 'src/hooks/useRoomListeners';
 import {
   getStorage,
@@ -40,6 +41,8 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
       setReconnecting(false);
     }
   };
+
+  useConfirmLeave();
 
   useEffect(() => {
     if (room) {
