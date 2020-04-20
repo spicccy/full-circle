@@ -1,10 +1,6 @@
-import { MapSchema, Schema, type } from '@colyseus/schema';
+import { Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import {
-  becomeCurator,
-  curatorReveal,
-  warn,
-} from '@full-circle/shared/lib/actions/server';
+import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';

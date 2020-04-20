@@ -31,8 +31,10 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
   private _chains: Chain[] = [];
   private currRevealIndex = 0;
 
+  // if this is ever null, it messes up the syncing?
+  // so initialise to a placeholder
   @type(Chain)
-  revealedChain: Chain | null = null;
+  revealedChain: Chain = new Chain('placeholder', []);
 
   generateChains = (
     players: IPlayer[],
@@ -70,10 +72,14 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
 
       return new Chain(owner, [initialLink, ...links]);
     });
+
+    this.revealedChain = this.chains[0];
   };
 
   revealNext = () => {
     if (this.currRevealIndex < this.chains.length) {
+      console.log(this.chains);
+      console.log(this.chains[this.currRevealIndex].links);
       this.revealedChain = this.chains[this.currRevealIndex];
       this.currRevealIndex++;
       return true;
@@ -86,6 +92,8 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
       const link = chain.links[round];
       if (link.type === LinkType.PROMPT && link.playerId === id) {
         link.data = guess;
+        console.log(link.data);
+        console.log(chain.links);
         return true;
       }
     }
@@ -101,6 +109,8 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
       const link = chain.links[round];
       if (link.type === LinkType.IMAGE && link.playerId === id) {
         link.data = JSON.stringify(drawing);
+        console.log(link, link.data);
+        console.log(chain.links);
         return true;
       }
     }
