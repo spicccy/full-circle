@@ -7,7 +7,7 @@ describe('room scoring', () => {
   let playerIds: string[];
 
   beforeEach(() => {
-    roomState = new RoomState(mockRoom, { predictableChains: true });
+    roomState = new RoomState(mockRoom, { predictableRandomness: true });
     addPlayers(roomState, 3);
     playerIds = [];
     for (const id in roomState.players) {

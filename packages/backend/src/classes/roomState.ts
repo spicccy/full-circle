@@ -8,6 +8,7 @@ import {
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IPlayer,
   IRoomStateSynced,
@@ -20,7 +21,6 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
-import { PromptManager } from './managers/promptManager/promptManager';
 import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
@@ -57,6 +57,7 @@ export interface IRoomStateBackend {
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
+  readonly settings: RoomSettings;
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
@@ -66,7 +67,7 @@ export interface IRoomStateBackend {
   incrementRound: () => void;
   getRound: () => number;
 
-  generateChains: (promptManager: PromptManager) => void;
+  generateChains: (prompts: string[]) => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
   updateRoundData: () => void;
@@ -90,22 +91,18 @@ export interface IRoomStateBackend {
   updatePlayerScores: () => void;
 }
 
-export type RoomOptions = {
-  predictableChains: boolean;
-};
-
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
-  options?: RoomOptions;
+  _settings: RoomSettings;
   chainManager: ChainManager;
   stickyNoteColourManager = new StickyNoteColourManager();
 
-  constructor(private room: IRoom, options?: RoomOptions) {
+  constructor(private room: IRoom, options?: RoomSettings) {
     super();
     this.clock = room.clock;
-    this.options = options;
+    this._settings = options ?? {};
     this.chainManager = new ChainManager();
   }
 
@@ -249,15 +246,19 @@ class RoomState extends Schema
     this.phase = phase;
   };
 
+  get settings() {
+    return this._settings;
+  }
+
   // ===========================================================================
   // Chain management
   // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
-  generateChains = (promptManager: PromptManager) => {
+  generateChains = (initialPrompts: string[]) => {
     this.chainManager.generateChains(
       objectValues(this.players),
-      promptManager,
-      this.options
+      initialPrompts,
+      this.settings
     );
   };
 

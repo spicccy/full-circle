@@ -38,7 +38,7 @@ const CopyLink: FunctionComponent<ICopyLink> = ({ url }) => {
       direction="row"
       align="center"
       border={{
-        color: Colour.ORANGE,
+        color: Colour.BLUE,
         size: 'small',
         style: 'solid',
         side: 'all',

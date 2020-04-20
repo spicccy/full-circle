@@ -1,20 +1,19 @@
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
 
 import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
-import { RoomOptions } from '../../roomState';
 import Link from '../../subSchema/link';
-import { PromptManager } from '../promptManager/promptManager';
 
 export interface IChainManager {
   readonly chains: IChain[];
   generateChains: (
     players: IPlayer[],
-    promptManager: PromptManager,
-    options?: RoomOptions
+    initialPrompts: string[],
+    options?: RoomSettings
   ) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
@@ -25,19 +24,18 @@ class ChainManager implements IChainManager {
 
   generateChains = (
     players: IPlayer[],
-    promptManager: PromptManager,
-    options?: RoomOptions
+    initialPrompts: string[],
+    options?: RoomSettings
   ) => {
     const ids = players.map((val) => val.id);
     const chainOrder = getAllocation(
-      options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
+      options?.predictableRandomness ? Allocation.ORDERED : Allocation.RAND
     )(ids);
 
     if (!chainOrder) {
       throw new Error('Chain allocation failed!');
     }
 
-    const prompts = promptManager.getInitialPrompts(players.length);
     this._chains = chainOrder.map((chainIds) => {
       const owner = chainIds[0];
       const links = chainIds.map(
@@ -49,7 +47,7 @@ class ChainManager implements IChainManager {
           })
       );
 
-      const initialPrompt = prompts.pop() ?? '';
+      const initialPrompt = initialPrompts.pop() ?? '';
       const initialLink = new Link({
         type: LinkType.PROMPT,
         id: `${owner}-start`,

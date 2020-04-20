@@ -32,7 +32,10 @@ const TestConsumer: React.FunctionComponent = () => {
       <div data-testid="roomId">{room?.id}</div>
       <div data-testid="roomCode">{roomCode}</div>
       <div data-testid="roomError">{JSON.stringify(roomError)}</div>
-      <button data-testid="createAndJoinRoom" onClick={createAndJoinRoom} />
+      <button
+        data-testid="createAndJoinRoom"
+        onClick={() => createAndJoinRoom()}
+      />
       <input
         data-testid="joinRoomId"
         value={joinRoomId}

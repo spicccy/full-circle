@@ -7,15 +7,13 @@ import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import { SettingsManager } from '../managers/settingsManager/settingsManager';
 import { throwJoinRoomError } from '../../util/util';
+import { PromptManager } from '../managers/promptManager/promptManager';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 import Player from './../subSchema/player';
 
 class LobbyState implements IState {
-  settingsManager = new SettingsManager();
-
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (client: IClient, options: IJoinOptions) => {
@@ -66,8 +64,12 @@ class LobbyState implements IState {
     this.roomState.clearSubmittedPlayers();
 
     // assume settings have been configured
-    const promptManager = this.settingsManager.getPromptManager();
-    this.roomState.generateChains(promptManager);
+    const prompts = new PromptManager({
+      category: this.roomState.settings.promptPack,
+      testing: this.roomState.settings.predictableRandomness,
+    }).getInitialPrompts(this.roomState.numPlayers);
+
+    this.roomState.generateChains(prompts);
   };
 
   validateLobby = (): boolean => {

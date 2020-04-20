@@ -12,12 +12,20 @@ export interface IPrompt {
 export type PromptList = Array<IPrompt>;
 
 export enum Category {
-  LEAGUE = 'LEAGUE',
-  CSGO = 'CSGO',
-  GENERIC = 'GENERIC',
-  ACTORS = 'ACTORS',
-  FASTFOOD = 'FASTFOOD',
+  LEAGUE = 'League of Legends',
+  CSGO = 'CS:GO',
+  GENERIC = 'Items',
+  ACTORS = 'Actors',
+  FASTFOOD = 'Fast-Food',
 }
+
+export const PromptCategories: string[] = [
+  Category.GENERIC,
+  Category.FASTFOOD,
+  Category.LEAGUE,
+  Category.ACTORS,
+  Category.CSGO,
+];
 
 export const getPrompts = (category: Category | string): PromptList => {
   switch (category) {

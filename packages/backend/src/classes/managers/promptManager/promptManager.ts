@@ -1,18 +1,25 @@
+import { Category, getPrompts } from '@full-circle/shared/lib/prompts';
 import { shuffle } from 'lodash';
 
-import { Category, getPrompts } from '.';
+export type PromptManagerOptions = {
+  category?: Category | string;
+  testing?: boolean;
+};
 
 export class PromptManager {
-  _category: Category = Category.GENERIC;
+  _category: Category | string = Category.GENERIC;
   _testing = false;
 
-  constructor(category?: Category, testing?: boolean) {
-    if (category) {
-      this._category = category;
-    }
-    if (testing) {
-      this._testing = testing;
-      this._category = Category.GENERIC;
+  constructor(options?: PromptManagerOptions) {
+    if (options) {
+      const { category, testing } = options;
+      if (category) {
+        this._category = category;
+      }
+      if (testing) {
+        this._testing = testing;
+        this._category = Category.GENERIC;
+      }
     }
   }
 
