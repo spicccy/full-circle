@@ -17,17 +17,32 @@ const mockPrompt: ILink = {
   playerId: 'PromptGuesserId',
 };
 
-export const mockChain: IChain = {
-  owner: 'OwnerId',
-  links: [
-    mockPrompt,
-    mockImage,
-    mockPrompt,
-    mockImage,
-    mockPrompt,
-    mockImage,
-    mockPrompt,
-    mockImage,
-    mockPrompt,
-  ],
+const links = [
+  {
+    type: LinkType.PROMPT,
+    id: '',
+    data: 'cat',
+    playerId: '',
+  },
+  mockImage,
+  {
+    type: LinkType.PROMPT,
+    id: '',
+    data: 'mouse?',
+    playerId: '',
+  },
+  mockImage,
+  {
+    type: LinkType.PROMPT,
+    id: '',
+    data: 'cat??',
+    playerId: '',
+  },
+];
+
+export const mockChain = (nLinks: number): IChain => {
+  return {
+    owner: 'Albert',
+    links: links.slice(0, nLinks),
+  };
 };

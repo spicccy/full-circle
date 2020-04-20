@@ -28,7 +28,7 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
   const player = getPlayer(link.playerId);
   const playerColour = player?.stickyNoteColour ?? StickyNoteColour.GRAY;
   if (link.type === 'image') {
-    const guessPlayerUsername = player ? player.username : 'Starting Image';
+    const guessPlayerUsername = player ? player.username : '';
     const canvasActions = link.data ? JSON.parse(link.data) : [];
     return (
       <Box>
@@ -46,7 +46,7 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
     );
   }
 
-  const promptPlayerUsername = player ? player.username : 'Starting Prompt';
+  const promptPlayerUsername = player ? player.username : '';
   return (
     <Box>
       <LinkStickyNote
