@@ -44,6 +44,7 @@ class ChainManager implements IChainManager {
             type: j % 2 ? LinkType.PROMPT : LinkType.IMAGE,
             id: `${owner}-${j}`,
             playerId,
+            data: null,
           })
       );
 
@@ -65,7 +66,7 @@ class ChainManager implements IChainManager {
   storeGuess = (id: string, guess: string, round: number): boolean => {
     for (const chain of this._chains) {
       const link = chain.links[round];
-      if (link.playerId === id) {
+      if (link.type === LinkType.PROMPT && link.playerId === id) {
         link.data = guess;
         return true;
       }
@@ -80,7 +81,7 @@ class ChainManager implements IChainManager {
   ): boolean => {
     for (const chain of this._chains) {
       const link = chain.links[round];
-      if (link.playerId === id) {
+      if (link.type === LinkType.IMAGE && link.playerId === id) {
         link.data = JSON.stringify(drawing);
         return true;
       }

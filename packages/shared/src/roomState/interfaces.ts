@@ -3,7 +3,7 @@ import { LinkType, PhaseType, StickyNoteColour } from './constants';
 export type ILink = {
   type: LinkType;
   id: string;
-  data?: string;
+  data: string | null;
   playerId: string;
 };
 

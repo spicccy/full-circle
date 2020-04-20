@@ -5,6 +5,7 @@ import {
   IChain,
   IPlayer,
   IPlayerManagerData,
+  LinkType,
   RoomErrorType,
 } from '@full-circle/shared/lib/roomState';
 
@@ -127,9 +128,13 @@ class PlayerManager extends Schema
 
     for (const chain of chains) {
       for (let i = 2; i < chain.links.length; i++) {
+        const currentPrompt = chain.links[i].data;
+        const previousPrompt = chain.links[i - 2].data;
         if (
-          chain.links[i].type === 'prompt' &&
-          closeEnough(chain.links[i].data, chain.links[i - 2].data)
+          chain.links[i].type === LinkType.PROMPT &&
+          currentPrompt &&
+          previousPrompt &&
+          closeEnough(currentPrompt, previousPrompt)
         ) {
           const goodDrawer = this.getPlayer(chain.links[i - 1].playerId);
           const correctGuesser = this.getPlayer(chain.links[i].playerId);
@@ -156,7 +161,7 @@ class PlayerManager extends Schema
       const link = chain.links[round];
       const player = this.getPlayer(link.playerId);
       if (player) {
-        player.roundData = new Link(previousLink);
+        player.roundData = previousLink as Link;
       }
     }
   };
