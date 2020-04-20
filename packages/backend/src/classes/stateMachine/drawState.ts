@@ -1,6 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit, warn } from '@full-circle/shared/lib/actions/server';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
@@ -67,11 +67,8 @@ class DrawState implements IState {
     this.roomState.updatePlayerScores();
   };
 
-  startBuffer = () => {
-    this.roomState.unsubmittedPlayerIds.forEach((id) => {
-      this.roomState.sendAction(id, forceSubmit());
-    });
-
+  private startBuffer = () => {
+    this.roomState.setShowBuffer(true);
     this.bufferHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       BUFFER_MS
@@ -79,6 +76,7 @@ class DrawState implements IState {
   };
 
   advanceState = () => {
+    this.roomState.setShowBuffer(false);
     if (this.roomState.gameIsOver) {
       this.roomState.setRevealState();
       return;

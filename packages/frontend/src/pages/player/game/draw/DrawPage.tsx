@@ -1,5 +1,4 @@
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import {
   CanvasAction,
   Colour,
@@ -7,12 +6,11 @@ import {
   PenThickness,
   PenType,
 } from '@full-circle/shared/lib/canvas';
-import { Box } from 'grommet';
+import { Box, Heading } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
+import { Card } from 'src/components/Card/Card';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
-import { useRoomMessage } from 'src/hooks/useRoomListeners';
-import { getType } from 'typesafe-actions';
 
 import { Background } from '../components/Background';
 import { CanvasCard } from './CanvasCard';
@@ -25,7 +23,7 @@ interface IDrawPage {
 }
 
 const DrawPage: FunctionComponent<IDrawPage> = ({ prompt = '' }) => {
-  const { room } = useRoom();
+  const { room, syncedState } = useRoom();
   const { hasSubmitted } = useRoomHelpers();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [pen, setPen] = useState<Pen>({
@@ -38,20 +36,21 @@ const DrawPage: FunctionComponent<IDrawPage> = ({ prompt = '' }) => {
     room?.send(submitDrawing(canvasActions));
   };
 
-  useRoomMessage((action) => {
-    switch (action.type) {
-      case getType(forceSubmit): {
-        handleSubmitDrawing();
-        return;
-      }
-    }
-  });
-
   const renderBody = () => {
     if (hasSubmitted) {
       return (
         <Box width="medium">
           <DrawingSubmittedCard canvasActions={canvasActions} />
+        </Box>
+      );
+    }
+
+    if (syncedState?.showBuffer) {
+      return (
+        <Box width="medium">
+          <Card align="center" justify="center">
+            <Heading>Moving on... Too bad</Heading>
+          </Card>
         </Box>
       );
     }

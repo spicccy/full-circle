@@ -16,6 +16,7 @@ export interface IPlayer {
   id: string;
   username: string;
   disconnected: boolean;
+  submitted: boolean;
   score: number;
   stickyNoteColour: StickyNoteColour;
   roundData?: ILink;
@@ -37,12 +38,12 @@ export interface IRoomMetadata {
 
 export interface IPlayerManagerData {
   playerMap: Record<string, IPlayer>;
-  submittedPlayers: Record<string, boolean>;
 }
 
 export interface IRoomStateSynced {
   curator: string;
   round: number;
+  showBuffer: boolean;
   phase: IPhase;
   revealer: string;
   playerManager: IPlayerManagerData;
