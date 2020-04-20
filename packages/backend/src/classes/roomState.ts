@@ -21,6 +21,7 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
+import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -60,7 +61,7 @@ export interface IRoomStateBackend {
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
-  sendReveal: () => boolean;
+  revealNext: () => boolean;
 
   setShowBuffer: (buffering: boolean) => void;
   setPhase: (phase: Phase) => void;
@@ -95,9 +96,8 @@ class RoomState extends Schema
   currState: IState = new LobbyState(this);
   clock: IClock;
   private _settings: RoomSettings;
-  private displayChain = 0;
   private waitingCuratorRejoin = false;
-  chainManager: ChainManager;
+  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomSettings) {
     super();
@@ -129,6 +129,9 @@ class RoomState extends Schema
 
   @type(PlayerManager)
   playerManager = new PlayerManager();
+
+  @type(ChainManager)
+  chainManager = new ChainManager();
 
   // =====================================
   // IRoomStateBackend Api
@@ -214,16 +217,8 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
-  sendReveal = () => {
-    if (this.displayChain < this.chains.length) {
-      const chain = this.chains[this.displayChain];
-      this.revealer = chain.owner;
-      this.sendAction(this.curator, curatorReveal(chain));
-      this.displayChain++;
-      return true;
-    }
-
-    return false;
+  revealNext = () => {
+    return this.chainManager.revealNext();
   };
 
   incrementRound = () => {

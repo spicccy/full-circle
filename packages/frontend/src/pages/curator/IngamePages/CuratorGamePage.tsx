@@ -24,7 +24,6 @@ Lobby should only re-render when a new player has joined
 
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
-  const [chain, setChain] = useState<IChain | null>(null);
 
   const { addToast } = useToasts();
 
@@ -33,13 +32,11 @@ const CuratorGamePage: FunctionComponent = () => {
       case '@server/warn':
         addToast(msg.payload, { appearance: 'warning' });
         break;
-      case '@server/curatorReveal':
-        console.log(msg.payload);
-        setChain(msg.payload);
-        break;
       default:
     }
   };
+
+  const chain = syncedState?.chainManager?.revealedChain ?? null;
 
   useRoomMessage(curatorMessageHandler);
 

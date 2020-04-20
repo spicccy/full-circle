@@ -45,6 +45,10 @@ export interface IRoomStateSynced {
   round: number;
   showBuffer: boolean;
   phase: IPhase;
-  revealer: string;
+  chainManager: IChainManagerData;
   playerManager: IPlayerManagerData;
+}
+
+export interface IChainManagerData {
+  revealedChain: IChain | null;
 }

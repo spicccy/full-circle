@@ -27,7 +27,7 @@ class RevealState implements IState {
   onReceive = (_client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(revealChain): {
-        const revealed = this.roomState.sendReveal();
+        const revealed = this.roomState.revealNext();
         if (!revealed) {
           this.advanceState();
         }
@@ -44,7 +44,7 @@ class RevealState implements IState {
 
   onStateStart = () => {
     this.roomState.setPhase(new Phase(PhaseType.REVEAL));
-    this.roomState.sendReveal();
+    this.roomState.revealNext();
   };
 
   onStateEnd = () => {

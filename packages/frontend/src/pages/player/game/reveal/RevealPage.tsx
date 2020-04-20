@@ -47,7 +47,8 @@ const RevealPage: FunctionComponent = () => {
     room?.send(revealChain());
   };
 
-  const display = syncedState?.revealer === room?.sessionId;
+  const isController =
+    syncedState?.chainManager?.revealedChain?.owner === room?.sessionId;
 
   return (
     <Background>
@@ -62,7 +63,7 @@ const RevealPage: FunctionComponent = () => {
             </LikeButton>
           </Box>
           <Button
-            disabled={!display}
+            disabled={!isController}
             onClick={onSubmit}
             size="large"
             label="Next"
