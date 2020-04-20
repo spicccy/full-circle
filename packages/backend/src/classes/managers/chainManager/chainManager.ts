@@ -76,9 +76,9 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
 
   revealNext = () => {
     if (this.currRevealIndex < this.chains.length) {
-      console.log(this.chains);
-      console.log(this.chains[this.currRevealIndex].links);
-      this.revealedChain = this.chains[this.currRevealIndex];
+      const newChain = this.chains[this.currRevealIndex];
+      this.revealedChain.owner = newChain.owner;
+      this.revealedChain.links = newChain.links;
       this.currRevealIndex++;
       return true;
     }
