@@ -72,8 +72,6 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
 
       return new Chain(owner, [initialLink, ...links]);
     });
-
-    this.revealedChain = this.chains[0];
   };
 
   revealNext = () => {
