@@ -8,7 +8,7 @@ const mockImage: ILink = {
   type: LinkType.IMAGE,
   id: '',
   data: imageString,
-  playerId: 'ImageDrawerId',
+  playerId: '',
 };
 
 const links = [

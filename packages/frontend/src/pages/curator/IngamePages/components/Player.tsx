@@ -1,9 +1,8 @@
 import { IPlayer, StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { FunctionComponent } from 'react';
 import React from 'react';
+import { IRandomStickyNoteData, StickyNote } from 'src/components/StickyNote';
 import styled from 'styled-components';
-
-import { IRandomStickyNoteData, StickyNote } from './StickyNote';
 
 const PlayerStickyNote = styled(StickyNote)<{ submitted: boolean }>`
   font-size: 24px;

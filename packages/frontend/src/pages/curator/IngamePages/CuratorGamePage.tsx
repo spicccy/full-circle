@@ -1,15 +1,16 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import { IChain, PhaseType } from '@full-circle/shared/lib/roomState';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Box } from 'grommet';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
-import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
 
-import { useRoomMessage } from '../../../hooks/useRoomListeners';
+import { PlayerBackground } from './components/PlayerBackground';
 import { EndPage } from './EndPage';
 import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
@@ -24,25 +25,23 @@ Lobby should only re-render when a new player has joined
 
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
-  const [chain, setChain] = useState<IChain | null>(null);
 
   const { addToast } = useToasts();
 
-  // TODO: ALEX expand this in upcoming PR
   const curatorMessageHandler = (msg: ServerAction) => {
     switch (msg.type) {
       case '@server/warn':
         addToast(msg.payload, { appearance: 'warning' });
         break;
-      case '@server/curatorReveal':
-        console.log(msg.payload);
-        setChain(msg.payload);
-        break;
       default:
     }
   };
 
+  const chain = syncedState?.chainManager?.revealedChain ?? null;
+
   useRoomMessage(curatorMessageHandler);
+
+  useConfirmLeave();
 
   if (!room) {
     return <Redirect to="/create" />;
@@ -76,7 +75,11 @@ const CuratorGamePage: FunctionComponent = () => {
       case PhaseType.REVEAL:
         return <IngameReveal chain={chain} />;
       case PhaseType.END:
-        return <EndPage />;
+        return (
+          <Box flex background="light-2">
+            <EndPage />
+          </Box>
+        );
       default:
         return <div>Loading</div>;
     }

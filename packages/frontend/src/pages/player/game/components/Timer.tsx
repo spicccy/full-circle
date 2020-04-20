@@ -23,7 +23,7 @@ const CornerTimer: FunctionComponent<ICornerTimerProps> = ({ timer }) => (
     round={{ corner: 'bottom-left', size: 'small' }}
   >
     <Heading
-      data-testHidden="true"
+      data-testhidden="true"
       level="2"
       margin="none"
       textAlign="center"

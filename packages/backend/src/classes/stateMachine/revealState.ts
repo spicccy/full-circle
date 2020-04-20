@@ -1,5 +1,5 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { revealChain } from '@full-circle/shared/lib/actions/client';
+import { revealChain, vote } from '@full-circle/shared/lib/actions/client';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -27,10 +27,14 @@ class RevealState implements IState {
   onReceive = (_client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(revealChain): {
-        const revealed = this.roomState.sendReveal();
+        const revealed = this.roomState.revealNext();
         if (!revealed) {
           this.advanceState();
         }
+        return;
+      }
+      case getType(vote): {
+        this.roomState.addVote(message.payload);
         return;
       }
     }
@@ -44,7 +48,7 @@ class RevealState implements IState {
 
   onStateStart = () => {
     this.roomState.setPhase(new Phase(PhaseType.REVEAL));
-    this.roomState.sendReveal();
+    this.roomState.revealNext();
   };
 
   onStateEnd = () => {

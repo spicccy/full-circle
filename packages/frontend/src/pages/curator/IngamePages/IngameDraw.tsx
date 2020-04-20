@@ -2,9 +2,11 @@ import 'styled-components/macro';
 
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { CuratorTimer } from 'src/components/CuratorTimer';
-import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+
+import { BackButton } from './components/BackButton';
+import { CuratorTimer } from './components/CuratorTimer';
+import { RoomCodeBox } from './components/RoomCodeBox';
 
 const IngameDraw: FunctionComponent = () => {
   const { syncedState } = useRoom();
@@ -21,17 +23,18 @@ const IngameDraw: FunctionComponent = () => {
     return (
       <Box align="center" justify="center">
         <Heading>Drawing Phase</Heading>
-        <Paragraph>It's time to d-d-d-d-d-d-d-guess</Paragraph>
+        <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
         <CuratorTimer />
       </Box>
     );
   };
 
   return (
-    <Box css={{ position: 'relative' }} flex>
+    <Box flex>
+      <BackButton />
+      <RoomCodeBox />
       <Box flex align="center" justify="center">
         {renderBody()}
-        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
       </Box>
     </Box>
   );

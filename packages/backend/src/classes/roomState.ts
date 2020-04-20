@@ -1,10 +1,7 @@
-import { MapSchema, Schema, type } from '@colyseus/schema';
+import { Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import {
-  becomeCurator,
-  curatorReveal,
-  warn,
-} from '@full-circle/shared/lib/actions/server';
+import { Vote } from '@full-circle/shared/lib/actions/client';
+import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -21,6 +18,7 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
+import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -60,7 +58,7 @@ export interface IRoomStateBackend {
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
-  sendReveal: () => boolean;
+  revealNext: () => boolean;
 
   setShowBuffer: (buffering: boolean) => void;
   setPhase: (phase: Phase) => void;
@@ -88,14 +86,16 @@ export interface IRoomStateBackend {
   curatorRejoined: () => void;
 
   updatePlayerScores: () => void;
+  addVote: (vote: Vote) => void;
 }
 
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
-  _settings: RoomSettings;
-  chainManager: ChainManager;
+  private _settings: RoomSettings;
+  private waitingCuratorRejoin = false;
+  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomSettings) {
     super();
@@ -119,9 +119,6 @@ class RoomState extends Schema
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
 
-  @type({ map: 'string' })
-  warnings = new MapSchema<string>();
-
   @type('string')
   revealer = '';
 
@@ -131,9 +128,8 @@ class RoomState extends Schema
   @type(PlayerManager)
   playerManager = new PlayerManager();
 
-  private displayChain = 0;
-
-  private waitingCuratorRejoin = false;
+  @type(ChainManager)
+  chainManager = new ChainManager();
 
   // =====================================
   // IRoomStateBackend Api
@@ -219,16 +215,8 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
-  sendReveal = () => {
-    if (this.displayChain < this.chains.length) {
-      const chain = this.chains[this.displayChain];
-      this.revealer = chain.owner;
-      this.sendAction(this.curator, curatorReveal(chain));
-      this.displayChain++;
-      return true;
-    }
-
-    return false;
+  revealNext = () => {
+    return this.chainManager.revealNext();
   };
 
   incrementRound = () => {
@@ -253,13 +241,12 @@ class RoomState extends Schema
 
   // ===========================================================================
   // Chain management
-  // TODO: refactor chain management into its own class (SRP)
   // ===========================================================================
   generateChains = (initialPrompts: string[]) => {
     this.chainManager.generateChains(
       objectValues(this.players),
       initialPrompts,
-      this.settings
+      this._settings
     );
   };
 
@@ -281,6 +268,10 @@ class RoomState extends Schema
 
   updatePlayerScores = () => {
     this.playerManager.updatePlayerScores(this.chains);
+  };
+
+  addVote = (vote: Vote) => {
+    this.playerManager.addVote(vote);
   };
 
   // ===========================================================================

@@ -10,6 +10,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 import styled from 'styled-components/macro';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
+import { RoomCodeBox } from './components/RoomCodeBox';
 
 interface ILobbyProps {
   startGame(): void;
@@ -33,30 +34,28 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
     <Box flex>
       <BackButton label="Back" href="/create" onClick={leaveRoom} />
       <Box flex align="center" justify="center">
-        <Box width="large" justify="between" fill direction="column">
-          <Box align="center" pad="large">
-            <Heading color={Colour.BLUE} level="1" data-testid="roomID">
-              Room: {roomCode}
-            </Heading>
-            <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
-            <Paragraph color={Colour.DARK_GRAY} size="small">
-              Quick join QR code
-            </Paragraph>
-            <Paragraph color={Colour.DARK_GRAY} size="small">
-              Copy this link to your friends
-            </Paragraph>
-            <CopyLink url={joinUrl} />
+        <Box align="center">
+          <Heading color={Colour.BLUE} level="1" data-testid="roomID">
+            Room: {roomCode}
+          </Heading>
+          <QR value={joinUrl} about={`Join room ${roomCode}`}></QR>
+          <Paragraph color={Colour.DARK_GRAY} size="small">
+            Quick join QR code
+          </Paragraph>
+          <Paragraph color={Colour.DARK_GRAY} size="small">
+            Copy this link to your friends
+          </Paragraph>
+          <CopyLink url={joinUrl} />
 
-            <Button
-              label="Start Game"
-              icon={<Launch />}
-              onClick={startGame}
-              data-testid="startGame"
-              disabled={nPlayers < 3}
-              size="large"
-              margin="medium"
-            />
-          </Box>
+          <Button
+            label="Start Game"
+            icon={<Launch />}
+            onClick={startGame}
+            data-testid="startGame"
+            disabled={nPlayers < 3}
+            size="large"
+            margin="medium"
+          />
         </Box>
       </Box>
     </Box>

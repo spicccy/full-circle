@@ -18,6 +18,7 @@ export interface IPlayer {
   disconnected: boolean;
   submitted: boolean;
   score: number;
+  votes: number;
   stickyNoteColour: StickyNoteColour;
   roundData?: ILink;
 }
@@ -45,6 +46,10 @@ export interface IRoomStateSynced {
   round: number;
   showBuffer: boolean;
   phase: IPhase;
-  revealer: string;
+  chainManager: IChainManagerData;
   playerManager: IPlayerManagerData;
+}
+
+export interface IChainManagerData {
+  revealedChain: IChain | null;
 }
