@@ -1,7 +1,6 @@
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
-
-import { Scoreboard } from '../../../components/Scoreboard';
+import { Scoreboard } from 'src/components/Scoreboard';
 
 const EndPage: FunctionComponent = () => {
   return (

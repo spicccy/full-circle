@@ -4,8 +4,8 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components/macro';
 
 const BackgroundCircle = styled(Box)`
-  min-width: calc((90vw + 90vh) / 2);
-  min-height: calc((90vw + 90vh) / 2);
+  min-width: 90vh;
+  min-height: 90vh;
 `;
 
 export const AllPlayersCircle: FunctionComponent = () => {
@@ -13,7 +13,7 @@ export const AllPlayersCircle: FunctionComponent = () => {
     <BackgroundCircle
       css={{ position: 'absolute' }}
       round="full"
-      border={{ color: Colour.YELLOW, size: '5vw' }}
+      border={{ color: Colour.YELLOW, size: '3vw' }}
     ></BackgroundCircle>
   );
 };

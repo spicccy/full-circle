@@ -3,8 +3,8 @@ import React, { FunctionComponent } from 'react';
 
 export const CuratorBuffer: FunctionComponent = () => {
   return (
-    <Box fill align="center" justify="center">
-      <Text>We will begin the next state shortly.</Text>
+    <Box flex align="center" justify="center">
+      <Text>We will begin the next stage shortly.</Text>
     </Box>
   );
 };

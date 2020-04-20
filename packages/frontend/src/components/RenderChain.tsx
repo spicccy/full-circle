@@ -1,5 +1,5 @@
 import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
-import { Box } from 'grommet';
+import { Box, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 
@@ -20,7 +20,8 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
   return (
     <Box fill pad="medium" justify="center" align="center">
       {chainStarter}
-      <Box direction="row" wrap justify="center" align="center" width="xlarge">
+      <Paragraph> Press NEXT on your phone to end the chain viewing</Paragraph>
+      <Box direction="row" wrap justify="center" align="center">
         {links}
       </Box>
     </Box>

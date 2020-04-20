@@ -6,6 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { ToastProvider } from 'react-toast-notifications';
 
 import { PageContainer } from './components/PageContainer';
+import { RenderChain } from './components/RenderChain';
 import { RoomProvider } from './contexts/RoomContext';
 import {
   CreatePage,
@@ -21,7 +22,6 @@ import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
-import { RenderChain } from './components/RenderChain';
 
 export const App: FunctionComponent = () => {
   try {
