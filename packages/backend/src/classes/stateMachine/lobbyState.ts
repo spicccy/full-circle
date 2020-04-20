@@ -31,8 +31,6 @@ class LobbyState implements IState {
     if (error) {
       throwJoinRoomError(warn(error));
     }
-
-    this.roomState.addSubmittedPlayer(player.id);
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
