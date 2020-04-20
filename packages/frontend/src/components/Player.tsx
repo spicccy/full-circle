@@ -31,9 +31,6 @@ export const Player: FunctionComponent<IPlayerProps> = ({
   const stickyNoteColour =
     playerState?.stickyNoteColour ?? StickyNoteColour.GRAY;
 
-  if (player === undefined) {
-    return null;
-  }
   return (
     <PlayerStickyNote
       align="center"
