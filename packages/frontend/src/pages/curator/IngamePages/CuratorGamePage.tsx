@@ -72,7 +72,11 @@ const CuratorGamePage: FunctionComponent = () => {
       case PhaseType.REVEAL:
         return <IngameReveal chain={chain} />;
       case PhaseType.END:
-        return <EndPage />;
+        return (
+          <Box flex background="light-2">
+            <EndPage />
+          </Box>
+        );
       default:
         return <div>Loading</div>;
     }

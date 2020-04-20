@@ -18,6 +18,7 @@ export interface IPlayer {
   disconnected: boolean;
   submitted: boolean;
   score: number;
+  votes: number;
   stickyNoteColour: StickyNoteColour;
   roundData?: ILink;
 }

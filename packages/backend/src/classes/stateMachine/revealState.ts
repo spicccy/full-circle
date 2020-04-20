@@ -1,5 +1,5 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { revealChain } from '@full-circle/shared/lib/actions/client';
+import { revealChain, vote } from '@full-circle/shared/lib/actions/client';
 import { warn } from '@full-circle/shared/lib/actions/server';
 import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
@@ -31,6 +31,10 @@ class RevealState implements IState {
         if (!revealed) {
           this.advanceState();
         }
+        return;
+      }
+      case getType(vote): {
+        this.roomState.addVote(message.payload);
         return;
       }
     }

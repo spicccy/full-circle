@@ -1,4 +1,5 @@
 import { MapSchema, Schema, type } from '@colyseus/schema';
+import { Vote } from '@full-circle/shared/lib/actions/client';
 import { reconnect } from '@full-circle/shared/lib/actions/server';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import {
@@ -29,6 +30,7 @@ interface IPlayerManager {
   setPlayerReconnected: (id: string) => void;
   attemptReconnection: (username: string) => void;
   updatePlayerScores: (chain: IChain[]) => void;
+  addVote: (vote: Vote) => void;
 }
 
 class PlayerManager extends Schema
@@ -163,6 +165,13 @@ class PlayerManager extends Schema
       if (player) {
         player.roundData = previousLink as Link;
       }
+    }
+  };
+
+  addVote = (vote: Vote) => {
+    const player = this.getPlayer(vote.playerId);
+    if (player) {
+      player.votes += vote.vote === 'dislike' ? -1 : 1;
     }
   };
 }

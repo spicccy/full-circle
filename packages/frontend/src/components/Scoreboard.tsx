@@ -27,16 +27,11 @@ const Scoreboard: FunctionComponent = () => {
       .sort((a, b) => b.score - a.score)
       .map((player) => {
         return (
-          <div
-            css={{
-              display: 'flex',
-              width: '100%',
-              justifyContent: 'space-between',
-            }}
-          >
+          <>
             <Text>{player.username}</Text>
-            <Text>{player.score}</Text>
-          </div>
+            <Text textAlign="end">{player.score}</Text>
+            <Text textAlign="end">{player.votes}</Text>
+          </>
         );
       });
   };
@@ -49,12 +44,27 @@ const Scoreboard: FunctionComponent = () => {
         pad="small"
         round="small"
         elevation="medium"
-        background="light-1"
+        background="white"
       >
         <Heading level="2" textAlign="center">
           Scoreboard
         </Heading>
-        {renderScoreboardRows()}
+        <div
+          css={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr 1fr',
+            paddingBottom: 24,
+          }}
+        >
+          <Text size="large">Player</Text>
+          <Text size="large" textAlign="end">
+            Score
+          </Text>
+          <Text size="large" textAlign="end">
+            Votes
+          </Text>
+          {renderScoreboardRows()}
+        </div>
       </Box>
     </Grommet>
   );

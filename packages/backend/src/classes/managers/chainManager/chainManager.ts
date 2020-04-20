@@ -67,7 +67,7 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
         type: LinkType.PROMPT,
         id: `${owner}-start`,
         data: initialPrompt,
-        playerId: '',
+        playerId: 'Initial Prompt',
       });
 
       return new Chain(owner, [initialLink, ...links]);

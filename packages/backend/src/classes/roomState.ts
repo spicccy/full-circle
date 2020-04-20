@@ -1,5 +1,6 @@
 import { Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
+import { Vote } from '@full-circle/shared/lib/actions/client';
 import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
@@ -85,6 +86,7 @@ export interface IRoomStateBackend {
   curatorRejoined: () => void;
 
   updatePlayerScores: () => void;
+  addVote: (vote: Vote) => void;
 }
 
 class RoomState extends Schema
@@ -266,6 +268,10 @@ class RoomState extends Schema
 
   updatePlayerScores = () => {
     this.playerManager.updatePlayerScores(this.chains);
+  };
+
+  addVote = (vote: Vote) => {
+    this.playerManager.addVote(vote);
   };
 
   // ===========================================================================

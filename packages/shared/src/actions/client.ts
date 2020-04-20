@@ -14,3 +14,11 @@ export const notifyPlayerReady = createAction('@client/notifyPlayerReady')();
 export const clientError = createAction('@client/warn')<RoomErrorType>();
 
 export const revealChain = createAction('@client/revealChain')();
+
+export type Vote = {
+  playerId: string;
+  linkId: string;
+  vote: 'like' | 'dislike';
+};
+
+export const vote = createAction('@client/vote')<Vote>();

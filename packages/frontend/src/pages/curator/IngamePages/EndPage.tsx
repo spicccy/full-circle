@@ -1,6 +1,5 @@
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { CuratorSvg } from 'src/components/CuratorSvg';
 import { Scoreboard } from 'src/components/Scoreboard';
 
 const EndPage: FunctionComponent = () => {
@@ -8,11 +7,12 @@ const EndPage: FunctionComponent = () => {
     <Box
       css={{ position: 'relative' }}
       fill
+      flex
       background="light-2"
       justify="center"
       align="center"
+      pad="large"
     >
-      <CuratorSvg />
       <Scoreboard />
     </Box>
   );

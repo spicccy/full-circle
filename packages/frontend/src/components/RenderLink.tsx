@@ -28,37 +28,33 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
   const player = getPlayer(link.playerId);
   const playerColour = player?.stickyNoteColour ?? StickyNoteColour.GRAY;
   if (link.type === 'image') {
-    const guessPlayerUsername = player ? player.username : '';
+    const guessPlayerUsername = player ? player.username : link.playerId;
     const canvasActions = link.data ? JSON.parse(link.data) : [];
     return (
       <Box>
-        <LinkStickyNote
-          align="center"
-          justify="center"
-          margin="medium"
-          colour={playerColour}
-          size="180px"
-        >
-          <ViewCanvas canvasActions={canvasActions} />
+        <LinkStickyNote margin="medium" colour={playerColour} size="180px">
+          <Box fill flex align="center" justify="center">
+            <ViewCanvas canvasActions={canvasActions} />
+          </Box>
+          <Text size="small" alignSelf="end" textAlign="center">
+            - {guessPlayerUsername}
+          </Text>
         </LinkStickyNote>
-        <Text textAlign="center">{guessPlayerUsername}</Text>
       </Box>
     );
   }
 
-  const promptPlayerUsername = player ? player.username : '';
+  const promptPlayerUsername = player ? player.username : link.playerId;
   return (
     <Box>
-      <LinkStickyNote
-        align="center"
-        justify="center"
-        margin="medium"
-        colour={playerColour}
-        size="180px"
-      >
-        <Text>{link.data}</Text>
+      <LinkStickyNote margin="medium" colour={playerColour} size="180px">
+        <Box fill flex justify="center" align="center">
+          <Text>{link.data}</Text>
+        </Box>
+        <Text alignSelf="end" size="small" textAlign="center">
+          - {promptPlayerUsername}
+        </Text>
       </LinkStickyNote>
-      <Text textAlign="center">{promptPlayerUsername}</Text>
     </Box>
   );
 };
