@@ -1,5 +1,6 @@
 import 'styled-components/macro';
 
+import { Colour } from '@full-circle/shared/lib/canvas';
 import { IPlayer } from '@full-circle/shared/lib/roomState';
 import { Box, Grommet, Heading, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
@@ -45,6 +46,12 @@ const Scoreboard: FunctionComponent = () => {
         round="small"
         elevation="medium"
         background="white"
+        border={{
+          color: Colour.BLUE,
+          size: 'medium',
+          side: 'all',
+          style: 'solid',
+        }}
       >
         <Heading level="2" textAlign="center">
           Scoreboard
