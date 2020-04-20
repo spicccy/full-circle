@@ -19,6 +19,9 @@ class Player extends Schema implements IPlayer {
   @type('number')
   score = 0;
 
+  @type('number')
+  votes = 0;
+
   @type(Link)
   roundData?: Link;
 

@@ -1,11 +1,18 @@
+import { Schema, type } from '@colyseus/schema';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
-import { IChain, IPlayer, LinkType } from '@full-circle/shared/lib/roomState';
+import {
+  IChain,
+  IChainManagerData,
+  IPlayer,
+  LinkType,
+} from '@full-circle/shared/lib/roomState';
 
 import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
+import { Chain } from '../../subSchema/chain';
 import Link from '../../subSchema/link';
 
 export interface IChainManager {
@@ -17,10 +24,17 @@ export interface IChainManager {
   ) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
+  revealNext: () => boolean;
 }
 
-class ChainManager implements IChainManager {
-  _chains: IChain[] = [];
+class ChainManager extends Schema implements IChainManager, IChainManagerData {
+  private _chains: Chain[] = [];
+  private currRevealIndex = 0;
+
+  // if this is ever null, it messes up the syncing?
+  // so initialise to a placeholder
+  @type(Chain)
+  revealedChain: Chain = new Chain('placeholder', []);
 
   generateChains = (
     players: IPlayer[],
@@ -53,14 +67,22 @@ class ChainManager implements IChainManager {
         type: LinkType.PROMPT,
         id: `${owner}-start`,
         data: initialPrompt,
-        playerId: '',
+        playerId: 'Initial Prompt',
       });
 
-      return {
-        owner,
-        links: [initialLink, ...links],
-      };
+      return new Chain(owner, [initialLink, ...links]);
     });
+  };
+
+  revealNext = () => {
+    if (this.currRevealIndex < this.chains.length) {
+      const newChain = this.chains[this.currRevealIndex];
+      this.revealedChain.owner = newChain.owner;
+      this.revealedChain.links = newChain.links;
+      this.currRevealIndex++;
+      return true;
+    }
+    return false;
   };
 
   storeGuess = (id: string, guess: string, round: number): boolean => {

@@ -26,7 +26,7 @@ export function diffDir() {
 export const removeElements = async (currPage: Page) => {
   await currPage.evaluate(() => {
     (
-      document.querySelectorAll("[data-testHidden='true']") || []
+      document.querySelectorAll("[data-testhidden='true']") || []
     ).forEach((el) => el.remove());
   });
 };
