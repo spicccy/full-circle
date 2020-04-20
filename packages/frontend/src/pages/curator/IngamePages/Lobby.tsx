@@ -23,7 +23,7 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
 
   return (
-    <Box pad="large">
+    <Box flex>
       <LinkButton
         alignSelf="start"
         label="Back"

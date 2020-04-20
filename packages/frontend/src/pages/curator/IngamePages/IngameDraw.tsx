@@ -4,7 +4,6 @@ import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { CuratorTimer } from 'src/components/CuratorTimer';
 import { LinkButton } from 'src/components/Link/LinkButton';
-import { PlayerBackground } from 'src/components/PlayerBackground';
 import { useRoom } from 'src/contexts/RoomContext';
 
 const IngameDraw: FunctionComponent = () => {
@@ -18,7 +17,6 @@ const IngameDraw: FunctionComponent = () => {
   }
   return (
     <Box css={{ position: 'relative' }} flex>
-      <PlayerBackground />
       <Box flex align="center" justify="center">
         {title}
         {text}
