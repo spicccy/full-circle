@@ -1,8 +1,8 @@
 import { ServerAction } from '@full-circle/shared/lib/actions';
 import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import { IChain, PhaseType } from '@full-circle/shared/lib/roomState';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Box } from 'grommet';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
