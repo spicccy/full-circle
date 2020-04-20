@@ -3,10 +3,11 @@ import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { ILink } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { ViewCanvas } from 'src/components/Canvas/ViewCanvas';
-import { StickyNote } from 'src/components/StickyNote';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 import styled from 'styled-components';
+
+import { ViewCanvas } from './Canvas/ViewCanvas';
+import { StickyNote } from './StickyNote';
 
 interface IRenderLinkProps {
   link: ILink;

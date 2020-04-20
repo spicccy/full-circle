@@ -6,6 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { ToastProvider } from 'react-toast-notifications';
 
 import { PageContainer } from './components/PageContainer';
+import { RenderChain } from './components/RenderChain';
 import { RoomProvider } from './contexts/RoomContext';
 import {
   CreatePage,
@@ -16,7 +17,6 @@ import {
   PlayerGamePage,
   Team,
 } from './pages';
-import { RenderChain } from './pages/curator/IngamePages/components/RenderChain';
 import { IngameReveal } from './pages/curator/IngamePages/IngameReveal';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
