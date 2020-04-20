@@ -23,7 +23,7 @@ const IngameDraw: FunctionComponent = () => {
     return (
       <Box align="center" justify="center">
         <Heading>Drawing Phase</Heading>
-        <Paragraph>It's time to d-d-d-d-d-d-d-guess</Paragraph>
+        <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
         <CuratorTimer />
       </Box>
     );

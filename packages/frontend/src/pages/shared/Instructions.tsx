@@ -1,7 +1,7 @@
 import 'styled-components/macro';
 
 import { Colour } from '@full-circle/shared/lib/canvas';
-import { Box, Button, Heading, Text } from 'grommet';
+import { Box, Heading } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { Navbar } from 'src/components/Navbar';
 
