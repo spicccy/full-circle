@@ -21,7 +21,6 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
-import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -63,6 +62,7 @@ export interface IRoomStateBackend {
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
   sendReveal: () => boolean;
 
+  setShowBuffer: (buffering: boolean) => void;
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
   getRound: () => number;
@@ -79,7 +79,6 @@ export interface IRoomStateBackend {
   setLobbyState: () => void;
 
   readonly allPlayersSubmitted: boolean;
-  readonly unsubmittedPlayerIds: string[];
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
   setPlayerDisconnected: (id: string) => void;
@@ -97,7 +96,6 @@ class RoomState extends Schema
   clock: IClock;
   _settings: RoomSettings;
   chainManager: ChainManager;
-  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomSettings) {
     super();
@@ -126,6 +124,9 @@ class RoomState extends Schema
 
   @type('string')
   revealer = '';
+
+  @type('boolean')
+  showBuffer = false;
 
   @type(PlayerManager)
   playerManager = new PlayerManager();
@@ -183,10 +184,6 @@ class RoomState extends Schema
 
   get allPlayersSubmitted(): boolean {
     return this.playerManager.allPlayersSubmitted;
-  }
-
-  get unsubmittedPlayerIds(): string[] {
-    return this.playerManager.unsubmittedPlayerIds;
   }
 
   addSubmittedPlayer = (id: string): void => {
@@ -249,6 +246,10 @@ class RoomState extends Schema
   get settings() {
     return this._settings;
   }
+
+  setShowBuffer = (show: boolean) => {
+    this.showBuffer = show;
+  };
 
   // ===========================================================================
   // Chain management

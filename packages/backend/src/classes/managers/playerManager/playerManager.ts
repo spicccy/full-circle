@@ -5,18 +5,21 @@ import {
   IChain,
   IPlayer,
   IPlayerManagerData,
+  LinkType,
   RoomErrorType,
 } from '@full-circle/shared/lib/roomState';
 
 import { CURATOR_USERNAME, MAX_PLAYERS } from '../../../constants';
 import { closeEnough, throwJoinRoomError } from '../../../util/util';
+import Link from '../../subSchema/link';
 import Player from '../../subSchema/player';
+import { StickyNoteColourManager } from '../stickyNoteColourManager';
 
 interface IPlayerManager {
+  readonly players: MapSchema<Player>;
+  readonly playerArray: Player[];
   readonly numPlayers: number;
   readonly allPlayersSubmitted: boolean;
-  readonly unsubmittedPlayerIds: string[];
-  readonly players: MapSchema<Player>;
   addPlayer: (player: IPlayer) => RoomErrorType | null;
   removePlayer: (playerId: string) => void;
   getPlayer: (id: string) => void;
@@ -30,33 +33,25 @@ interface IPlayerManager {
 
 class PlayerManager extends Schema
   implements IPlayerManager, IPlayerManagerData {
+  stickyNoteColourManager = new StickyNoteColourManager();
+
   @type({ map: Player })
   playerMap = new MapSchema<Player>();
-
-  @type({ map: 'boolean' })
-  submittedPlayers = new MapSchema<boolean>();
 
   get players() {
     return this.playerMap;
   }
 
+  get playerArray(): Player[] {
+    return objectValues(this.playerMap);
+  }
+
   get numPlayers() {
-    return Object.keys(this.playerMap).length;
+    return this.playerArray.length;
   }
 
   get allPlayersSubmitted(): boolean {
-    return objectValues(this.submittedPlayers).every(Boolean);
-  }
-
-  get unsubmittedPlayerIds(): string[] {
-    const ids = [];
-    for (const playerId in this.submittedPlayers) {
-      if (!this.submittedPlayers[playerId]) {
-        ids.push(playerId);
-      }
-    }
-
-    return ids;
+    return this.playerArray.every((player) => player.submitted);
   }
 
   addPlayer = (player: IPlayer): RoomErrorType | null => {
@@ -68,92 +63,105 @@ class PlayerManager extends Schema
       return RoomErrorType.TOO_MANY_PLAYERS;
     }
 
-    for (const id in this.playerMap) {
-      const existingPlayer: Player = this.playerMap[id];
-      if (player.username === existingPlayer.username) {
-        return RoomErrorType.CONFLICTING_USERNAMES;
-      }
+    if (this.playerArray.some((p) => p.username === player.username)) {
+      return RoomErrorType.CONFLICTING_USERNAMES;
     }
 
     const { id } = player;
     this.playerMap[id] = player;
-    this.submittedPlayers[id] = false;
+    player.stickyNoteColour = this.stickyNoteColourManager.getColour();
     return null;
   };
 
   removePlayer = (playerId: string) => {
+    const player = this.getPlayer(playerId);
+    if (player) {
+      this.stickyNoteColourManager.releaseColour(player.stickyNoteColour);
+    }
+
     delete this.playerMap[playerId];
-    delete this.submittedPlayers[playerId];
   };
 
-  getPlayer = (id: string): IPlayer | undefined => {
+  getPlayer = (id: string): Player | undefined => {
     return this.playerMap[id];
   };
 
   addSubmittedPlayer = (id: string): void => {
-    this.submittedPlayers[id] = true;
-  };
-
-  clearSubmittedPlayers = (): void => {
-    for (const playerId in this.submittedPlayers) {
-      this.submittedPlayers[playerId] = false;
+    const player = this.getPlayer(id);
+    if (player) {
+      player.submitted = true;
     }
   };
 
+  clearSubmittedPlayers = (): void => {
+    this.playerArray.forEach((player) => {
+      player.submitted = false;
+    });
+  };
+
   setPlayerDisconnected = (id: string): void => {
-    const player: Player = this.playerMap[id];
-    player.disconnected = true;
+    const player = this.getPlayer(id);
+    if (player) {
+      player.disconnected = true;
+    }
   };
 
   setPlayerReconnected = (id: string): void => {
-    const player: Player = this.playerMap[id];
-    player.disconnected = false;
+    const player = this.getPlayer(id);
+    if (player) {
+      player.disconnected = false;
+    }
   };
 
   attemptReconnection = (username: string) => {
-    for (const id in this.playerMap) {
-      const player: Player = this.playerMap[id];
-      if (player.username === username && player.disconnected) {
-        throwJoinRoomError(reconnect(player.id));
-      }
+    const player = this.playerArray.find((p) => p.username === username);
+    if (player && player.disconnected) {
+      throwJoinRoomError(reconnect(player.id));
     }
   };
 
   updatePlayerScores = (chains: IChain[]) => {
     // reset scores so this function is idempotent
-    for (const id in this.playerMap) {
-      this.playerMap[id].score = 0;
-    }
+    this.playerArray.forEach((player) => {
+      player.score = 0;
+    });
 
     for (const chain of chains) {
       for (let i = 2; i < chain.links.length; i++) {
+        const currentPrompt = chain.links[i].data;
+        const previousPrompt = chain.links[i - 2].data;
         if (
-          chain.links[i].type === 'prompt' &&
-          closeEnough(chain.links[i].data, chain.links[i - 2].data)
+          chain.links[i].type === LinkType.PROMPT &&
+          currentPrompt &&
+          previousPrompt &&
+          closeEnough(currentPrompt, previousPrompt)
         ) {
-          const goodDrawer = chain.links[i - 1].playerId;
-          const correctGuesser = chain.links[i].playerId;
-          this.playerMap[correctGuesser].score++;
-          this.playerMap[goodDrawer].score++;
+          const goodDrawer = this.getPlayer(chain.links[i - 1].playerId);
+          const correctGuesser = this.getPlayer(chain.links[i].playerId);
+
+          if (goodDrawer) {
+            goodDrawer.score++;
+          }
+
+          if (correctGuesser) {
+            correctGuesser.score++;
+          }
         }
       }
     }
   };
 
   updateRoundData = (chains: IChain[], round: number) => {
-    for (const playerId in this.playerMap) {
-      const player = this.getPlayer(playerId);
-      if (player) {
-        player.roundData = undefined;
-      }
-    }
+    this.playerArray.forEach((player) => {
+      player.roundData = undefined;
+    });
 
     for (const chain of chains) {
       const previousLink = chain.links[round - 1];
       const link = chain.links[round];
       const player = this.getPlayer(link.playerId);
       if (player) {
-        player.roundData = previousLink;
+        player.roundData = previousLink as Link;
       }
     }
   };

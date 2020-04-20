@@ -9,7 +9,7 @@ class Link extends Schema implements ILink {
   id: string;
 
   @type('string')
-  data?: string;
+  data: string | null;
 
   @type('string')
   playerId: string;

@@ -64,7 +64,9 @@ const PlayerGamePage: FunctionComponent = () => {
 
     case PhaseType.DRAW: {
       const prompt =
-        roundData?.type === LinkType.PROMPT ? roundData.data : undefined;
+        roundData?.type === LinkType.PROMPT && roundData.data
+          ? roundData.data
+          : undefined;
 
       return <DrawPage prompt={prompt} />;
     }

@@ -5,12 +5,12 @@ import React, { FunctionComponent } from 'react';
 import { CuratorBuffer } from 'src/components/CuratorBuffer';
 import { CuratorTimer } from 'src/components/CuratorTimer';
 import { LinkButton } from 'src/components/Link/LinkButton';
-import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
+import { useRoom } from 'src/contexts/RoomContext';
 
 const IngameDraw: FunctionComponent = () => {
-  const { allSubmitted } = useRoomHelpers();
+  const { syncedState } = useRoom();
 
-  if (allSubmitted) {
+  if (syncedState?.showBuffer) {
     return <CuratorBuffer />;
   }
 

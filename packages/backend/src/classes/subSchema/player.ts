@@ -13,6 +13,9 @@ class Player extends Schema implements IPlayer {
   @type('boolean')
   disconnected = false;
 
+  @type('boolean')
+  submitted = false;
+
   @type('number')
   score = 0;
 
