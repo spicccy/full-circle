@@ -17,15 +17,17 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
   const links = chain.links.map((link, index) => (
     <RenderLink link={link} key={index} />
   ));
-  const { getUsername } = useRoomHelpers();
-  const chainStarter = getUsername(chain.owner) ?? 'No Player Found';
+  const { getPlayer } = useRoomHelpers();
+  const chainStarter = getPlayer(chain.owner)?.username ?? 'No Player Found';
   return (
-    <Box flex css={{ position: 'relative' }} align="center">
+    <Box flex>
       <CuratorSvg />
-      <Heading size="small">{chainStarter}</Heading>
-      <Paragraph> Press NEXT on your phone to end the chain viewing</Paragraph>
-      <Box direction="row" wrap justify="center" align="center">
-        {links}
+      <Box pad="small" align="center" fill>
+        <Heading size="small">{chainStarter}</Heading>
+        <Paragraph>Press NEXT on your phone to end the chain viewing</Paragraph>
+        <Box direction="row" wrap justify="center" align="center">
+          {links}
+        </Box>
       </Box>
     </Box>
   );

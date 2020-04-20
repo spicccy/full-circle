@@ -7,12 +7,19 @@ import QR from 'qrcode.react';
 import React, { FunctionComponent } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+import styled from 'styled-components/macro';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
 
 interface ILobbyProps {
   startGame(): void;
 }
+
+const BackButton = styled(LinkButton)`
+  position: fixed;
+  top: 25px;
+  left: 35px;
+`;
 
 const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
   const { syncedState, roomCode, leaveRoom } = useRoom();
@@ -24,14 +31,9 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
 
   return (
     <Box flex>
-      <LinkButton
-        alignSelf="start"
-        label="Back"
-        href="/create"
-        onClick={leaveRoom}
-      />
+      <BackButton label="Back" href="/create" onClick={leaveRoom} />
       <Box flex align="center" justify="center">
-        <Box width="large" justify="between" flex direction="column">
+        <Box width="large" justify="between" fill direction="column">
           <Box align="center" pad="large">
             <Heading color={Colour.BLUE} level="1" data-testid="roomID">
               Room: {roomCode}
@@ -46,13 +48,13 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
             <CopyLink url={joinUrl} />
 
             <Button
-              alignSelf="center"
               label="Start Game"
               icon={<Launch />}
               onClick={startGame}
               data-testid="startGame"
               disabled={nPlayers < 3}
               size="large"
+              margin="medium"
             />
           </Box>
         </Box>

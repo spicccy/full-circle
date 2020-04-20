@@ -24,10 +24,11 @@ const LinkStickyNote = styled(StickyNote)`
 */
 
 export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
-  const { getUsername } = useRoomHelpers();
-
+  const { getPlayer } = useRoomHelpers();
+  const player = getPlayer(link.playerId);
+  const playerColour = player?.stickyNoteColour ?? StickyNoteColour.GRAY;
   if (link.type === 'image') {
-    const guessPlayerUsername = getUsername(link.playerId) ?? 'User Not Found';
+    const guessPlayerUsername = player ? player.username : 'Starting Image';
     const canvasActions = link.data ? JSON.parse(link.data) : [];
     return (
       <Box>
@@ -35,7 +36,7 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
           align="center"
           justify="center"
           margin="medium"
-          colour={StickyNoteColour.GRAY}
+          colour={playerColour}
           size="180px"
         >
           <ViewCanvas canvasActions={canvasActions} />
@@ -45,14 +46,14 @@ export const RenderLink: FunctionComponent<IRenderLinkProps> = ({ link }) => {
     );
   }
 
-  const promptPlayerUsername = getUsername(link.playerId) ?? 'Starting Prompt';
+  const promptPlayerUsername = player ? player.username : 'Starting Prompt';
   return (
     <Box>
       <LinkStickyNote
         align="center"
         justify="center"
         margin="medium"
-        colour={StickyNoteColour.GRAY}
+        colour={playerColour}
         size="180px"
       >
         <Text>{link.data}</Text>

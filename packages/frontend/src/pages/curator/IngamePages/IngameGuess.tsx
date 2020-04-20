@@ -12,16 +12,16 @@ const IngameGuess: FunctionComponent = () => {
   const renderBody = () => {
     if (syncedState?.showBuffer) {
       return (
-        <Box>
+        <Box align="center" justify="center">
           <Heading> Transitioning </Heading>
           <Paragraph>We will begin the next stage shortly.</Paragraph>
         </Box>
       );
     }
     return (
-      <Box>
-        <Heading>Guessing Phase</Heading>;
-        <Paragraph>It's time to g-g-g-g-g-g-g-guess</Paragraph>;
+      <Box align="center" justify="center">
+        <Heading>Guessing Phase</Heading>
+        <Paragraph>It's time to g-g-g-g-g-g-g-guess</Paragraph>
         <CuratorTimer />
       </Box>
     );
