@@ -1,6 +1,6 @@
 import { revealChain } from '@full-circle/shared/lib/actions/client';
 import { Colour } from '@full-circle/shared/lib/canvas';
-import { Box, Button } from 'grommet';
+import { Box, Button, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { BaseButton } from 'src/components/BaseButton';
 import { Card } from 'src/components/Card/Card';
@@ -8,6 +8,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { ThumbDown, ThumbUp } from 'src/icons';
 import styled from 'styled-components';
 
+import { RenderChain } from '../../../../components/RenderChain';
 import { Background } from '../components/Background';
 
 const DislikeButton = styled(BaseButton)`
@@ -50,23 +51,26 @@ const RevealPage: FunctionComponent = () => {
   const isController =
     syncedState?.chainManager?.revealedChain?.owner === room?.sessionId;
 
+  const chain = syncedState?.chainManager?.revealedChain;
+
   return (
     <Background>
       <Box width="medium">
+        <Card margin="medium" pad="large" align="center" justify="center">
+          {isController ? (
+            <Heading level={5}>
+              You started this chain. Look what you've done.
+            </Heading>
+          ) : null}
+          <Paragraph fill>Tap a prompt or picture to vote for it</Paragraph>
+          {chain ? <RenderChain chain={chain} /> : null}
+        </Card>
         <Card pad="large" align="center" justify="center">
-          <Box direction="row" margin={{ bottom: 'medium' }}>
-            <DislikeButton>
-              <ThumbDown />
-            </DislikeButton>
-            <LikeButton>
-              <ThumbUp />
-            </LikeButton>
-          </Box>
           <Button
             disabled={!isController}
             onClick={onSubmit}
             size="large"
-            label="Next"
+            label="Next Chain"
           />
         </Card>
       </Box>
