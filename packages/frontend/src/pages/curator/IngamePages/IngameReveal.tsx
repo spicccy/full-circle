@@ -13,7 +13,7 @@ const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
   if (chain === null) {
     return (
       <Box flex align="center" justify="center">
-        <Paragraph> We will be seeing the Reveal Screen shortly</Paragraph>
+        <Paragraph> We will be seeing the Reveal Screen shorty</Paragraph>
       </Box>
     );
   }
