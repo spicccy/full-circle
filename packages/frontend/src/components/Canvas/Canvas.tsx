@@ -9,6 +9,7 @@ import {
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import React, {
   FunctionComponent,
+  ReactNode,
   useLayoutEffect,
   useRef,
   useState,
@@ -26,6 +27,9 @@ import {
 const CanvasContainer = styled.div`
   position: relative;
   touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   > canvas {
     height: 100%;
@@ -46,6 +50,7 @@ interface ITouch {
 interface ICanvasProps {
   pen: Pen;
   canvasActions: CanvasAction[];
+  placeholder?: ReactNode;
   setCanvasActions: (canvasActions: CanvasAction[]) => void;
 }
 
@@ -53,6 +58,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   pen,
   canvasActions,
   setCanvasActions,
+  placeholder,
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const drawingCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -128,6 +134,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
 
   // Touch events
   useEventListener(canvasContainerRef, 'touchstart', (e) => {
+    e.preventDefault();
     for (const touch of e.changedTouches) {
       ongoingTouches.current[touch.identifier] = {
         path: [getTouchPosition(touch, drawingCanvasRef.current)],
@@ -138,6 +145,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   useEventListener(canvasContainerRef, 'touchmove', (e) => {
+    e.preventDefault();
     for (const touch of e.changedTouches) {
       const ongoingTouch = ongoingTouches.current[touch.identifier];
       if (ongoingTouch) {
@@ -151,6 +159,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
   });
 
   useEventListener(canvasContainerRef, 'touchend', (e) => {
+    e.preventDefault();
     const strokes: CanvasAction[] = [];
     for (const touch of e.changedTouches) {
       const ongoingTouch = ongoingTouches.current[touch.identifier];
@@ -162,6 +171,8 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
 
     setCanvasActions([...canvasActions, ...strokes]);
   });
+
+  const showPlaceholder = canvasActions.length === 0 && !isDrawing;
 
   return (
     <CanvasContainer ref={canvasContainerRef}>
@@ -176,6 +187,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
         width={CANVAS_WIDTH}
         ref={hoverCanvasRef}
       />
+      {showPlaceholder && placeholder}
     </CanvasContainer>
   );
 };
