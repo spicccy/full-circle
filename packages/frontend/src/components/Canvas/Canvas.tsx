@@ -7,7 +7,12 @@ import {
   Pen,
 } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import React, {
+  FunctionComponent,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useEventListener } from 'src/hooks/useEventListener';
 import styled from 'styled-components';
 
@@ -82,7 +87,7 @@ export const Canvas: FunctionComponent<ICanvasProps> = ({
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     redrawDrawingCanvas();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasActions, pen]);
