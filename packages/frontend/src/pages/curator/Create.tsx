@@ -1,6 +1,6 @@
 import 'styled-components/macro';
 
-import { PromptCategories } from '@full-circle/shared/lib/prompts';
+import { Category, PromptCategories } from '@full-circle/shared/lib/prompts';
 import { Box, FormField, Heading, Paragraph, Select } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
@@ -11,7 +11,7 @@ import { useRoom } from 'src/contexts/RoomContext';
 const CreatePage: FunctionComponent = () => {
   const { createAndJoinRoom } = useRoom();
   const [loading, setLoading] = useState(false);
-  const [promptSet, setPromptSet] = useState(PromptCategories[0]);
+  const [promptSet, setPromptSet] = useState<Category>(PromptCategories[0]);
 
   const createLobby = async () => {
     setLoading(true);

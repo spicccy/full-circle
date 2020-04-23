@@ -21,7 +21,7 @@ export enum Category {
   POKEMON = 'Pokemon',
 }
 
-export const PromptCategories: string[] = [
+export const PromptCategories: Category[] = [
   Category.GENERIC,
   Category.FASTFOOD,
   Category.LEAGUE,
