@@ -3,6 +3,7 @@ import { csgo } from './csgo';
 import { fastfood } from './fastfood';
 import { generic } from './generic';
 import { league } from './league';
+import { pokemon } from './pokemon';
 
 export interface IPrompt {
   id: number;
@@ -17,29 +18,27 @@ export enum Category {
   GENERIC = 'Items',
   ACTORS = 'Actors',
   FASTFOOD = 'Fast-Food',
+  POKEMON = 'Pokemon',
 }
 
-export const PromptCategories: string[] = [
+export const PromptCategories: Category[] = [
   Category.GENERIC,
   Category.FASTFOOD,
   Category.LEAGUE,
   Category.ACTORS,
   Category.CSGO,
+  Category.POKEMON,
 ];
 
-export const getPrompts = (category: Category | string): PromptList => {
-  switch (category) {
-    case Category.LEAGUE:
-      return league;
-    case Category.CSGO:
-      return csgo;
-    case Category.GENERIC:
-      return generic;
-    case Category.ACTORS:
-      return actors;
-    case Category.FASTFOOD:
-      return fastfood;
-    default:
-      return generic;
-  }
+export const getPrompts = (category: Category): PromptList => {
+  const map: Record<Category, PromptList> = {
+    [Category.LEAGUE]: league,
+    [Category.CSGO]: csgo,
+    [Category.GENERIC]: generic,
+    [Category.ACTORS]: actors,
+    [Category.FASTFOOD]: fastfood,
+    [Category.POKEMON]: pokemon,
+  };
+
+  return map[category] ?? generic;
 };
