@@ -1,6 +1,7 @@
 import { actors } from './actors';
 import { csgo } from './csgo';
 import { fastfood } from './fastfood';
+import { florida } from './florida';
 import { generic } from './generic';
 import { league } from './league';
 import { pokemon } from './pokemon';
@@ -19,6 +20,7 @@ export enum Category {
   ACTORS = 'Actors',
   FASTFOOD = 'Fast-Food',
   POKEMON = 'Pokemon',
+  FLORIDA = 'Florida man',
 }
 
 export const PromptCategories: Category[] = [
@@ -38,6 +40,7 @@ export const getPrompts = (category: Category): PromptList => {
     [Category.ACTORS]: actors,
     [Category.FASTFOOD]: fastfood,
     [Category.POKEMON]: pokemon,
+    [Category.FLORIDA]: florida,
   };
 
   return map[category] ?? generic;
