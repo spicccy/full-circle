@@ -2,12 +2,12 @@ import { Category, getPrompts } from '@full-circle/shared/lib/prompts';
 import { shuffle } from 'lodash';
 
 export type PromptManagerOptions = {
-  category?: Category | string;
+  category?: Category;
   testing?: boolean;
 };
 
 export class PromptManager {
-  _category: Category | string = Category.GENERIC;
+  _category: Category = Category.GENERIC;
   _testing = false;
 
   constructor(options?: PromptManagerOptions) {
