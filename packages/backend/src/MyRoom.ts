@@ -1,11 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { warn } from '@full-circle/shared/lib/actions/server';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
-import {
-  IRoomMetadata,
-  RoomErrorType,
-} from '@full-circle/shared/lib/roomState';
+import { IRoomMetadata } from '@full-circle/shared/lib/roomState';
 import { Client, Room } from 'colyseus';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
@@ -23,9 +18,9 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
     this.setState(new RoomState(this, options));
   }
 
-  onJoin(client: IClient, options: IJoinOptions) {
+  onJoin(client: IClient) {
     console.log(`${client.id} joined ${this.roomId}.`);
-    this.state.onJoin(client, options);
+    this.state.onJoin(client);
   }
 
   onMessage(client: IClient, message: ClientAction) {
@@ -33,23 +28,9 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
   }
 
   async onLeave(client: Client, consented: boolean) {
-    console.log(`${client.id} left ${this.roomId}.`);
-    // special case to be handled at room level, don't delegate to currState
-
-    if (client.id === this.state.curator) {
-      this.state.curatorDisconnected();
-      this.broadcast(warn(RoomErrorType.CURATOR_DISCONNECTED));
-    } else {
-      const canReconnect = this.state.onLeave(client, consented);
-      if (canReconnect) {
-        try {
-          await this.allowReconnection(client);
-          this.state.setPlayerReconnected(client.id);
-        } catch (e) {
-          this.state.removePlayer(client.id);
-        }
-      }
-    }
+    this.state.onLeave(client, consented);
+    await this.allowReconnection(client);
+    this.state.onReconnect(client);
   }
 
   onDispose() {

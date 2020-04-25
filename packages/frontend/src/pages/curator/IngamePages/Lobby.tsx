@@ -1,20 +1,16 @@
 import 'styled-components/macro';
 
+import { startGame } from '@full-circle/shared/lib/actions/client';
 import { Colour } from '@full-circle/shared/lib/canvas';
 import { Box, Button, Heading, Paragraph } from 'grommet';
 import { Launch } from 'grommet-icons';
 import QR from 'qrcode.react';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
 import styled from 'styled-components/macro';
 
 import { CopyLink } from '../../../components/Link/CopyLink';
-import { RoomCodeBox } from './components/RoomCodeBox';
-
-interface ILobbyProps {
-  startGame(): void;
-}
 
 const BackButton = styled(LinkButton)`
   position: fixed;
@@ -22,13 +18,19 @@ const BackButton = styled(LinkButton)`
   left: 35px;
 `;
 
-const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
-  const { syncedState, roomCode, leaveRoom } = useRoom();
+const Lobby: FunctionComponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { syncedState, roomCode, sendAction, leaveRoom } = useRoom();
+
+  const handleStartGame = () => {
+    sendAction(startGame());
+    setIsLoading(true);
+  };
 
   const nPlayers = Object.keys(syncedState?.playerManager.playerMap ?? {})
     .length;
 
-  const joinUrl = process.env.REACT_APP_FRONTEND_URL + '/join/' + roomCode;
+  const joinUrl = `${process.env.REACT_APP_FRONTEND_URL}/play/${roomCode}`;
 
   return (
     <Box flex>
@@ -50,9 +52,9 @@ const Lobby: FunctionComponent<ILobbyProps> = ({ startGame }) => {
           <Button
             label="Start Game"
             icon={<Launch />}
-            onClick={startGame}
+            onClick={handleStartGame}
             data-testid="startGame"
-            disabled={nPlayers < 3}
+            disabled={nPlayers < 3 || isLoading}
             size="large"
             margin="medium"
           />

@@ -1,22 +1,20 @@
-import 'styled-components/macro';
-
-import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { RenderChain } from 'src/components/RenderChain';
+import { useRoom } from 'src/contexts/RoomContext';
 
-interface IInGameReveal {
-  chain: IChain | null;
-}
+const IngameReveal: FunctionComponent = () => {
+  const { syncedState } = useRoom();
+  const chain = syncedState?.chainManager.revealedChain;
 
-const IngameReveal: FunctionComponent<IInGameReveal> = ({ chain }) => {
-  if (chain === null) {
+  if (!chain) {
     return (
       <Box flex align="center" justify="center">
         <Paragraph> We will be seeing the Reveal Screen shortly</Paragraph>
       </Box>
     );
   }
+
   return <Box fill>{<RenderChain chain={chain} />}</Box>;
 };
 

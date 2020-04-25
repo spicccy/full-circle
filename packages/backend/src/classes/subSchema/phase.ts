@@ -9,7 +9,7 @@ class Phase extends Schema implements IPhase {
   phaseStart: number;
 
   @type('number')
-  phaseEnd: number | undefined;
+  phaseEnd: number;
 
   @type('string')
   phaseType: PhaseType;
@@ -21,7 +21,7 @@ class Phase extends Schema implements IPhase {
   constructor(phaseType: PhaseType, durationMs?: number) {
     super();
     this.phaseStart = Date.now();
-    this.phaseEnd = durationMs ? this.phaseStart + durationMs : undefined;
+    this.phaseEnd = durationMs ? this.phaseStart + durationMs : 0;
     this.phaseType = phaseType;
   }
 }

@@ -1,66 +1,56 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
-import { warn } from '@full-circle/shared/lib/actions/server';
-import { formatUsername } from '@full-circle/shared/lib/helpers';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { joinGame, startGame } from '@full-circle/shared/lib/actions/client';
+import { joinGameError } from '@full-circle/shared/lib/actions/server';
+import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import { throwJoinRoomError } from '../../util/util';
 import { PromptManager } from '../managers/promptManager/promptManager';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
-import Player from './../subSchema/player';
 
 class LobbyState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
-  onJoin = (client: IClient, options: IJoinOptions) => {
-    const username = formatUsername(options.username);
-    const clientId = client.id;
-
+  onJoin = (client: IClient) => {
     if (!this.roomState.getCurator()) {
-      this.roomState.setCurator(clientId);
+      this.roomState.setCurator(client.id);
       return;
-    }
-
-    const player = new Player(clientId, username);
-
-    const error = this.roomState.addPlayer(player);
-    if (error) {
-      throwJoinRoomError(warn(error));
     }
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.roomState.removePlayer(client.id);
-    return false;
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorDisconnected();
+    } else {
+      this.roomState.removePlayer(client.id);
+    }
+  };
+
+  onReconnect = (client: IClient) => {
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorReconnected();
+    }
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
     switch (message.type) {
-      case getType(notifyPlayerReady): {
-        this.onClientReady(client.id);
-        return;
+      case getType(startGame): {
+        return this.startGame();
       }
-    }
-  };
-
-  onClientReady = (clientId: string) => {
-    if (clientId === this.roomState.getCurator() && this.validateLobby()) {
-      this.advanceState();
+      case getType(joinGame): {
+        return this.addPlayer(client.id, message.payload.username);
+      }
     }
   };
 
   onStateStart = () => {
     this.roomState.setPhase(new Phase(PhaseType.LOBBY));
-    this.roomState.clearSubmittedPlayers();
   };
 
-  onStateEnd = () => {
-    this.roomState.clearSubmittedPlayers();
+  onStateEnd = () => {};
 
+  advanceState = () => {
     // assume settings have been configured
     const prompts = new PromptManager({
       category: this.roomState.settings.promptPack,
@@ -68,23 +58,34 @@ class LobbyState implements IState {
     }).getInitialPrompts(this.roomState.numPlayers);
 
     this.roomState.generateChains(prompts);
+
+    this.roomState.incrementRound();
+    this.roomState.setDrawState();
   };
 
-  validateLobby = (): boolean => {
+  private addPlayer = (clientId: string, username: string) => {
+    const error = this.roomState.addPlayer(clientId, username);
+    if (error) {
+      this.roomState.sendAction(clientId, joinGameError(error));
+    }
+  };
+
+  private startGame = () => {
+    if (this.validateLobby()) {
+      this.advanceState();
+    }
+  };
+
+  private validateLobby = (): boolean => {
     if (this.roomState.numPlayers < 3) {
       this.roomState.sendWarning(
         this.roomState.getCurator(),
-        RoomErrorType.NOT_ENOUGH_PLAYERS
+        ServerError.NOT_ENOUGH_PLAYERS
       );
       return false;
     }
 
     return true;
-  };
-
-  advanceState = () => {
-    this.roomState.incrementRound();
-    this.roomState.setDrawState();
   };
 }
 

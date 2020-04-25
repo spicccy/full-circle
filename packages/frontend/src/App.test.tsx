@@ -35,17 +35,4 @@ describe('The App renders routes correctly', () => {
     const titleElement = getByText('Choose Room Settings');
     expect(titleElement).toBeInTheDocument();
   });
-
-  it('should redirect players without a room to the login page', () => {
-    const history = createMemoryHistory();
-    history.push('/play');
-    const { getByText } = render(
-      <Router history={history}>
-        <App />
-      </Router>
-    );
-
-    const titleElement = getByText('Full Circle');
-    expect(titleElement).toBeInTheDocument();
-  });
 });

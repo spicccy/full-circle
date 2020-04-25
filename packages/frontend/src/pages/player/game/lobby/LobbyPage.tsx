@@ -1,29 +1,14 @@
-import { Colour } from '@full-circle/shared/lib/canvas';
 import { Box, Heading, Image } from 'grommet';
 import React, { FunctionComponent } from 'react';
 import { Card } from 'src/components/Card/Card';
-import { LinkAnchor } from 'src/components/Link/LinkAnchor';
 import { useRoom } from 'src/contexts/RoomContext';
-import { Close } from 'src/icons';
 import logo from 'src/images/fullcircle.png';
-import styled from 'styled-components/macro';
 
 import { Background } from '../components/Background';
-
-const CloseButton = styled(LinkAnchor)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px;
-
-  :hover,
-  :focus {
-    fill: ${Colour.RED};
-  }
-`;
+import { CloseButton } from '../components/CloseButton';
 
 const Lobby: FunctionComponent = () => {
-  const { roomCode, leaveRoom } = useRoom();
+  const { roomCode } = useRoom();
 
   return (
     <Background>
@@ -34,9 +19,7 @@ const Lobby: FunctionComponent = () => {
           align="center"
           justify="center"
         >
-          <CloseButton href="/" onClick={leaveRoom}>
-            <Close />
-          </CloseButton>
+          <CloseButton />
           <Image
             a11yTitle="Full Circle"
             width={100}

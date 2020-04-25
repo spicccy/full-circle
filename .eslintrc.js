@@ -25,6 +25,7 @@ module.exports = {
     ],
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-empty-function': 0,
     'no-restricted-imports': [
       2,
       {

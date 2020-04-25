@@ -1,11 +1,9 @@
 import { createAction } from 'typesafe-actions';
 
-import { IChain, RoomErrorType } from '../roomState';
+import { ServerError } from '../roomState';
 
-export const warn = createAction('@server/warn')<RoomErrorType>();
+export const serverError = createAction('@server/error')<ServerError>();
 
-export const reconnect = createAction('@server/reconnect')<string>();
-
-export const curatorReveal = createAction('@server/curatorReveal')<IChain>();
-
-export const becomeCurator = createAction('@server/becomeCurator')();
+export const joinGameError = createAction('@server/joinGameError')<
+  ServerError
+>();

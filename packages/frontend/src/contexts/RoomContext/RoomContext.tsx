@@ -1,12 +1,10 @@
-import { ServerAction } from '@full-circle/shared/lib/actions';
-import { clientError } from '@full-circle/shared/lib/actions/client';
+import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IRoomMetadata,
   IRoomStateSynced,
-  RoomErrorType,
+  RoomError,
 } from '@full-circle/shared/lib/roomState';
 import React, {
   createContext,
@@ -17,9 +15,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import {
+  LocalStorageKey,
+  removeStorage,
+  setStorage,
+} from 'src/utils/localStorage';
 
 import { useColyseus } from '../ColyseusContext';
-import { parseServerError } from './roomErrorHandler';
+import { parseRoomError } from './roomErrorHandler';
 import {
   empty,
   fail,
@@ -36,10 +39,10 @@ type RemoveListener = () => void;
 interface IRoomContext {
   syncedState?: IRoomStateSynced;
   createAndJoinRoom(roomSettings?: RoomSettings): Promise<RoomState>;
-  joinRoomByCode(roomId: string, options: IJoinOptions): Promise<RoomState>;
-  reconnectToRoomByCode(roomId: string, id: string): Promise<RoomState>;
+  joinRoomByCode(roomId: string): Promise<RoomState>;
   reconnectToRoomById(roomId: string, id: string): Promise<RoomState>;
-  leaveRoom(): void;
+  leaveRoom(clearSession?: boolean): void;
+  sendAction(action: ClientAction): void;
   addMessageListener(listener: MessageListener): RemoveListener;
   addLeaveListener(listener: LeaveListener): RemoveListener;
   clearError(): void;
@@ -86,18 +89,23 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
         const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME, options);
         const roomCode = await getRoomCode(room.id);
         if (!roomCode) {
-          const roomState = fail(
-            clientError(RoomErrorType.ROOM_INITIALISATION_ERROR)
-          );
+          const roomState = fail(RoomError.ROOM_INITIALISATION_ERROR);
           setRoomState(roomState);
           return roomState;
         }
 
         const roomState = success(room, roomCode);
         setRoomState(roomState);
+        setStorage(LocalStorageKey.SESSION_DATA, {
+          roomCode,
+          clientId: room.sessionId,
+          roomId: room.id,
+          isCurator: true,
+        });
+
         return roomState;
       } catch (e) {
-        const roomState = fail(parseServerError(e));
+        const roomState = fail(parseRoomError(e));
         setRoomState(roomState);
         return roomState;
       }
@@ -106,48 +114,30 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
   );
 
   const joinRoomByCode = useCallback(
-    async (roomCode: string, options: IJoinOptions): Promise<RoomState> => {
+    async (roomCode: string): Promise<RoomState> => {
       setRoomState(loading());
 
       try {
         const roomId = await getRoomId(roomCode);
         if (!roomId) {
-          const roomState = fail(clientError(RoomErrorType.ROOM_NOT_FOUND));
+          const roomState = fail(RoomError.ROOM_NOT_FOUND);
           setRoomState(roomState);
           return roomState;
         }
 
-        const room = await colyseus.joinById<RoomStateWithFn>(roomId, options);
+        const room = await colyseus.joinById<RoomStateWithFn>(roomId);
         const roomState = success(room, roomCode);
         setRoomState(roomState);
+        setStorage(LocalStorageKey.SESSION_DATA, {
+          roomCode,
+          clientId: room.sessionId,
+          roomId: room.id,
+          isCurator: false,
+        });
+
         return roomState;
       } catch (e) {
-        const roomState = fail(parseServerError(e));
-        setRoomState(roomState);
-        return roomState;
-      }
-    },
-    [colyseus, getRoomId]
-  );
-
-  const reconnectToRoomByCode = useCallback(
-    async (roomCode: string, id: string): Promise<RoomState> => {
-      setRoomState(loading());
-
-      try {
-        const roomId = await getRoomId(roomCode);
-        if (!roomId) {
-          const roomState = fail(clientError(RoomErrorType.RECONNECT_ERROR));
-          setRoomState(roomState);
-          return roomState;
-        }
-
-        const room = await colyseus.reconnect<RoomStateWithFn>(roomId, id);
-        const roomState = success(room, roomCode);
-        setRoomState(roomState);
-        return roomState;
-      } catch (e) {
-        const roomState = fail(parseServerError(e));
+        const roomState = fail(parseRoomError(e));
         setRoomState(roomState);
         return roomState;
       }
@@ -167,16 +157,23 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
         const roomCode = await getRoomCode(roomId);
         if (!roomCode) {
-          const roomState = fail(clientError(RoomErrorType.RECONNECT_ERROR));
+          const roomState = fail(RoomError.ROOM_INITIALISATION_ERROR);
           setRoomState(roomState);
           return roomState;
         }
 
         const roomState = success(room, roomCode);
         setRoomState(roomState);
+        setStorage(LocalStorageKey.SESSION_DATA, {
+          roomCode,
+          clientId: room.sessionId,
+          roomId: room.id,
+          isCurator: false,
+        });
+
         return roomState;
       } catch (e) {
-        const roomState = fail(parseServerError(e));
+        const roomState = fail(parseRoomError(e));
         setRoomState(roomState);
         return roomState;
       }
@@ -184,9 +181,16 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     [colyseus, getRoomCode]
   );
 
-  const leaveRoom = useCallback(() => {
+  const leaveRoom = useCallback((clearSession = true) => {
     setRoomState(empty());
+    if (clearSession) {
+      removeStorage(LocalStorageKey.SESSION_DATA);
+    }
   }, []);
+
+  const sendAction = (action: ClientAction) => {
+    roomState.room?.send(action);
+  };
 
   const addMessageListener = useCallback(
     (listener: MessageListener): RemoveListener => {
@@ -233,9 +237,9 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     syncedState,
     createAndJoinRoom,
     joinRoomByCode,
-    reconnectToRoomByCode,
     reconnectToRoomById,
     leaveRoom,
+    sendAction,
     clearError,
     addMessageListener,
     addLeaveListener,

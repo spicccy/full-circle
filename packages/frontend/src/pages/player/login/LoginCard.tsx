@@ -1,10 +1,10 @@
 import 'styled-components/macro';
 
-import { Colour } from '@full-circle/shared/lib/canvas';
-import { Box, Heading, Image, Text, TextInput } from 'grommet';
+import { Box, Heading, Image } from 'grommet';
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
+import { useLoader } from 'src/hooks/useLoader';
 import logo from 'src/images/fullcircle.png';
 
 import { RoomInput } from './RoomInput';
@@ -25,72 +25,28 @@ const Header: FunctionComponent = () => (
 );
 
 interface ILoginCardProps {
-  name: string;
-  roomCode: string;
-  setName(name: string): void;
-  setRoomCode(roomCode: string): void;
-  attemptToJoinRoom(): void;
-  usernameError?: boolean;
-  roomCodeError?: boolean;
+  attemptToJoinRoom(roomCode: string): Promise<unknown>;
 }
 
 const LoginCard: FunctionComponent<ILoginCardProps> = ({
-  name,
-  roomCode,
-  setName,
-  setRoomCode,
   attemptToJoinRoom,
-  usernameError,
-  roomCodeError,
 }) => {
-  const handleSubmit = async (e: FormEvent) => {
-    setLoading(true);
-    e.preventDefault();
-    await attemptToJoinRoom();
-    setLoading(false);
-  };
+  const [roomCode, setRoomCode] = useState('');
+  const { isLoading, load } = useLoader();
 
-  const [loading, setLoading] = useState(false);
-  const error = usernameError || roomCodeError;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await load(() => attemptToJoinRoom(roomCode));
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card
-        border={
-          error
-            ? {
-                color: Colour.RED,
-                size: 'medium',
-                style: 'solid',
-                side: 'all',
-              }
-            : undefined
-        }
-        pad="large"
-      >
+      <Card pad="large">
         <Header />
-        <Box direction="row" align="center" margin={{ bottom: 'medium' }}>
-          <Text
-            size="xlarge"
-            margin={{ right: 'small' }}
-            color={usernameError ? Colour.RED : undefined}
-          >
-            Name:
-          </Text>
-          <TextInput
-            size="medium"
-            id="username"
-            data-testid="playerNameInput"
-            required
-            maxLength={12}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Box>
         <RoomInput value={roomCode} onChange={setRoomCode} />
         <LoadingButton
           data-testid="joinRoom"
-          loading={loading}
+          loading={isLoading}
           type="submit"
           size="large"
           alignSelf="center"

@@ -50,7 +50,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
   chain,
   votable,
 }) => {
-  const { room } = useRoom();
+  const { sendAction } = useRoom();
 
   const { links } = chain;
 
@@ -63,7 +63,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
             <DislikeButton
               onClick={() => {
                 const { playerId, id } = link;
-                room?.send(vote({ playerId, linkId: id, vote: 'dislike' }));
+                sendAction(vote({ playerId, linkId: id, vote: 'dislike' }));
               }}
             >
               <ThumbDown></ThumbDown>
@@ -71,7 +71,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
             <LikeButton
               onClick={() => {
                 const { playerId, id } = link;
-                room?.send(vote({ playerId, linkId: id, vote: 'like' }));
+                sendAction(vote({ playerId, linkId: id, vote: 'like' }));
               }}
             >
               <ThumbUp></ThumbUp>

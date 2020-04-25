@@ -20,7 +20,7 @@ export interface IPlayer {
   score: number;
   votes: number;
   stickyNoteColour: StickyNoteColour;
-  roundData?: ILink;
+  roundData: ILink | null;
 }
 
 export interface IPhase {
@@ -28,7 +28,7 @@ export interface IPhase {
   phaseStart: number;
 
   // When does the phase end?
-  phaseEnd?: number;
+  phaseEnd: number;
   phaseType: PhaseType;
 }
 
@@ -43,6 +43,7 @@ export interface IPlayerManagerData {
 
 export interface IRoomStateSynced {
   curator: string;
+  curatorDisconnected: boolean;
   round: number;
   showBuffer: boolean;
   phase: IPhase;

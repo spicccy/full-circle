@@ -18,13 +18,9 @@ import { DrawingSubmittedCard } from './DrawingSubmittedCard';
 import { PenPicker } from './penPicker/PenPicker';
 import { PromptCard } from './PromptCard';
 
-interface IDrawPage {
-  prompt?: string;
-}
-
-const DrawPage: FunctionComponent<IDrawPage> = ({ prompt = '' }) => {
-  const { room, syncedState } = useRoom();
-  const { hasSubmitted } = useRoomHelpers();
+const DrawPage: FunctionComponent = () => {
+  const { sendAction, syncedState } = useRoom();
+  const { hasSubmitted, playerData } = useRoomHelpers();
   const [canvasActions, setCanvasActions] = useState<CanvasAction[]>([]);
   const [pen, setPen] = useState<Pen>({
     type: PenType.SOLID,
@@ -32,8 +28,10 @@ const DrawPage: FunctionComponent<IDrawPage> = ({ prompt = '' }) => {
     penThickness: PenThickness.MEDIUM,
   });
 
+  const prompt = playerData?.roundData?.data ?? undefined;
+
   const handleSubmitDrawing = () => {
-    room?.send(submitDrawing(canvasActions));
+    sendAction(submitDrawing(canvasActions));
   };
 
   const renderBody = () => {

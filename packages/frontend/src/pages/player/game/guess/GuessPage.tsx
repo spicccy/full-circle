@@ -11,18 +11,24 @@ import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 import { GuessSubmittedCard } from './GuessSubmittedCard';
 
-interface IGuessPage {
-  drawing?: CanvasAction[];
-}
+const parseDrawing = (data?: string): CanvasAction[] => {
+  try {
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+};
 
-const GuessPage: FunctionComponent<IGuessPage> = ({ drawing = [] }) => {
-  const { room, syncedState } = useRoom();
-  const { hasSubmitted } = useRoomHelpers();
+const GuessPage: FunctionComponent = () => {
+  const { sendAction, syncedState } = useRoom();
+  const { hasSubmitted, playerData } = useRoomHelpers();
 
   const [guess, setGuess] = useState('');
 
+  const drawing = parseDrawing(playerData?.roundData?.data ?? undefined);
+
   const handleSubmit = () => {
-    room?.send(submitGuess(guess));
+    sendAction(submitGuess(guess));
   };
 
   const renderBody = () => {
