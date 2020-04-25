@@ -1,22 +1,34 @@
-import { objectValues } from '@full-circle/shared/lib/helpers';
+import { IPlayer } from '@full-circle/shared/lib/roomState';
 import { useRoom } from 'src/contexts/RoomContext';
 
 interface IUseRoomHelpers {
+  playerData?: IPlayer;
   hasSubmitted: boolean;
-  allSubmitted: boolean;
+  getPlayer(playerId: string): IPlayer | undefined;
+  isDisconnected: boolean;
 }
 
 export const useRoomHelpers = (): IUseRoomHelpers => {
   const { room, syncedState } = useRoom();
 
+  const playerManager = syncedState?.playerManager;
+
   const id = room?.sessionId;
-  const hasSubmitted = Boolean(id && syncedState?.submittedPlayers[id]);
-  const allSubmitted = Boolean(
-    syncedState && objectValues(syncedState.submittedPlayers).every(Boolean)
-  );
+  const playerData = id
+    ? syncedState?.playerManager?.playerMap?.[id]
+    : undefined;
+
+  const hasSubmitted = Boolean(playerData?.submitted);
+  const isDisconnected = Boolean(playerData?.disconnected);
+
+  const getPlayer = (playerId: string) => {
+    return playerManager?.playerMap?.[playerId];
+  };
 
   return {
+    playerData,
     hasSubmitted,
-    allSubmitted,
+    getPlayer,
+    isDisconnected,
   };
 };

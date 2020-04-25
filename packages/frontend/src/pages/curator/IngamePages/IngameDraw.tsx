@@ -2,27 +2,39 @@ import 'styled-components/macro';
 
 import { Box, Heading, Paragraph } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { CuratorBuffer } from 'src/components/CuratorBuffer';
-import { CuratorTimer } from 'src/components/CuratorTimer';
-import { LinkButton } from 'src/components/Link/LinkButton';
-import { PlayerBackground } from 'src/components/PlayerBackground';
-import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
+import { useRoom } from 'src/contexts/RoomContext';
+
+import { BackButton } from './components/BackButton';
+import { CuratorTimer } from './components/CuratorTimer';
+import { RoomCodeBox } from './components/RoomCodeBox';
 
 const IngameDraw: FunctionComponent = () => {
-  const { allSubmitted } = useRoomHelpers();
+  const { syncedState } = useRoom();
 
-  if (allSubmitted) {
-    return <CuratorBuffer />;
-  }
-
-  return (
-    <Box css={{ position: 'relative' }} flex>
-      <PlayerBackground />
-      <Box flex align="center" justify="center">
+  const renderBody = () => {
+    if (syncedState?.showBuffer) {
+      return (
+        <Box align="center" justify="center">
+          <Heading> Transitioning </Heading>
+          <Paragraph>We will begin the next stage shortly.</Paragraph>
+        </Box>
+      );
+    }
+    return (
+      <Box align="center" justify="center">
         <Heading>Drawing Phase</Heading>
         <Paragraph>It's time to d-d-d-d-d-d-d-draw</Paragraph>
         <CuratorTimer />
-        <LinkButton alignSelf="center" label="Go to Home" href="/create" />
+      </Box>
+    );
+  };
+
+  return (
+    <Box flex>
+      <BackButton />
+      <RoomCodeBox />
+      <Box flex align="center" justify="center">
+        {renderBody()}
       </Box>
     </Box>
   );

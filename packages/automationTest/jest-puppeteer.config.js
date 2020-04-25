@@ -1,6 +1,7 @@
 module.exports = {
   launch: {
-    headless: false,
+    headless: true,
     browserContext: 'incognito',
+    args: ['--no-sandbox'],
   },
 };

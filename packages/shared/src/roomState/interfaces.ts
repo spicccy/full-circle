@@ -1,22 +1,14 @@
-import { PhaseType } from './constants';
+import { LinkType, PhaseType, StickyNoteColour } from './constants';
 
-export interface IPrompt {
-  text: string;
+export type ILink = {
+  type: LinkType;
+  id: string;
+  data: string | null;
   playerId: string;
-}
-
-export interface IImage {
-  imageData: string;
-  playerId: string;
-}
-
-export interface ILink {
-  prompt: IPrompt;
-  image: IImage;
-}
+};
 
 export interface IChain {
-  id: string;
+  owner: string;
   links: ILink[];
 }
 
@@ -24,7 +16,11 @@ export interface IPlayer {
   id: string;
   username: string;
   disconnected: boolean;
+  submitted: boolean;
   score: number;
+  votes: number;
+  stickyNoteColour: StickyNoteColour;
+  roundData?: ILink;
 }
 
 export interface IPhase {
@@ -41,29 +37,19 @@ export interface IRoomMetadata {
   roomCode: string;
 }
 
-export interface IRoundData {
-  id: string;
-  data: string;
+export interface IPlayerManagerData {
+  playerMap: Record<string, IPlayer>;
 }
 
 export interface IRoomStateSynced {
   curator: string;
-  chains: IChain[];
-  players: Record<string, IPlayer>;
   round: number;
+  showBuffer: boolean;
   phase: IPhase;
-  submittedPlayers: Record<string, boolean>;
-  roundData: IRoundData[];
-  revealer: string;
+  chainManager: IChainManagerData;
+  playerManager: IPlayerManagerData;
 }
 
-export enum RoomErrorType {
-  TOO_MANY_PLAYERS = 'The room is already full',
-  GAME_ALREADY_STARTED = 'The game has already started',
-  CONFLICTING_USERNAMES = 'That username has already been taken for this room',
-  NOT_ENOUGH_PLAYERS = 'You need at least three players to join this room',
-  ROOM_NOT_FOUND = 'No room with a matching code was found',
-  ROOM_INITIALISATION_ERROR = 'Unable to initialise the room',
-  NETWORK_ERROR = 'Network error',
-  UNKNOWN_ERROR = 'An unknown error occured',
+export interface IChainManagerData {
+  revealedChain: IChain | null;
 }

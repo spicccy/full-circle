@@ -1,0 +1,14 @@
+{
+  "name": "@full-circle/scraper",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "scrape": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "puppeteer": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^2.0.1"
+  }
+}

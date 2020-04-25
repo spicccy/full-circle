@@ -1,12 +1,10 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
-import { Box } from 'grommet';
+import { Box, Heading } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
+import { Card } from 'src/components/Card/Card';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
-import { useRoomMessage } from 'src/hooks/useRoomListeners';
-import { getType } from 'typesafe-actions';
 
 import { Background } from '../components/Background';
 import { DrawingCard } from './DrawingCard';
@@ -14,11 +12,11 @@ import { GuessCard } from './GuessCard';
 import { GuessSubmittedCard } from './GuessSubmittedCard';
 
 interface IGuessPage {
-  drawing: CanvasAction[];
+  drawing?: CanvasAction[];
 }
 
-const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
-  const { room } = useRoom();
+const GuessPage: FunctionComponent<IGuessPage> = ({ drawing = [] }) => {
+  const { room, syncedState } = useRoom();
   const { hasSubmitted } = useRoomHelpers();
 
   const [guess, setGuess] = useState('');
@@ -27,20 +25,21 @@ const GuessPage: FunctionComponent<IGuessPage> = ({ drawing }) => {
     room?.send(submitGuess(guess));
   };
 
-  useRoomMessage((action) => {
-    switch (action.type) {
-      case getType(forceSubmit): {
-        handleSubmit();
-        return;
-      }
-    }
-  });
-
   const renderBody = () => {
     if (hasSubmitted) {
       return (
         <Box width="medium">
           <GuessSubmittedCard guess={guess} />
+        </Box>
+      );
+    }
+
+    if (syncedState?.showBuffer) {
+      return (
+        <Box width="medium">
+          <Card align="center" justify="center">
+            <Heading>Moving on... Too bad</Heading>
+          </Card>
         </Box>
       );
     }

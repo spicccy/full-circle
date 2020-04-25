@@ -1,6 +1,11 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
+import { warn } from '@full-circle/shared/lib/actions/server';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { IRoomMetadata } from '@full-circle/shared/lib/roomState/interfaces';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
+import {
+  IRoomMetadata,
+  RoomErrorType,
+} from '@full-circle/shared/lib/roomState';
 import { Client, Room } from 'colyseus';
 
 import RoomCodeGenerator from './classes/helpers/roomCodeGenerator';
@@ -8,14 +13,14 @@ import RoomState from './classes/roomState';
 import { IClient } from './interfaces';
 
 export class MyRoom extends Room<RoomState, IRoomMetadata> {
-  onCreate(_options: any) {
+  onCreate(options: RoomSettings) {
     // Create an easy 4-letter code for joining rooms
     const roomCode = RoomCodeGenerator.getNewCode();
     this.setMetadata({ roomCode });
     console.log(`MyRoom ${this.roomId} created with code ${roomCode}.`);
 
     // Create a new state instance
-    this.setState(new RoomState(this));
+    this.setState(new RoomState(this, options));
   }
 
   onJoin(client: IClient, options: IJoinOptions) {
@@ -29,15 +34,20 @@ export class MyRoom extends Room<RoomState, IRoomMetadata> {
 
   async onLeave(client: Client, consented: boolean) {
     console.log(`${client.id} left ${this.roomId}.`);
+    // special case to be handled at room level, don't delegate to currState
+
     if (client.id === this.state.curator) {
-      this.disconnect();
+      this.state.curatorDisconnected();
+      this.broadcast(warn(RoomErrorType.CURATOR_DISCONNECTED));
     } else {
-      this.state.onLeave(client, consented);
-      try {
-        await this.allowReconnection(client);
-        this.state.playerReconnected(client.id);
-      } catch (e) {
-        this.state.removePlayer(client.id);
+      const canReconnect = this.state.onLeave(client, consented);
+      if (canReconnect) {
+        try {
+          await this.allowReconnection(client);
+          this.state.setPlayerReconnected(client.id);
+        } catch (e) {
+          this.state.removePlayer(client.id);
+        }
       }
     }
   }

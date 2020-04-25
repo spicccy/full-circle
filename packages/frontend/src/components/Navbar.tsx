@@ -1,3 +1,6 @@
+import 'styled-components/macro';
+
+import { Colour } from '@full-circle/shared/lib/canvas';
 import {
   Box,
   Button,
@@ -8,20 +11,30 @@ import {
   Paragraph,
   ResponsiveContext,
 } from 'grommet';
-import { Multiple } from 'grommet-icons';
+import { Menu } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from 'src/images/fullcircle.png';
+import styled from 'styled-components';
+
+const NavLink = styled(Link)`
+  text-decoration: none;
+  color: ${Colour.DARK_GRAY};
+  :hover {
+    color: ${Colour.BLACK};
+  }
+`;
 
 export const Navbar: FunctionComponent = () => {
   const size = React.useContext(ResponsiveContext);
   const [show, setShow] = useState(false);
+
   return (
-    <Header background="light-2" pad="medium">
+    <Header background="white" pad="medium">
       <Box direction="row" align="center">
-        <Link to="/">
+        <NavLink to="/">
           <img alt="Full Circle" width={50} height={50} src={logo} />
-        </Link>
+        </NavLink>
         {size !== 'small' && (
           <Heading margin="none" level="3">
             Full Circle
@@ -31,11 +44,7 @@ export const Navbar: FunctionComponent = () => {
       {size === 'small' && (
         <Box align="start" justify="center">
           <Box>
-            <Button
-              icon={<Multiple />}
-              label="show"
-              onClick={() => setShow(true)}
-            />
+            <Button icon={<Menu />} onClick={() => setShow(true)} />
             {show && (
               <Layer
                 onEsc={() => setShow(false)}
@@ -44,15 +53,23 @@ export const Navbar: FunctionComponent = () => {
                 <Box background="light-2" fill>
                   <Box flex align="center" justify="center">
                     <Paragraph>
-                      <Link to="/team">Meet the Team</Link>
+                      <NavLink to="/team">Meet the Team</NavLink>
                     </Paragraph>
                     <Paragraph>
-                      <Link to="/instructions">How to Play</Link>
+                      <NavLink to="/instructions">How to Play</NavLink>
                     </Paragraph>
                     <Paragraph>
-                      <Link to="/">Join a Game</Link>
+                      <NavLink
+                        css={{
+                          fontWeight: 'bold',
+                          '&:hover': { color: Colour.ORANGE },
+                        }}
+                        to="/"
+                      >
+                        Join a Game
+                      </NavLink>
                     </Paragraph>
-                    <Button label="close" onClick={() => setShow(false)} />
+                    <Button label="Close" onClick={() => setShow(false)} />
                   </Box>
                 </Box>
               </Layer>
@@ -63,9 +80,14 @@ export const Navbar: FunctionComponent = () => {
 
       {size !== 'small' && (
         <Nav direction="row">
-          <Link to="/team">Meet the Team</Link>
-          <Link to="/instructions">How to Play</Link>
-          <Link to="/">Join a Game</Link>
+          <NavLink to="/team">Meet the Team</NavLink>
+          <NavLink to="/instructions">How to Play</NavLink>
+          <NavLink
+            css={{ fontWeight: 'bold', '&:hover': { color: Colour.ORANGE } }}
+            to="/"
+          >
+            Join a Game
+          </NavLink>
         </Nav>
       )}
     </Header>

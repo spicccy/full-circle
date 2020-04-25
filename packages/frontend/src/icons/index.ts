@@ -7,3 +7,4 @@ export { ReactComponent as ThumbDown } from './thumb-down.svg';
 export { ReactComponent as ThumbUpOutline } from './thumb-up-outline.svg';
 export { ReactComponent as ThumbUp } from './thumb-up.svg';
 export { ReactComponent as Undo } from './undo.svg';
+export { ReactComponent as Whiteboard } from './whiteboard.svg';

@@ -1,14 +1,11 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
-import {
-  sendReconnect,
-  throwServerWarning,
-  warn,
-} from '@full-circle/shared/lib/actions/server';
+import { warn } from '@full-circle/shared/lib/actions/server';
+import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
 
 import { IClient } from '../../interfaces';
+import { throwJoinRoomError } from '../../util/util';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 
@@ -16,18 +13,13 @@ class EndState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
   onJoin = (_client: IClient, options: IJoinOptions) => {
-    const username = options.username;
-    // see if the player had previously been in the lobby
-    const maybeExistingId = this.roomState.attemptReconnection(username);
-    if (maybeExistingId) {
-      // throw an error since we can't message them till they are in the room
-      sendReconnect(maybeExistingId);
-    }
-    throwServerWarning(RoomErrorType.GAME_ALREADY_STARTED);
+    this.roomState.attemptReconnection(formatUsername(options.username));
+    throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
   };
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.roomState.playerDisconnected(client.id);
+    this.roomState.setPlayerDisconnected(client.id);
+    return true;
   };
 
   onReceive = (client: IClient, message: ClientAction) => {

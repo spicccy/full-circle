@@ -1,44 +1,11 @@
-import { Colour } from '@full-circle/shared/lib/canvas';
-import { Box, Button } from 'grommet';
-import React, { FunctionComponent } from 'react';
-import { BaseButton } from 'src/components/BaseButton';
-import { Card } from 'src/components/Card/Card';
-import { ThumbDown, ThumbUp } from 'src/icons';
-import styled from 'styled-components';
-import { useRoom } from 'src/contexts/RoomContext';
 import { revealChain } from '@full-circle/shared/lib/actions/client';
+import { Box, Button, Heading, Paragraph } from 'grommet';
+import React, { FunctionComponent } from 'react';
+import { Card } from 'src/components/Card/Card';
+import { RenderChain } from 'src/components/RenderChain';
+import { useRoom } from 'src/contexts/RoomContext';
 
 import { Background } from '../components/Background';
-
-const DislikeButton = styled(BaseButton)`
-  transition: 0.3s;
-  fill: ${Colour.DARK_GRAY};
-  padding: 16px;
-  border: 4px solid ${Colour.DARK_GRAY};
-  border-radius: 8px;
-
-  margin-right: 32px;
-
-  :hover,
-  :focus {
-    border-color: ${Colour.RED};
-    fill: ${Colour.RED};
-  }
-`;
-
-const LikeButton = styled(BaseButton)`
-  transition: 0.3s;
-  fill: ${Colour.DARK_GRAY};
-  padding: 16px;
-  border: 4px solid ${Colour.DARK_GRAY};
-  border-radius: 8px;
-
-  :hover,
-  :focus {
-    border-color: ${Colour.GREEN};
-    fill: ${Colour.GREEN};
-  }
-`;
 
 const RevealPage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
@@ -47,27 +14,37 @@ const RevealPage: FunctionComponent = () => {
     room?.send(revealChain());
   };
 
-  const display = syncedState?.revealer === room?.sessionId;
+  const isController =
+    syncedState?.chainManager?.revealedChain?.owner === room?.sessionId;
+
+  const chain = syncedState?.chainManager?.revealedChain;
 
   return (
     <Background>
       <Box width="medium">
+        <Card margin="medium" pad="large" align="center" justify="center">
+          {isController ? (
+            <Heading level={5}>
+              You control this chain. Press next to see the next chain.
+            </Heading>
+          ) : null}
+          <Paragraph fill>Tap a prompt or picture to vote for it</Paragraph>
+          {chain ? <RenderChain votable chain={chain} /> : null}
+        </Card>
         <Card pad="large" align="center" justify="center">
-          <Box direction="row" margin={{ bottom: 'medium' }}>
-            <DislikeButton>
-              <ThumbDown />
-            </DislikeButton>
-            <LikeButton>
-              <ThumbUp />
-            </LikeButton>
-          </Box>
-          <Button
-            disabled={!display}
-            onClick={onSubmit}
-            size="large"
-            label="Next"
-            data-testid="nextChain"
-          />
+          {isController ? (
+            <>
+              <Paragraph>
+                Make sure you give everyone enough time to vote.
+              </Paragraph>
+              <Button onClick={onSubmit} size="large" label="Next Chain" />
+            </>
+          ) : (
+            <Paragraph>
+              You're viewing someone else's chain. Wait until they have pressed
+              next.
+            </Paragraph>
+          )}
         </Card>
       </Box>
     </Background>

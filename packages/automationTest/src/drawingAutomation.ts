@@ -1,7 +1,7 @@
 import { BoundingBox, Page } from 'puppeteer';
 
 import { setCurrPage } from '../jest-setup';
-import { screenshotName } from './screenshotAutomation';
+import { compareSnapshot } from './screenshotAutomation';
 
 const drawLine = async (
   playerPage: Page,
@@ -33,13 +33,11 @@ export const drawImage = async (
   await playerPage.click(colourSelector);
   const bBox = await canvas.boundingBox();
   if (bBox != null) {
+    await playerPage.waitFor(1000);
     await drawLine(playerPage, bBox, [1.5, 2, 1.5, 3]);
-    await drawLine(playerPage, bBox, [3, 2, 3, 3]);
-    await drawLine(playerPage, bBox, [1.25, 1.3, 4, 1.3]);
+    await playerPage.waitFor(1000);
   }
-  await playerPage.screenshot({
-    path: screenshotName(snapshot),
-  });
+  await compareSnapshot(playerPage, snapshot);
 
   await playerPage.waitForSelector("[data-testid='submitDrawing']");
   await playerPage.click("[data-testid='submitDrawing']");

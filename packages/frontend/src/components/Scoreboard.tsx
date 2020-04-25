@@ -1,6 +1,7 @@
 import 'styled-components/macro';
 
-import { IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
+import { Colour } from '@full-circle/shared/lib/canvas';
+import { IPlayer } from '@full-circle/shared/lib/roomState';
 import { Box, Grommet, Heading, Text } from 'grommet';
 import React, { FunctionComponent } from 'react';
 
@@ -13,11 +14,11 @@ const Scoreboard: FunctionComponent = () => {
   if (!syncedState) {
     return null;
   }
-  const { players } = syncedState;
+  const players = syncedState.playerManager.playerMap;
 
   const playerScores: IPlayer[] = [];
 
-  for (const id in syncedState.players) {
+  for (const id in syncedState.playerManager.playerMap) {
     const player: IPlayer = players[id];
     playerScores.push(player);
   }
@@ -27,27 +28,50 @@ const Scoreboard: FunctionComponent = () => {
       .sort((a, b) => b.score - a.score)
       .map((player) => {
         return (
-          <div
-            css={{
-              display: 'flex',
-              width: '100%',
-              justifyContent: 'space-between',
-            }}
-          >
+          <>
             <Text>{player.username}</Text>
-            <Text>{player.score}</Text>
-          </div>
+            <Text textAlign="end">{player.score}</Text>
+            <Text textAlign="end">{player.votes}</Text>
+          </>
         );
       });
   };
 
   return (
     <Grommet theme={notepadTheme}>
-      <Box flex width="medium" pad="small" round="small" elevation="medium">
-        <Heading level="3" textAlign="center">
+      <Box
+        flex
+        width="medium"
+        pad="small"
+        round="small"
+        elevation="medium"
+        background="white"
+        border={{
+          color: Colour.BLUE,
+          size: 'medium',
+          side: 'all',
+          style: 'solid',
+        }}
+      >
+        <Heading level="2" textAlign="center">
           Scoreboard
         </Heading>
-        {renderScoreboardRows()}
+        <div
+          css={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr 1fr',
+            paddingBottom: 24,
+          }}
+        >
+          <Text size="large">Player</Text>
+          <Text size="large" textAlign="end">
+            Score
+          </Text>
+          <Text size="large" textAlign="end">
+            Votes
+          </Text>
+          {renderScoreboardRows()}
+        </div>
       </Box>
     </Grommet>
   );

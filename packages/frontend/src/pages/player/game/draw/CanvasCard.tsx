@@ -48,7 +48,6 @@ interface ICanvasCardProps {
   onSubmitDrawing(): void;
 }
 
-// TODO: (Tony) implement redo
 const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
   pen,
   canvasActions,
@@ -87,38 +86,31 @@ const CanvasCard: FunctionComponent<ICanvasCardProps> = ({
   });
 
   return (
-    <Card>
-      <BorderBottom
-        css={{ position: 'relative' }}
-        align="center"
-        justify="center"
-      >
+    <Card css={{ userSelect: 'none' }}>
+      <BorderBottom>
         <Canvas
           pen={pen}
+          placeholder={
+            <Heading
+              level="2"
+              css={{
+                position: 'absolute',
+                opacity: 0.2,
+                pointerEvents: 'none',
+              }}
+            >
+              Draw here
+            </Heading>
+          }
           canvasActions={canvasActions}
           setCanvasActions={setCanvasActions}
         />
-        {isEmpty && (
-          <Heading
-            level="2"
-            css={{
-              position: 'absolute',
-              opacity: 0.2,
-              pointerEvents: 'none',
-            }}
-          >
-            Draw here
-          </Heading>
-        )}
       </BorderBottom>
 
       <Box direction="row" align="center" pad={{ left: '4px', right: '4px' }}>
         <ButtonWrapper title="undo (ctrl-z)" onClick={undo} disabled={isEmpty}>
           <Undo />
         </ButtonWrapper>
-        {/* <ButtonWrapper title="redo (ctrl-y)">
-          <Redo />
-        </ButtonWrapper> */}
         <EraserWrapper
           title="clear (ctrl-d)"
           onClick={clear}

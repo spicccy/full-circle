@@ -6,14 +6,41 @@ const isRef = <TElement>(
   element: RefOrElement<TElement>
 ): element is RefObject<TElement> => 'current' in element;
 
-export const useEventListener = <
-  TElement extends HTMLElement | Document | Window | null,
+function useEventListener<
+  TElement extends Window,
+  TEvent extends keyof WindowEventMap
+>(
+  element: TElement,
+  type: TEvent,
+  listener: (event: WindowEventMap[TEvent]) => any
+): void;
+
+function useEventListener<
+  TElement extends Document,
+  TEvent extends keyof DocumentEventMap
+>(
+  element: TElement,
+  type: TEvent,
+  listener: (event: DocumentEventMap[TEvent]) => any
+): void;
+
+function useEventListener<
+  TElement extends HTMLElement,
   TEvent extends keyof HTMLElementEventMap
 >(
   element: RefOrElement<TElement>,
   type: TEvent,
   listener: (event: HTMLElementEventMap[TEvent]) => any
-) => {
+): void;
+
+function useEventListener<
+  TElement extends HTMLElement | Document | Window | null,
+  TEvent extends keyof HTMLElementEventMap
+>(
+  element: TElement,
+  type: TEvent,
+  listener: (event: HTMLElementEventMap[TEvent]) => any
+) {
   const savedHandler = useRef(listener);
 
   useEffect(() => {
@@ -30,4 +57,6 @@ export const useEventListener = <
 
     return () => innerElement.removeEventListener(type, eventListener);
   }, [type, element]);
-};
+}
+
+export { useEventListener };

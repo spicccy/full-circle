@@ -1,7 +1,7 @@
 import { Page } from 'puppeteer';
 
 import { setCurrPage } from '../jest-setup';
-import { screenshotName } from './screenshotAutomation';
+import { compareSnapshot } from './screenshotAutomation';
 
 export const joinGame = async (
   playerName: string,
@@ -10,16 +10,19 @@ export const joinGame = async (
   isScreenshot: boolean
 ) => {
   setCurrPage(newPage);
-  await newPage.goto('localhost:3000/');
+  await newPage.setViewport({
+    width: 720,
+    height: 1280,
+    deviceScaleFactor: 1,
+  });
+  await newPage.goto('http://localhost:3000');
   await newPage.waitForSelector('[data-testid=playerNameInput]');
   await newPage.click('input[data-testid=playerNameInput]');
   await newPage.type('input[data-testid=playerNameInput]', playerName);
   await newPage.click('input[data-testid=roomCodeInput]');
   await newPage.type('input[data-testid=roomCodeInput]', roomCode);
   if (isScreenshot) {
-    await newPage.screenshot({
-      path: screenshotName('player_login'),
-    });
+    await compareSnapshot(newPage, 'player_login');
   }
   await Promise.all([
     newPage.click('[data-testid=joinRoom]'),
@@ -27,8 +30,6 @@ export const joinGame = async (
   ]);
   await expect(newPage).toMatch('Joined room');
   if (isScreenshot) {
-    await newPage.screenshot({
-      path: screenshotName('player_joined_room.png'),
-    });
+    await compareSnapshot(newPage, 'player_joined_room');
   }
 };

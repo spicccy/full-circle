@@ -1,36 +1,31 @@
-import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
+import { Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import {
-  curatorReveal,
-  displayDrawing,
-  displayPrompt,
-  warn,
-} from '@full-circle/shared/lib/actions/server';
+import { Vote } from '@full-circle/shared/lib/actions/client';
+import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
-  IChain,
   IPlayer,
   IRoomStateSynced,
+  PhaseType,
   RoomErrorType,
-} from '@full-circle/shared/lib/roomState/interfaces';
+} from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
-import { MAX_PLAYERS } from '../constants';
+import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
-import { Allocation, getAllocation } from '../util/sortPlayers/sortPlayers';
+import ChainManager from './managers/chainManager/chainManager';
+import PlayerManager from './managers/playerManager/playerManager';
+import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
-import Chain from './subSchema/chain';
-import Link from './subSchema/link';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-import RoundData from './subSchema/roundData';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -39,7 +34,7 @@ import RoundData from './subSchema/roundData';
 export interface IState {
   onReceive: (client: IClient, message: ClientAction) => void;
   onJoin: (client: IClient, options: IJoinOptions) => void;
-  onLeave: (client: IClient, consented: boolean) => void;
+  onLeave: (client: IClient, consented: boolean) => boolean;
   onClientReady: (clientId: string) => void;
   onStateStart: () => void;
   onStateEnd: () => void;
@@ -55,29 +50,25 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: IPlayer) => RoomErrorType | null;
+  addPlayer: (player: Player) => RoomErrorType | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
+  readonly settings: RoomSettings;
 
   sendAction: (clientID: string, action: ServerAction) => void;
   sendWarning: (clientID: string, warning: RoomErrorType) => void;
-  sendReveal: () => void;
+  revealNext: () => boolean;
 
-  setRevealer: () => void;
-
+  setShowBuffer: (buffering: boolean) => void;
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
   getRound: () => number;
 
-  allocate: () => void;
-  readonly currChains: ArraySchema<Chain>;
-
+  generateChains: (prompts: string[]) => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
-
-  sendCurrDrawings: () => void;
-  sendCurrPrompts: () => void;
+  updateRoundData: () => void;
 
   setDrawState: (duration?: number) => void;
   setGuessState: (duration?: number) => void;
@@ -86,30 +77,31 @@ export interface IRoomStateBackend {
   setLobbyState: () => void;
 
   readonly allPlayersSubmitted: boolean;
-  readonly unsubmittedPlayerIds: string[];
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
-  playerDisconnected: (id: string) => void;
-  playerReconnected: (id: string) => void;
-  attemptReconnection: (id: string) => string | null;
+  setPlayerDisconnected: (id: string) => void;
+  setPlayerReconnected: (id: string) => void;
+  attemptReconnection: (username: string) => void;
+  curatorDisconnected: () => void;
+  curatorRejoined: () => void;
 
   updatePlayerScores: () => void;
+  addVote: (vote: Vote) => void;
 }
-
-export type RoomOptions = {
-  predictableChains: boolean;
-};
 
 class RoomState extends Schema
   implements IState, IRoomStateSynced, IRoomStateBackend {
   currState: IState = new LobbyState(this);
   clock: IClock;
-  options?: RoomOptions;
+  private _settings: RoomSettings;
+  private waitingCuratorRejoin = false;
+  stickyNoteColourManager = new StickyNoteColourManager();
 
-  constructor(private room: IRoom, options?: RoomOptions) {
+  constructor(private room: IRoom, options?: RoomSettings) {
     super();
     this.clock = room.clock;
-    this.options = options;
+    this._settings = options ?? {};
+    this.chainManager = new ChainManager();
   }
 
   //==================================================================================
@@ -121,30 +113,23 @@ class RoomState extends Schema
   @type('string')
   curator = '';
 
-  @type({ map: Player })
-  players = new MapSchema<Player>();
-
-  @type({ map: 'boolean' })
-  submittedPlayers = new MapSchema<boolean>();
-
   @type('number')
   round = 0;
 
   @type(Phase)
   phase = new Phase(PhaseType.LOBBY);
 
-  @type([RoundData])
-  roundData = new ArraySchema<RoundData>();
-
-  @type({ map: 'string' })
-  warnings = new MapSchema<string>();
-
   @type('string')
   revealer = '';
 
-  displayChain = 0;
+  @type('boolean')
+  showBuffer = false;
 
-  chains = new ArraySchema<Chain>();
+  @type(PlayerManager)
+  playerManager = new PlayerManager();
+
+  @type(ChainManager)
+  chainManager = new ChainManager();
 
   // =====================================
   // IRoomStateBackend Api
@@ -165,85 +150,56 @@ class RoomState extends Schema
     return this.room.clients.find((client) => client.id === clientId);
   };
 
+  curatorDisconnected = () => {
+    this.waitingCuratorRejoin = true;
+  };
+
+  curatorRejoined = () => {
+    this.waitingCuratorRejoin = false;
+  };
+
   addPlayer = (player: IPlayer): RoomErrorType | null => {
-    if (this.numPlayers >= MAX_PLAYERS) {
-      return RoomErrorType.TOO_MANY_PLAYERS;
-    }
-
-    for (const id in this.players) {
-      const existingPlayer: Player = this.players[id];
-      if (player.username === existingPlayer.username) {
-        return RoomErrorType.CONFLICTING_USERNAMES;
-      }
-    }
-
-    const { id } = player;
-    this.players[id] = player;
-    this.submittedPlayers[id] = false;
-    return null;
+    return this.playerManager.addPlayer(player);
   };
 
   removePlayer = (playerId: string) => {
-    if (playerId === this.curator) {
-      // TODO: handle closing the room better
-      this.currState = new EndState(this);
-    }
-    delete this.players[playerId];
-    delete this.submittedPlayers[playerId];
+    this.playerManager.removePlayer(playerId);
   };
 
-  getPlayer = (id: string): IPlayer => {
-    return this.players[id];
+  getPlayer = (id: string): IPlayer | undefined => {
+    return this.playerManager.getPlayer(id);
   };
+
+  get players() {
+    return this.playerManager.players;
+  }
 
   get numPlayers() {
-    return Object.keys(this.players).length;
+    return this.playerManager.numPlayers;
   }
 
   get allPlayersSubmitted(): boolean {
-    return objectValues(this.submittedPlayers).every(Boolean);
-  }
-
-  get unsubmittedPlayerIds(): string[] {
-    const ids = [];
-    for (const playerId in this.submittedPlayers) {
-      if (!this.submittedPlayers[playerId]) {
-        ids.push(playerId);
-      }
-    }
-
-    return ids;
+    return this.playerManager.allPlayersSubmitted;
   }
 
   addSubmittedPlayer = (id: string): void => {
-    this.submittedPlayers[id] = true;
+    this.playerManager.addSubmittedPlayer(id);
   };
 
   clearSubmittedPlayers = (): void => {
-    for (const playerId in this.submittedPlayers) {
-      this.submittedPlayers[playerId] = false;
-    }
+    this.playerManager.clearSubmittedPlayers();
   };
 
-  playerDisconnected = (id: string): void => {
-    const player: Player = this.players[id];
-    player.disconnected = true;
+  setPlayerDisconnected = (id: string): void => {
+    this.playerManager.setPlayerDisconnected(id);
   };
 
-  playerReconnected = (id: string): void => {
-    const player: Player = this.players[id];
-    player.disconnected = false;
+  setPlayerReconnected = (id: string): void => {
+    this.playerManager.setPlayerReconnected(id);
   };
 
-  attemptReconnection = (username: string): string | null => {
-    for (const id in this.players) {
-      const player: Player = this.players[id];
-      if (player.username === username && player.disconnected) {
-        return player.id;
-      }
-    }
-
-    return null;
+  attemptReconnection = (username: string) => {
+    this.playerManager.attemptReconnection(username);
   };
 
   // Communication with frontend
@@ -259,30 +215,8 @@ class RoomState extends Schema
     this.sendAction(clientId, warn(warning));
   };
 
-  setRevealer = () => {
-    const itr = this.displayChain;
-    const chains = this.chains;
-    if (itr < chains.length) {
-      this.revealer = chains[itr].id;
-      return;
-    }
-    this.revealer = '';
-  };
-
-  sendReveal = () => {
-    const curator = this.curator;
-    const itr = this.displayChain++;
-    if (itr < this.chains.length) {
-      const chain = this.chains[itr];
-      const links = chain.links;
-      const payload: IChain = {
-        id: chain.id,
-        links: links.map((val) => {
-          return val.link;
-        }),
-      };
-      this.sendAction(curator, curatorReveal(payload));
-    }
+  revealNext = () => {
+    return this.chainManager.revealNext();
   };
 
   incrementRound = () => {
@@ -297,139 +231,54 @@ class RoomState extends Schema
     this.phase = phase;
   };
 
-  // ===========================================================================
-  // Chain management
-  // TODO: refactor chain management into its own class (SRP)
-  // ===========================================================================
-  get currChains() {
-    return this.chains;
+  get settings() {
+    return this._settings;
   }
 
-  allocate = () => {
-    this.chains = new ArraySchema<Chain>();
-    const allocation = getAllocation(
-      this.options?.predictableChains ? Allocation.ORDERED : Allocation.RAND
-    );
-    const ids = objectValues(this.players).map((val) => val.id);
-    const chainOrder = allocation(ids);
-    if (!chainOrder) return;
-    this.setChains(chainOrder);
+  setShowBuffer = (show: boolean) => {
+    this.showBuffer = show;
   };
 
-  setChains = (chainOrder: string[][]) => {
-    const somePrompts = [
-      'cat',
-      'dog',
-      'mouse',
-      'turd',
-      'chicken',
-      'computer',
-      'p90x',
-      'car',
-      'screaming rock',
-      'a rockin wave',
-    ];
-    let i = 0;
-    for (const currChain of chainOrder) {
-      const owner = currChain[0];
-      const newChain = new Chain(owner);
-      const numLinks = currChain.length;
-      newChain.addLink(new Link(owner, ''));
-      for (let j = 1; j < numLinks - 1; j += 2) {
-        const guesser = currChain[j];
-        const drawer = currChain[j + 1];
-        newChain.addLink(new Link(drawer, guesser));
-      }
-      newChain.links[0].prompt.setText(somePrompts[i++]);
-      this.chains.push(newChain);
-    }
+  // ===========================================================================
+  // Chain management
+  // ===========================================================================
+  generateChains = (initialPrompts: string[]) => {
+    this.chainManager.generateChains(
+      objectValues(this.players),
+      initialPrompts,
+      this._settings
+    );
   };
 
   storeGuess = (id: string, guess: string): boolean => {
-    const round = this.round;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const prompt = chain.getLinks[round].prompt;
-      if (prompt.playerId === id) {
-        prompt.setText(guess);
-        return true;
-      }
-    }
-    return false;
+    return this.chainManager.storeGuess(id, guess, this.round);
   };
 
   storeDrawing = (id: string, drawing: CanvasAction[]): boolean => {
-    const round = this.round;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const image = chain.getLinks[round - 1].image;
-      if (image.playerId === id) {
-        image.setImage(JSON.stringify(drawing));
-        return true;
-      }
-    }
-    return false;
+    return this.chainManager.storeDrawing(id, drawing, this.round);
   };
 
-  sendCurrPrompts = () => {
-    this.roundData = new ArraySchema<RoundData>();
-    const round = this.round - 1;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const data = chain.getLinks[round].prompt.text;
-      const id = chain.getLinks[round].image.playerId;
-      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
-      this.sendAction(id, displayPrompt(data));
-    }
-  };
+  get chains() {
+    return this.chainManager.chains;
+  }
 
-  sendCurrDrawings = () => {
-    this.roundData = new ArraySchema<RoundData>();
-    const round = this.round - 1;
-    const chains = this.chains;
-    for (const chain of chains) {
-      const data = chain.getLinks[round].image.imageData;
-      const id = chain.getLinks[round + 1].prompt.playerId;
-      this.roundData.push(new RoundData(id, data)); // TODO: get rid of, kept for debugging
-      this.sendAction(id, displayDrawing(data));
-    }
+  updateRoundData = () => {
+    this.playerManager.updateRoundData(this.chains, this.round);
   };
 
   updatePlayerScores = () => {
-    // reset scores so this function is idempotent
-    for (const id in this.players) {
-      (this.players[id] as Player).score = 0;
-    }
+    this.playerManager.updatePlayerScores(this.chains);
+  };
 
-    for (const chain of this.chains) {
-      for (let i = 1; i < chain.links.length; i++) {
-        if (
-          chain.links[i].prompt.text.toLowerCase().trim() ===
-          chain.links[i - 1].prompt.text.toLowerCase().trim()
-        ) {
-          const goodDrawer = chain.links[i - 1].image.playerId;
-          const correctGuesser = chain.links[i].prompt.playerId;
-          (this.players[correctGuesser] as Player).score++;
-          (this.players[goodDrawer] as Player).score++;
-        }
-      }
-    }
+  addVote = (vote: Vote) => {
+    this.playerManager.addVote(vote);
   };
 
   // ===========================================================================
   // Game state management
   // ===========================================================================
   get gameIsOver() {
-    // TODO: implement checking of the room's configured round length
-    let phasesElapsed = this.round * 2;
-    if (this.phase.phaseType === PhaseType.GUESS) {
-      phasesElapsed += 1;
-    }
-    if (phasesElapsed > this.numPlayers) {
-      return true;
-    }
-
-    return false;
+    return this.round === this.numPlayers;
   }
 
   // State-transition helpers
@@ -476,11 +325,17 @@ class RoomState extends Schema
   };
 
   onJoin = (client: IClient, options: IJoinOptions) => {
-    this.currState.onJoin(client, options);
+    if (options.username === CURATOR_USERNAME && this.waitingCuratorRejoin) {
+      this.setCurator(client.id);
+      this.curatorRejoined();
+      this.sendAction(client.id, becomeCurator());
+    } else {
+      this.currState.onJoin(client, options);
+    }
   };
 
   onLeave = (client: IClient, consented: boolean) => {
-    this.currState.onLeave(client, consented);
+    return this.currState.onLeave(client, consented);
   };
 
   onStateStart = () => {

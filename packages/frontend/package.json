@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
+    "start:ci": "react-scripts start CI= true --watchAll=false",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test",
@@ -29,6 +30,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-toast-notifications": "^2.4.0",
+    "react-transition-group": "^4.3.0",
     "styled-components": "^5.0.1",
     "tiny-invariant": "^1.1.0"
   },

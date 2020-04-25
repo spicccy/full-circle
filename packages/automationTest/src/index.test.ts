@@ -1,23 +1,31 @@
+import fetch from 'node-fetch';
+
+import { setCurrPage } from '../jest-setup';
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
 import { revealChain } from './revealAutomation';
-import { changeDir, screenshotName } from './screenshotAutomation';
+import { changeDir, compareSnapshot } from './screenshotAutomation';
 
 const pageList = [page];
+const roomCode = '8722';
 
 describe('Full Circle', () => {
   beforeAll(async () => {
     jest.setTimeout(200000);
-    await page.goto('localhost:3000/');
+    await fetch('http://localhost:2567/test-reset');
+    await page.setViewport({
+      width: 1366,
+      height: 768,
+      deviceScaleFactor: 1,
+    });
+    await page.goto('http://localhost:3000');
   });
 
   it('should display the login page with links to join/create a room', async () => {
     await expect(page).toMatch('Full Circle');
     await expect(page).toMatch('OR create a new game here');
-    await page.screenshot({
-      path: screenshotName('login_page.png'),
-    });
+    await compareSnapshot(page, 'login_page');
   });
 
   it('should successfully navigate to the room creation page', async () => {
@@ -27,9 +35,7 @@ describe('Full Circle', () => {
       page.waitForNavigation(),
     ]);
     await expect(page).toMatch('Create a Room');
-    await page.screenshot({
-      path: screenshotName('home_page.png'),
-    });
+    await compareSnapshot(page, 'home_page');
   });
 
   it('should be able to successfully create a room', async () => {
@@ -39,38 +45,29 @@ describe('Full Circle', () => {
       page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
     await expect(page).toMatch('Room');
-    await page.screenshot({
-      path: screenshotName('lobby_no_players.png'),
-    });
+    await compareSnapshot(page, 'lobby_no_players');
   });
 
   it('should be able to join the room with 3 other browser instances', async () => {
-    await page.waitForXPath("//h3[@data-testid='roomID']");
-    const [element] = await page.$x("//h3[@data-testid='roomID']");
-    const codeString = await page.evaluate(
-      (element) => element.textContent,
-      element
-    );
-    const roomCode = codeString.replace('Room: ', '');
     const context1 = await browser.createIncognitoBrowserContext();
     const playerPage1 = await context1.newPage();
     pageList.push(playerPage1);
-    await joinGame('Player 1', roomCode, playerPage1, true);
+    await joinGame('Player1', roomCode, playerPage1, true);
     const context2 = await browser.createIncognitoBrowserContext();
     const playerPage2 = await context2.newPage();
     pageList.push(playerPage2);
-    await joinGame('Player 2', roomCode, playerPage2, false);
+    await joinGame('Player2', roomCode, playerPage2, false);
     const context3 = await browser.createIncognitoBrowserContext();
     const playerPage3 = await context3.newPage();
     pageList.push(playerPage3);
-    await joinGame('Player 3', roomCode, playerPage3, false);
-    await expect(page).toMatch('Player 1');
-    await expect(page).toMatch('Player 2');
-    await expect(page).toMatch('Player 3');
-    await page.screenshot({
-      path: screenshotName('lobby_with_player.png'),
-    });
+    await joinGame('Player3', roomCode, playerPage3, false);
+    setCurrPage(page);
+    await expect(page).toMatch('player1');
+    await expect(page).toMatch('player2');
+    await expect(page).toMatch('player3');
+    await compareSnapshot(page, 'lobby_with_player');
   });
+
   it('should be able to play the first draw/guess rounds successfully', async () => {
     changeDir('draw_guess_round_1');
     await page.waitForSelector("[data-testid='startGame']");
@@ -89,12 +86,5 @@ describe('Full Circle', () => {
     await drawImage(pageList[1], 'drawing_player_1', 'green (t)');
     await drawImage(pageList[2], 'drawing_player_2', 'purple (y)');
     await drawImage(pageList[3], 'drawing_player_3', 'orange (d)');
-  });
-
-  it('should be able to transition to the reveal phase where players reveal their chains', async () => {
-    changeDir('reveal_screen');
-    await revealChain(pageList[1], 'reveal_screen_player_1');
-    await revealChain(pageList[2], 'reveal_screen_player_2');
-    await revealChain(pageList[3], 'reveal_screen_player_3');
   });
 });

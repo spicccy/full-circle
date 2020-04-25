@@ -1,4 +1,4 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 
 import { IRoom } from '../../../interfaces';
 import { addPlayers, mockRoom } from '../../helpers/testHelper';
@@ -26,6 +26,6 @@ describe('Draw State', () => {
   it('advances to guess phase', () => {
     roomState.advanceState();
     expect(roomState.phase.phaseType).toBe(PhaseType.GUESS);
-    expect(roomState.round).toBe(1);
+    expect(roomState.round).toBe(2);
   });
 });

@@ -32,7 +32,7 @@ describe('The App renders routes correctly', () => {
 
     await waitForDomChange();
 
-    const titleElement = getByText('Create a Room');
+    const titleElement = getByText('Choose Room Settings');
     expect(titleElement).toBeInTheDocument();
   });
 

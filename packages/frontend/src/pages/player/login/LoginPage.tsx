@@ -1,5 +1,6 @@
 import { clientError } from '@full-circle/shared/lib/actions/client';
 import { reconnect, warn } from '@full-circle/shared/lib/actions/server';
+import { formatUsername } from '@full-circle/shared/lib/helpers';
 import { Box, Text } from 'grommet';
 import React, {
   FunctionComponent,
@@ -122,7 +123,7 @@ const LoginPage: FunctionComponent = () => {
           name={name}
           setName={(name: string) => {
             dispatchError({ type: 'clearError', on: 'username' });
-            setName(name);
+            setName(formatUsername(name));
           }}
           roomCode={roomCode}
           setRoomCode={(code: string) => {

@@ -1,4 +1,4 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState/constants';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { mocked } from 'ts-jest/utils';
 
 import { addPlayers, mockRoom } from '../helpers/testHelper';
@@ -80,43 +80,10 @@ describe('Room state', () => {
       expect(state.round).toBe(1);
 
       state.advanceState();
-      expect(state.round).toBe(1);
+      expect(state.round).toBe(2);
 
       state.advanceState();
-      expect(state.round).toBe(2);
-    });
-  });
-
-  describe('chain allocation', () => {
-    it('can generate chain correctly', () => {
-      const roomState = new RoomState(mockRoom);
-      const mockedVal = [
-        ['a', 'b', 'c', 'd', 'e'],
-        ['e', 'd', 'b', 'a', 'c'],
-      ];
-      mocked(getAllocation).mockReturnValue(() => {
-        return mockedVal;
-      });
-
-      roomState.allocate();
-      const chains = roomState.currChains;
-      const chain1 = chains[0];
-      expect(chain1.id).toBe('a');
-      expect(chain1.links[0].image.playerId).toBe('a');
-      expect(chain1.links[0].prompt.playerId).toBe('');
-      expect(chain1.links[1].image.playerId).toBe('c');
-      expect(chain1.links[1].prompt.playerId).toBe('b');
-      expect(chain1.links[2].image.playerId).toBe('e');
-      expect(chain1.links[2].prompt.playerId).toBe('d');
-
-      const chain2 = chains[1];
-      expect(chain2.id).toBe('e');
-      expect(chain2.links[0].image.playerId).toBe('e');
-      expect(chain2.links[0].prompt.playerId).toBe('');
-      expect(chain2.links[1].image.playerId).toBe('b');
-      expect(chain2.links[1].prompt.playerId).toBe('d');
-      expect(chain2.links[2].image.playerId).toBe('c');
-      expect(chain2.links[2].prompt.playerId).toBe('a');
+      expect(state.round).toBe(3);
     });
   });
 
@@ -169,63 +136,61 @@ describe('Room state', () => {
       });
     });
 
-    it('the image in the correct link', () => {
-      roomState.allocate();
-      roomState.incrementRound();
-      roomState.storeGuess('b', 'hello');
-      expect(roomState.currChains[0].getLinks[1].prompt.text).toEqual('hello');
-    });
-
     it('the prompt in the correct link', () => {
-      roomState.allocate();
-      roomState.incrementRound();
-      const val: any = { data: 'hello' };
-      roomState.storeDrawing('a', val);
-      expect(roomState.currChains[0].getLinks[0].image.imageData).toEqual(
+      roomState.advanceState();
+      roomState.storeDrawing('a', { data: 'hello' } as any);
+      expect(roomState.chains[0].links[1].playerId).toEqual('a');
+      expect(roomState.chains[0].links[1].data).toEqual(
         JSON.stringify({ data: 'hello' })
       );
     });
+
+    it('the image in the correct link', () => {
+      roomState.advanceState();
+      roomState.advanceState();
+      roomState.storeGuess('b', 'hello');
+      expect(roomState.chains[0].links[2].playerId).toEqual('b');
+      expect(roomState.chains[0].links[2].data).toEqual('hello');
+    });
   });
 
-  describe('should send the correct round', () => {
+  describe('should updates round data', () => {
     let roomState: RoomState;
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom);
+      addPlayers(roomState, 3);
       const mockedVal = [
-        ['a', 'b', 'c', 'd', 'e'],
-        ['e', 'd', 'b', 'a', 'c'],
+        ['0_id', '1_id', '2_id'],
+        ['1_id', '2_id', '0_id'],
+        ['2_id', '0_id', '1_id'],
       ];
       mocked(getAllocation).mockReturnValue(() => {
         return mockedVal;
       });
-      const testData1: any = { lol: 'iunno' };
 
-      roomState.allocate();
-      roomState.incrementRound();
-      roomState.storeDrawing('a', testData1);
-      roomState.storeDrawing('e', testData1);
-      roomState.storeGuess('b', 'prompt1');
-      roomState.storeGuess('d', 'prompt1');
+      roomState.advanceState();
+      roomState.storeDrawing('0_id', { lol: '1' } as any);
+      roomState.storeDrawing('1_id', { lol: '2' } as any);
     });
 
-    it('image data', () => {
-      roomState.round = 1;
-      roomState.sendCurrDrawings();
-      expect(roomState.roundData[0].id).toBe('b');
-      expect(roomState.roundData[1].id).toBe('d');
-      expect(roomState.roundData[0].data).toBe('{"lol":"iunno"}');
-      expect(roomState.roundData[1].data).toBe('{"lol":"iunno"}');
+    it.only('image data', () => {
+      roomState.advanceState();
+      expect(roomState.getPlayer('1_id')?.roundData?.data).toEqual(
+        JSON.stringify({ lol: '1' })
+      );
+      expect(roomState.getPlayer('2_id')?.roundData?.data).toEqual(
+        JSON.stringify({ lol: '2' })
+      );
     });
 
     it('prompt data', () => {
-      roomState.round = 1;
-      roomState.incrementRound();
-      roomState.sendCurrPrompts();
-      expect(roomState.roundData[0].id).toBe('c');
-      expect(roomState.roundData[1].id).toBe('b');
-      expect(roomState.roundData[0].data).toBe('prompt1');
-      expect(roomState.roundData[1].data).toBe('prompt1');
+      roomState.advanceState();
+      roomState.storeGuess('1_id', 'prompt1');
+      roomState.storeGuess('2_id', 'prompt2');
+      roomState.advanceState();
+      expect(roomState.getPlayer('2_id')?.roundData?.data).toEqual('prompt1');
+      expect(roomState.getPlayer('0_id')?.roundData?.data).toEqual('prompt2');
     });
   });
 });

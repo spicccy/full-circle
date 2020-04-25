@@ -1,25 +1,19 @@
-import { ArraySchema, Schema } from '@colyseus/schema';
-import { IChain } from '@full-circle/shared/lib/roomState/interfaces';
+import { ArraySchema, Schema, type } from '@colyseus/schema';
+import { IChain } from '@full-circle/shared/lib/roomState';
 
 import Link from './link';
 
-class Chain extends Schema implements IChain {
-  id = '';
+export class Chain extends Schema implements IChain {
+  @type('string')
+  owner: string;
 
-  links = new ArraySchema<Link>();
+  @type([Link])
+  links: ArraySchema<Link>;
 
-  constructor(id: string) {
+  constructor(owner: string, links: Link[]) {
     super();
-    this.id = id;
-  }
-
-  addLink = (newLink: Link) => {
-    this.links.push(newLink);
-  };
-
-  get getLinks() {
-    return this.links;
+    this.owner = owner;
+    this.links = new ArraySchema<Link>();
+    links.forEach((link) => this.links.push(link));
   }
 }
-
-export default Chain;

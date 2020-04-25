@@ -1,5 +1,5 @@
-import { RoomErrorType } from '@full-circle/shared/lib/roomState/interfaces';
-import { Box, Button, Heading } from 'grommet';
+import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { Box, Heading } from 'grommet';
 import { Home } from 'grommet-icons';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
@@ -7,6 +7,7 @@ import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import { LinkButton } from 'src/components/Link/LinkButton';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
 import { useRoomLeave } from 'src/hooks/useRoomListeners';
 import {
   getStorage,
@@ -20,6 +21,7 @@ import { Background } from './components/Background';
 export const ReconnectManager: FunctionComponent = ({ children }) => {
   const {
     room,
+    syncedState,
     isLoading,
     roomError,
     reconnectToRoomById,
@@ -39,6 +41,8 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
       setReconnecting(false);
     }
   };
+
+  useConfirmLeave();
 
   useEffect(() => {
     if (room) {
@@ -66,7 +70,7 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
         }
 
         default: {
-          addToast("Room doesn't exist anymore", { appearance: 'error' });
+          addToast(roomError.payload, { appearance: 'error' });
           setReconnecting(false);
           removeStorage(LocalStorageKey.SESSION_ID);
           removeStorage(LocalStorageKey.ROOM_ID);
@@ -77,11 +81,12 @@ export const ReconnectManager: FunctionComponent = ({ children }) => {
 
   // Add current room ids to localstorage
   useEffect(() => {
-    if (room) {
+    const currentPhase = syncedState?.phase.phaseType;
+    if (room && currentPhase && currentPhase !== PhaseType.LOBBY) {
       setStorage(LocalStorageKey.SESSION_ID, room.sessionId);
       setStorage(LocalStorageKey.ROOM_ID, room.id);
     }
-  }, [room]);
+  }, [room, syncedState]);
 
   useRoomLeave((code) => {
     switch (code) {

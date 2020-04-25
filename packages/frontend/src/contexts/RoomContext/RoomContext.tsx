@@ -2,11 +2,12 @@ import { ServerAction } from '@full-circle/shared/lib/actions';
 import { clientError } from '@full-circle/shared/lib/actions/client';
 import { ROOM_NAME } from '@full-circle/shared/lib/constants';
 import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IRoomMetadata,
   IRoomStateSynced,
   RoomErrorType,
-} from '@full-circle/shared/lib/roomState/interfaces';
+} from '@full-circle/shared/lib/roomState';
 import React, {
   createContext,
   FunctionComponent,
@@ -34,7 +35,7 @@ type RemoveListener = () => void;
 
 interface IRoomContext {
   syncedState?: IRoomStateSynced;
-  createAndJoinRoom(): Promise<RoomState>;
+  createAndJoinRoom(roomSettings?: RoomSettings): Promise<RoomState>;
   joinRoomByCode(roomId: string, options: IJoinOptions): Promise<RoomState>;
   reconnectToRoomByCode(roomId: string, id: string): Promise<RoomState>;
   reconnectToRoomById(roomId: string, id: string): Promise<RoomState>;
@@ -77,29 +78,32 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
     setRoomState(empty());
   }, []);
 
-  const createAndJoinRoom = useCallback(async (): Promise<RoomState> => {
-    setRoomState(loading());
+  const createAndJoinRoom = useCallback(
+    async (options?: RoomSettings): Promise<RoomState> => {
+      setRoomState(loading());
 
-    try {
-      const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME);
-      const roomCode = await getRoomCode(room.id);
-      if (!roomCode) {
-        const roomState = fail(
-          clientError(RoomErrorType.ROOM_INITIALISATION_ERROR)
-        );
+      try {
+        const room = await colyseus.create<RoomStateWithFn>(ROOM_NAME, options);
+        const roomCode = await getRoomCode(room.id);
+        if (!roomCode) {
+          const roomState = fail(
+            clientError(RoomErrorType.ROOM_INITIALISATION_ERROR)
+          );
+          setRoomState(roomState);
+          return roomState;
+        }
+
+        const roomState = success(room, roomCode);
+        setRoomState(roomState);
+        return roomState;
+      } catch (e) {
+        const roomState = fail(parseServerError(e));
         setRoomState(roomState);
         return roomState;
       }
-
-      const roomState = success(room, roomCode);
-      setRoomState(roomState);
-      return roomState;
-    } catch (e) {
-      const roomState = fail(parseServerError(e));
-      setRoomState(roomState);
-      return roomState;
-    }
-  }, [colyseus, getRoomCode]);
+    },
+    [colyseus, getRoomCode]
+  );
 
   const joinRoomByCode = useCallback(
     async (roomCode: string, options: IJoinOptions): Promise<RoomState> => {
@@ -133,7 +137,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
       try {
         const roomId = await getRoomId(roomCode);
         if (!roomId) {
-          const roomState = fail(clientError(RoomErrorType.ROOM_NOT_FOUND));
+          const roomState = fail(clientError(RoomErrorType.RECONNECT_ERROR));
           setRoomState(roomState);
           return roomState;
         }
@@ -163,9 +167,7 @@ export const RoomProvider: FunctionComponent = ({ children }) => {
 
         const roomCode = await getRoomCode(roomId);
         if (!roomCode) {
-          const roomState = fail(
-            clientError(RoomErrorType.ROOM_INITIALISATION_ERROR)
-          );
+          const roomState = fail(clientError(RoomErrorType.RECONNECT_ERROR));
           setRoomState(roomState);
           return roomState;
         }

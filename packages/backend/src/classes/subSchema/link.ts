@@ -1,32 +1,25 @@
-import { Schema } from '@colyseus/schema';
-import { ILink } from '@full-circle/shared/lib/roomState/interfaces';
-
-import Image from './image';
-import Prompt from './prompt';
+import { Schema, type } from '@colyseus/schema';
+import { ILink, LinkType } from '@full-circle/shared/lib/roomState';
 
 class Link extends Schema implements ILink {
-  _prompt: Prompt;
-  _image: Image;
+  @type('string')
+  type: LinkType;
 
-  constructor(drawId: string, guessId: string) {
+  @type('string')
+  id: string;
+
+  @type('string')
+  data: string | null;
+
+  @type('string')
+  playerId: string;
+
+  constructor(link: ILink) {
     super();
-    this._prompt = new Prompt(guessId);
-    this._image = new Image(drawId);
-  }
-
-  get prompt() {
-    return this._prompt;
-  }
-
-  get image() {
-    return this._image;
-  }
-
-  get link() {
-    return {
-      prompt: this._prompt.prompt,
-      image: this._image.image,
-    };
+    this.type = link.type;
+    this.id = link.id;
+    this.data = link.data;
+    this.playerId = link.playerId;
   }
 }
 
