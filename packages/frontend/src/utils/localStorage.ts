@@ -1,13 +1,16 @@
 export enum LocalStorageKey {
-  USERNAME = 'username',
-  SESSION_ID = 'session_id',
-  ROOM_ID = 'room_id',
+  SESSION_DATA = 'SESSION_DATA',
+}
+
+interface ISessionData {
+  roomCode: string;
+  roomId: string;
+  clientId: string;
+  isCurator: boolean;
 }
 
 type LocalStorageMap = {
-  [LocalStorageKey.USERNAME]: string;
-  [LocalStorageKey.ROOM_ID]: string;
-  [LocalStorageKey.SESSION_ID]: string;
+  [LocalStorageKey.SESSION_DATA]: ISessionData;
 };
 
 export const getStorage = <TKey extends LocalStorageKey>(
@@ -15,10 +18,12 @@ export const getStorage = <TKey extends LocalStorageKey>(
 ): LocalStorageMap[TKey] | null => {
   try {
     const json = localStorage.getItem(key);
-    return json ? JSON.parse(json) : null;
+    const data = json ? JSON.parse(json) : null;
+    console.log(`[localStorage] get ${key}`, data);
+    return data;
   } catch (e) {
     localStorage.removeItem(key);
-    console.error(`Failed to retrieve ${key}: ${e.message}`);
+    console.error(`[localStorage] get failed ${key}`, e);
     return null;
   }
 };
@@ -28,12 +33,14 @@ export const setStorage = <TKey extends LocalStorageKey>(
   value: LocalStorageMap[TKey]
 ) => {
   try {
+    console.log(`[localStorage] set ${key}`, value);
     localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.error(`Failed to set ${key}: ${e.message}`);
+    console.error(`[localStorage] set failed ${key}`, e);
   }
 };
 
 export const removeStorage = (key: LocalStorageKey) => {
+  console.log(`[localStorage] remove ${key}`);
   localStorage.removeItem(key);
 };

@@ -11,15 +11,12 @@ export const mockClock: IClock = {
 export const mockRoom: IRoom = {
   clock: mockClock,
   send: jest.fn(),
+  broadcast: jest.fn(),
   clients: [],
 };
 
 export const mockClient: IClient = {
   id: '',
-  sessionId: '',
-  close: () => {
-    return;
-  },
 };
 
 export const createTestPlayer = (num: number): Player => {
@@ -28,6 +25,6 @@ export const createTestPlayer = (num: number): Player => {
 
 export const addPlayers = (roomState: RoomState, nPlayers: number) => {
   for (let i = 0; i < nPlayers; i++) {
-    roomState.addPlayer(createTestPlayer(i));
+    roomState.addPlayer(`${i}_id`, `${i}_username`);
   }
 };

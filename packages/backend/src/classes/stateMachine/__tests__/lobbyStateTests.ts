@@ -1,16 +1,21 @@
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { joinGame, startGame } from '@full-circle/shared/lib/actions/client';
+import { joinGameError } from '@full-circle/shared/lib/actions/server';
+import { Category } from '@full-circle/shared/lib/prompts';
+import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
+import { Mutable } from '@full-circle/shared/lib/testHelpers';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 import { mocked } from 'ts-jest/utils';
 
-import { MAX_PLAYERS } from '../../../constants';
-import { IClient, IRoom } from '../../../interfaces';
-import { addPlayers, mockClient, mockRoom } from '../../helpers/testHelper';
-import RoomState, { IState } from '../../roomState';
+import { IClient } from '../../../interfaces';
+import { mockClient } from '../../helpers/testHelper';
+import { PromptManager } from '../../managers/promptManager/promptManager';
+import { IRoomStateBackend } from '../../roomState';
+import Phase from '../../subSchema/phase';
 import LobbyState from '../lobbyState';
-import { getAllocation } from './../../../util/sortPlayers/sortPlayers';
 
-jest.mock('./../../../util/sortPlayers/sortPlayers');
+jest.mock('../../managers/promptManager/promptManager');
+
+jest.useFakeTimers();
 
 export const testCurator: IClient = partialMock<IClient>({
   ...mockClient,
@@ -22,137 +27,142 @@ export const testClient: IClient = partialMock<IClient>({
   id: 'player',
 });
 
+const mockRoomState = partialMock<IRoomStateBackend>({
+  numPlayers: 0,
+  getCurator: jest.fn().mockReturnValue(testCurator.id),
+  setCurator: jest.fn(),
+  setCuratorDisconnected: jest.fn(),
+  setCuratorReconnected: jest.fn(),
+  addPlayer: jest.fn(),
+  removePlayer: jest.fn(),
+  sendAction: jest.fn(),
+  sendWarning: jest.fn(),
+  setDrawState: jest.fn(),
+  setPhase: jest.fn(),
+  settings: {
+    promptPack: Category.GENERIC,
+    predictableRandomness: true,
+  },
+  generateChains: jest.fn(),
+  incrementRound: jest.fn(),
+});
+
+const mockGetPrompts = jest.fn().mockReturnValue(['abc']);
+mocked(PromptManager).mockImplementation(() => {
+  return partialMock({ getInitialPrompts: mockGetPrompts });
+});
+
 describe('Lobby State', () => {
-  let room: IRoom;
-  let roomState: RoomState;
-  let lobbyState: IState;
+  let roomState: Mutable<IRoomStateBackend>;
+  let lobbyState: LobbyState;
 
   beforeEach(() => {
-    room = mockRoom;
-    roomState = new RoomState(room);
-    roomState.setCurator('curator');
+    jest.clearAllMocks();
+    roomState = { ...mockRoomState };
+    lobbyState = new LobbyState(roomState);
+  });
 
-    addPlayers(roomState, 3);
+  describe('onJoin', () => {
+    it('sets curator if there is none', () => {
+      roomState.getCurator = jest.fn().mockReturnValue('');
 
-    lobbyState = roomState.currState;
-    const mockedVal = [
-      ['a', 'b', 'c', 'd', 'e'],
-      ['e', 'd', 'b', 'a', 'c'],
-    ];
+      lobbyState.onJoin(testCurator);
+      expect(roomState.setCurator).toBeCalledWith(testCurator.id);
+    });
 
-    mocked(getAllocation).mockReturnValue(() => {
-      return mockedVal;
+    it('does not set curator if there is one', () => {
+      lobbyState.onJoin(testCurator);
+      expect(roomState.setCurator).not.toBeCalled();
     });
   });
 
-  it('has a matching phaseType', () => {
-    expect(roomState.phase.phaseType).toBe(PhaseType.LOBBY);
-  });
-
-  it('has no timer', () => {
-    expect(roomState.phase.phaseEnd).toBeFalsy();
-  });
-
-  it('transitions to draw state', () => {
-    lobbyState.advanceState();
-    expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
-  });
-
-  it('can add a curator', () => {
-    const options: IJoinOptions = { username: 'curatorUsername' };
-    lobbyState.onJoin(testCurator, options);
-    expect(roomState.curator).toBe('curator');
-  });
-
-  it('will wait for a curator to advance to the next state', () => {
-    roomState.setCurator('curator');
-    roomState.onClientReady('curator');
-    expect(roomState.phase.phaseType).toBe(PhaseType.DRAW);
-  });
-
-  it('can add a player', () => {
-    roomState.setCurator('curator');
-
-    const lobbyState = new LobbyState(roomState);
-    const option: IJoinOptions = { username: 'username' };
-    lobbyState.onJoin(testClient, option);
-    expect(roomState.players[testClient.id].username).toBe('username');
-  });
-
-  it('will not allow more than MAX players to join', () => {
-    const roomState = new RoomState(room);
-    roomState.setCurator('curatorId');
-
-    const mockCloseJoinedPlayers = jest.fn();
-
-    const lobbyState = new LobbyState(roomState);
-
-    for (let i = 0; i < MAX_PLAYERS; i++) {
-      lobbyState.onJoin(
-        partialMock<IClient>({
-          id: `player${i}`,
-          sessionId: 'abcd',
-          close: mockCloseJoinedPlayers,
-        }),
-        { username: `${i}_username` }
-      );
-    }
-    expect(mockCloseJoinedPlayers).toBeCalledTimes(0);
-
-    const mockCloseFailPlayer = jest.fn();
-
-    const failPlayer: IClient = partialMock<IClient>({
-      id: '',
-      sessionId: '',
-      close: mockCloseFailPlayer,
+  describe('onLeave', () => {
+    it('if curator, sets curator to be disconnected', () => {
+      lobbyState.onLeave(testCurator, true);
+      expect(roomState.setCuratorDisconnected).toBeCalled();
     });
 
-    expect(() => {
-      lobbyState.onJoin(failPlayer, { username: 'new_username' });
-    }).toThrow();
+    it('if player, removes player', () => {
+      lobbyState.onLeave(testClient, true);
+      expect(roomState.removePlayer).toBeCalledWith(testClient.id);
+    });
   });
 
-  it('will not allow duplicate players to join', () => {
-    const roomState = new RoomState(room);
+  describe('onReconnect', () => {
+    it('if curator, sets curator to be reconnected', () => {
+      lobbyState.onReconnect(testCurator);
+      expect(roomState.setCuratorReconnected).toBeCalled();
+    });
+  });
 
-    const lobbyState = new LobbyState(roomState);
+  describe('onReceive', () => {
+    describe('startGame', () => {
+      it('sends warning if less than 3 people', () => {
+        roomState.numPlayers = 2;
 
-    lobbyState.onJoin(
-      partialMock<IClient>({
-        id: `curator`,
-        sessionId: 'abcd',
-      }),
-      { username: '' }
-    );
+        lobbyState.onReceive(testCurator, startGame());
+        expect(roomState.sendWarning).toBeCalledWith(
+          testCurator.id,
+          ServerError.NOT_ENOUGH_PLAYERS
+        );
+        expect(roomState.setDrawState).not.toBeCalled();
+      });
 
-    lobbyState.onJoin(
-      partialMock<IClient>({
-        id: `player_a`,
-        sessionId: 'abcd',
-      }),
-      { username: 'username' }
-    );
+      it('advances state if 3 or more people', () => {
+        roomState.numPlayers = 3;
 
-    expect(roomState.numPlayers).toBe(1);
+        lobbyState.onReceive(testCurator, startGame());
+        expect(roomState.sendWarning).not.toBeCalled();
+        expect(roomState.setDrawState).toBeCalled();
+      });
+    });
 
-    expect(() => {
-      lobbyState.onJoin(
-        partialMock<IClient>({
-          id: `player_b`,
-          sessionId: 'abcd',
-        }),
-        { username: 'username' }
-      );
-    }).toThrowError(RoomErrorType.CONFLICTING_USERNAMES);
+    describe('joinGame', () => {
+      it('should add a player', () => {
+        lobbyState.onReceive(testClient, joinGame({ username: 'toe' }));
+        expect(roomState.addPlayer).toBeCalledWith(testClient.id, 'toe');
+      });
 
-    lobbyState.onJoin(
-      partialMock<IClient>({
-        id: `player_b`,
-        sessionId: 'abcd',
-      }),
-      { username: 'username_different' }
-    );
+      it('sends error to client if there is an error', () => {
+        roomState.addPlayer = jest
+          .fn()
+          .mockReturnValue(ServerError.CONFLICTING_USERNAMES);
 
-    expect(roomState.numPlayers).toBe(2);
+        lobbyState.onReceive(testClient, joinGame({ username: 'toe' }));
+        expect(roomState.addPlayer).toBeCalledWith(testClient.id, 'toe');
+        expect(roomState.sendAction).toBeCalledWith(
+          testClient.id,
+          joinGameError(ServerError.CONFLICTING_USERNAMES)
+        );
+      });
+    });
+  });
+
+  describe('onStateStart', () => {
+    it('should set phase to Lobby', () => {
+      jest.spyOn(Date, 'now').mockReturnValue(10000);
+      lobbyState.onStateStart();
+      expect(roomState.setPhase).toBeCalledWith(new Phase(PhaseType.LOBBY));
+    });
+  });
+
+  describe('advanceState', () => {
+    it('should generate chains', () => {
+      roomState.numPlayers = 3;
+
+      lobbyState.advanceState();
+      expect(PromptManager).toBeCalledWith({
+        category: Category.GENERIC,
+        testing: true,
+      });
+      expect(mockGetPrompts).toBeCalledWith(3);
+      expect(roomState.generateChains).toBeCalledWith(['abc']);
+    });
+
+    it('should increment and move to draw phase', () => {
+      lobbyState.advanceState();
+      expect(roomState.incrementRound).toBeCalled();
+      expect(roomState.setDrawState).toBeCalled();
+    });
   });
 });

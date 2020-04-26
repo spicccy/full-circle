@@ -4,20 +4,26 @@ import { Category, PromptCategories } from '@full-circle/shared/lib/prompts';
 import { Box, FormField, Heading, Paragraph, Select } from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
-import { LinkButton } from 'src/components/Link/LinkButton';
+import { useHistory } from 'react-router-dom';
+import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Navbar } from 'src/components/Navbar';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useLoader } from 'src/hooks/useLoader';
 
 const CreatePage: FunctionComponent = () => {
   const { createAndJoinRoom } = useRoom();
-  const [loading, setLoading] = useState(false);
+  const { isLoading, load } = useLoader();
+  const history = useHistory();
   const [promptSet, setPromptSet] = useState<Category>(PromptCategories[0]);
 
   const createLobby = async () => {
-    setLoading(true);
-    const createdRoom = await createAndJoinRoom({ promptPack: promptSet });
-    setLoading(false);
-    return Boolean(createdRoom);
+    const createdRoom = await load(() =>
+      createAndJoinRoom({ promptPack: promptSet })
+    );
+
+    if (createdRoom.room) {
+      history.push(`/curator/${createdRoom.roomCode}`);
+    }
   };
 
   return (
@@ -50,13 +56,12 @@ const CreatePage: FunctionComponent = () => {
               packs and random challenges are being added soon.
             </Paragraph>
           </Box>
-          <LinkButton
+          <LoadingButton
             data-testid="createGame"
-            loading={loading}
+            loading={isLoading}
             alignSelf="center"
             label="Create Room"
             icon={<Add />}
-            href="/curator"
             onClick={createLobby}
             size="large"
           />

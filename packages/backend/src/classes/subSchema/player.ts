@@ -23,7 +23,7 @@ class Player extends Schema implements IPlayer {
   votes = 0;
 
   @type(Link)
-  roundData?: Link;
+  roundData: Link | null = null;
 
   @type('string')
   stickyNoteColour = StickyNoteColour.GRAY;

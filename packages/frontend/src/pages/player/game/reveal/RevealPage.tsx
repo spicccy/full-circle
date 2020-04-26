@@ -8,10 +8,10 @@ import { useRoom } from 'src/contexts/RoomContext';
 import { Background } from '../components/Background';
 
 const RevealPage: FunctionComponent = () => {
-  const { room, syncedState } = useRoom();
+  const { sendAction, room, syncedState } = useRoom();
 
   const onSubmit = () => {
-    room?.send(revealChain());
+    sendAction(revealChain());
   };
 
   const isController =

@@ -19,8 +19,8 @@ import {
 } from './pages';
 import { IngameReveal } from './pages/curator/IngamePages/IngameReveal';
 import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
+import { ConnectionManager } from './pages/player/game/ConnectionManager';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
-import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
 
 export const App: FunctionComponent = () => {
@@ -36,19 +36,22 @@ export const App: FunctionComponent = () => {
               <Switch>
                 <Route exact path="/" component={LoginPage} />
                 <Route exact path="/join" component={LoginPage} />
-                <Route exact path="/join/:roomCode" component={LoginPage} />
                 <Route exact path="/create" component={CreatePage} />
-                <Route exact path="/play">
-                  <ReconnectManager>
+                <Route exact path="/play/:roomCode">
+                  <ConnectionManager>
                     <PlayerGamePage />
-                  </ReconnectManager>
+                  </ConnectionManager>
                 </Route>
-                <Route exact path="/curator" component={CuratorGamePage} />
+                <Route
+                  exact
+                  path="/curator/:roomCode"
+                  component={CuratorGamePage}
+                />
                 <Route exact path="/instructions" component={Instructions} />
                 <Route exact path="/team" component={Team} />
                 <Route exact path="/revealtest" component={IngameReveal} />
                 <Route exact path="/canvastest">
-                  <DrawPage prompt="prompt" />
+                  <DrawPage />
                 </Route>
                 <Route exact path="/renderchain" component={RenderChain} />
                 <Route path="/" component={Error404} />

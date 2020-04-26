@@ -1,31 +1,27 @@
 import { Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
 import { Vote } from '@full-circle/shared/lib/actions/client';
-import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
+import { serverError } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
 import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IPlayer,
   IRoomStateSynced,
   PhaseType,
-  RoomErrorType,
+  ServerError,
 } from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
-import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
-import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
-import Player from './subSchema/player';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -33,9 +29,9 @@ import Player from './subSchema/player';
  */
 export interface IState {
   onReceive: (client: IClient, message: ClientAction) => void;
-  onJoin: (client: IClient, options: IJoinOptions) => void;
-  onLeave: (client: IClient, consented: boolean) => boolean;
-  onClientReady: (clientId: string) => void;
+  onJoin: (client: IClient) => void;
+  onLeave: (client: IClient, consented: boolean) => void;
+  onReconnect: (client: IClient) => void;
   onStateStart: () => void;
   onStateEnd: () => void;
   // public for tests
@@ -50,14 +46,15 @@ export interface IRoomStateBackend {
   setCurator: (id: string) => void;
   getCurator: () => string;
 
-  addPlayer: (player: Player) => RoomErrorType | null;
+  addPlayer: (clientId: string, username: string) => ServerError | null;
   removePlayer: (playerId: string) => void;
   readonly numPlayers: number;
   readonly gameIsOver: boolean;
   readonly settings: RoomSettings;
 
   sendAction: (clientID: string, action: ServerAction) => void;
-  sendWarning: (clientID: string, warning: RoomErrorType) => void;
+  sendAllWarning: (warning: ServerError) => void;
+  sendWarning: (clientID: string, warning: ServerError) => void;
   revealNext: () => boolean;
 
   setShowBuffer: (buffering: boolean) => void;
@@ -81,9 +78,8 @@ export interface IRoomStateBackend {
   clearSubmittedPlayers: () => void;
   setPlayerDisconnected: (id: string) => void;
   setPlayerReconnected: (id: string) => void;
-  attemptReconnection: (username: string) => void;
-  curatorDisconnected: () => void;
-  curatorRejoined: () => void;
+  setCuratorDisconnected: () => void;
+  setCuratorReconnected: () => void;
 
   updatePlayerScores: () => void;
   addVote: (vote: Vote) => void;
@@ -94,8 +90,6 @@ class RoomState extends Schema
   currState: IState = new LobbyState(this);
   clock: IClock;
   private _settings: RoomSettings;
-  private waitingCuratorRejoin = false;
-  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomSettings) {
     super();
@@ -125,6 +119,9 @@ class RoomState extends Schema
   @type('boolean')
   showBuffer = false;
 
+  @type('boolean')
+  curatorDisconnected = false;
+
   @type(PlayerManager)
   playerManager = new PlayerManager();
 
@@ -146,20 +143,12 @@ class RoomState extends Schema
     return this.curator;
   };
 
-  getClient = (clientId: string): Client | undefined => {
+  private getClient = (clientId: string): Client | undefined => {
     return this.room.clients.find((client) => client.id === clientId);
   };
 
-  curatorDisconnected = () => {
-    this.waitingCuratorRejoin = true;
-  };
-
-  curatorRejoined = () => {
-    this.waitingCuratorRejoin = false;
-  };
-
-  addPlayer = (player: IPlayer): RoomErrorType | null => {
-    return this.playerManager.addPlayer(player);
+  addPlayer = (clientId: string, username: string): ServerError | null => {
+    return this.playerManager.addPlayer(clientId, username);
   };
 
   removePlayer = (playerId: string) => {
@@ -198,8 +187,13 @@ class RoomState extends Schema
     this.playerManager.setPlayerReconnected(id);
   };
 
-  attemptReconnection = (username: string) => {
-    this.playerManager.attemptReconnection(username);
+  setCuratorDisconnected = () => {
+    this.sendAllWarning(ServerError.CURATOR_DISCONNECTED);
+    this.curatorDisconnected = true;
+  };
+
+  setCuratorReconnected = () => {
+    this.curatorDisconnected = false;
   };
 
   // Communication with frontend
@@ -211,8 +205,12 @@ class RoomState extends Schema
     }
   };
 
-  sendWarning = (clientId: string, warning: RoomErrorType) => {
-    this.sendAction(clientId, warn(warning));
+  sendAllWarning = (warning: ServerError) => {
+    this.room.broadcast(serverError(warning));
+  };
+
+  sendWarning = (clientId: string, warning: ServerError) => {
+    this.sendAction(clientId, serverError(warning));
   };
 
   revealNext = () => {
@@ -316,26 +314,20 @@ class RoomState extends Schema
   // State-specific behaviour
   // The behaviour and functionality here is to be delegated to the currentState
   // ===========================================================================
-  onClientReady = (clientId: string): void => {
-    this.currState.onClientReady(clientId);
-  };
-
   onReceive = (client: IClient, message: ClientAction) => {
     this.currState.onReceive(client, message);
   };
 
-  onJoin = (client: IClient, options: IJoinOptions) => {
-    if (options.username === CURATOR_USERNAME && this.waitingCuratorRejoin) {
-      this.setCurator(client.id);
-      this.curatorRejoined();
-      this.sendAction(client.id, becomeCurator());
-    } else {
-      this.currState.onJoin(client, options);
-    }
+  onJoin = (client: IClient) => {
+    this.currState.onJoin(client);
   };
 
   onLeave = (client: IClient, consented: boolean) => {
-    return this.currState.onLeave(client, consented);
+    this.currState.onLeave(client, consented);
+  };
+
+  onReconnect = (client: IClient) => {
+    this.currState.onReconnect(client);
   };
 
   onStateStart = () => {
