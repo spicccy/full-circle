@@ -7,3 +7,5 @@ export const serverError = createAction('@server/error')<ServerError>();
 export const joinGameError = createAction('@server/joinGameError')<
   ServerError
 >();
+
+export const forceSubmit = createAction('@server/forceSubmit')();

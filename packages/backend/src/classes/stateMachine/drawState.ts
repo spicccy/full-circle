@@ -1,5 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitDrawing } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Delayed } from 'colyseus';
@@ -75,13 +76,14 @@ class DrawState implements IState {
   private submitDrawing = (clientId: string, drawing: CanvasAction[]) => {
     this.roomState.storeDrawing(clientId, drawing);
     this.roomState.addSubmittedPlayer(clientId);
-    if (this.roomState.allPlayersSubmitted) {
+    if (this.roomState.allPlayersSubmitted && !this.roomState.showBuffer) {
       this.startBuffer();
     }
   };
 
   private startBuffer = () => {
     this.roomState.setShowBuffer(true);
+    this.roomState.sendAllAction(forceSubmit());
     this.bufferHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       BUFFER_MS
