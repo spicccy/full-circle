@@ -1,8 +1,8 @@
 import { revealChain } from '@full-circle/shared/lib/actions/client';
 import { Box, Button, Heading, Paragraph } from 'grommet';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { Card } from 'src/components/Card/Card';
-import { RenderChain } from 'src/components/RenderChain';
+import { VotableChain } from 'src/components/VotableChain';
 import { useRoom } from 'src/contexts/RoomContext';
 
 import { Background } from '../components/Background';
@@ -18,6 +18,14 @@ const RevealPage: FunctionComponent = () => {
     syncedState?.chainManager?.revealedChain?.owner === room?.sessionId;
 
   const chain = syncedState?.chainManager?.revealedChain;
+  const owner = chain?.owner;
+
+  useEffect(() => {
+    window.scroll({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [owner]);
 
   return (
     <Background>
@@ -29,7 +37,7 @@ const RevealPage: FunctionComponent = () => {
             </Heading>
           ) : null}
           <Paragraph fill>Tap a prompt or picture to vote for it</Paragraph>
-          {chain ? <RenderChain votable chain={chain} /> : null}
+          {chain ? <VotableChain chain={chain} /> : null}
         </Card>
         <Card pad="large" align="center" justify="center">
           {isController ? (
