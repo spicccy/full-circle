@@ -10,6 +10,7 @@ import { getType } from 'typesafe-actions';
 
 import { Background } from './components/Background';
 import { DrawPage } from './draw/DrawPage';
+import { EndPage } from './end/EndPage';
 import { GuessPage } from './guess/GuessPage';
 import { JoinGamePage } from './join/JoinGamePage';
 import { Lobby } from './lobby/LobbyPage';
@@ -54,6 +55,10 @@ const PlayerGamePage: FunctionComponent = () => {
 
     case PhaseType.REVEAL: {
       return <RevealPage />;
+    }
+
+    case PhaseType.END: {
+      return <EndPage />;
     }
 
     default: {

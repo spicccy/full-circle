@@ -1,6 +1,6 @@
 import { Box } from 'grommet';
 import React, { FunctionComponent } from 'react';
-import { Scoreboard } from 'src/components/Scoreboard';
+import { ScoreboardPage } from 'src/components/Scoreboard';
 
 const EndPage: FunctionComponent = () => {
   return (
@@ -13,7 +13,7 @@ const EndPage: FunctionComponent = () => {
       align="center"
       pad="large"
     >
-      <Scoreboard />
+      <ScoreboardPage />
     </Box>
   );
 };
