@@ -1,11 +1,11 @@
-import { LinkType, PhaseType, StickyNoteColour } from './constants';
+import { LinkType, PhaseType, StickyNoteColour, VoteType } from './constants';
 
-export type ILink = {
+export interface ILink {
   type: LinkType;
   id: string;
   data: string | null;
   playerId: string;
-};
+}
 
 export interface IChain {
   owner: string;
@@ -41,6 +41,10 @@ export interface IPlayerManagerData {
   playerMap: Record<string, IPlayer>;
 }
 
+export interface IVote {
+  playerVotes: Record<string, VoteType>;
+}
+
 export interface IRoomStateSynced {
   curator: string;
   curatorDisconnected: boolean;
@@ -49,6 +53,7 @@ export interface IRoomStateSynced {
   phase: IPhase;
   chainManager: IChainManagerData;
   playerManager: IPlayerManagerData;
+  votes: Record<string, IVote>;
 }
 
 export interface IChainManagerData {

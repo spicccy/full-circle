@@ -1,5 +1,4 @@
 import { MapSchema, Schema, type } from '@colyseus/schema';
-import { Vote } from '@full-circle/shared/lib/actions/client';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import {
   IChain,
@@ -27,7 +26,7 @@ interface IPlayerManager {
   setPlayerDisconnected: (id: string) => void;
   setPlayerReconnected: (id: string) => void;
   updatePlayerScores: (chain: IChain[]) => void;
-  addVote: (vote: Vote) => void;
+  updatePlayerVotes: (votes: Record<string, number>) => void;
 }
 
 class PlayerManager extends Schema
@@ -154,11 +153,10 @@ class PlayerManager extends Schema
     }
   };
 
-  addVote = (vote: Vote) => {
-    const player = this.getPlayer(vote.playerId);
-    if (player) {
-      player.votes += vote.vote === 'dislike' ? -1 : 1;
-    }
+  updatePlayerVotes = (votes: Record<string, number>) => {
+    this.playerArray.forEach((player) => {
+      player.votes = votes[player.id] ?? 0;
+    });
   };
 }
 

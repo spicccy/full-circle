@@ -1,6 +1,6 @@
-import { Schema, type } from '@colyseus/schema';
+import { MapSchema, Schema, type } from '@colyseus/schema';
 import { ClientAction, ServerAction } from '@full-circle/shared/lib/actions';
-import { Vote } from '@full-circle/shared/lib/actions/client';
+import { IVoteData } from '@full-circle/shared/lib/actions/client';
 import { serverError } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { objectValues } from '@full-circle/shared/lib/helpers';
@@ -10,6 +10,7 @@ import {
   IRoomStateSynced,
   PhaseType,
   ServerError,
+  VoteType,
 } from '@full-circle/shared/lib/roomState';
 import { Client } from 'colyseus';
 
@@ -22,6 +23,7 @@ import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
+import Vote from './subSchema/vote';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -82,7 +84,8 @@ export interface IRoomStateBackend {
   setCuratorReconnected: () => void;
 
   updatePlayerScores: () => void;
-  addVote: (vote: Vote) => void;
+  addVote: (clientId: string, voteData: IVoteData) => void;
+  calculateVotes: () => void;
 }
 
 class RoomState extends Schema
@@ -127,6 +130,9 @@ class RoomState extends Schema
 
   @type(ChainManager)
   chainManager = new ChainManager();
+
+  @type({ map: Vote })
+  votes = new MapSchema<Vote>();
 
   // =====================================
   // IRoomStateBackend Api
@@ -268,8 +274,37 @@ class RoomState extends Schema
     this.playerManager.updatePlayerScores(this.chains);
   };
 
-  addVote = (vote: Vote) => {
-    this.playerManager.addVote(vote);
+  addVote = (clientId: string, voteData: IVoteData) => {
+    if (!this.votes[voteData.linkId]) {
+      this.votes[voteData.linkId] = new Vote();
+    }
+
+    const vote: Vote = this.votes[voteData.linkId];
+    vote.playerVotes[clientId] = voteData.voteType;
+  };
+
+  calculateVotes = () => {
+    const votes: Record<string, number> = {};
+
+    for (const linkId in this.votes) {
+      const vote: Vote = this.votes[linkId];
+      const linkPlayer = this.chainManager.findLink(linkId)?.playerId;
+      if (linkPlayer) {
+        votes[linkPlayer] = votes[linkPlayer] ?? 0;
+        for (const voterId in vote.playerVotes) {
+          const voterVote: VoteType = vote.playerVotes[voterId];
+          if (voterVote === VoteType.DISLIKE) {
+            votes[linkPlayer] -= 1;
+          }
+
+          if (voterVote === VoteType.LIKE) {
+            votes[linkPlayer] += 1;
+          }
+        }
+      }
+    }
+
+    this.playerManager.updatePlayerVotes(votes);
   };
 
   // ===========================================================================

@@ -1,6 +1,6 @@
 import { IChain, IPlayer } from '@full-circle/shared/lib/roomState/interfaces';
 import { Box } from 'grommet';
-import { Next } from 'grommet-icons';
+import { LinkNext } from 'grommet-icons';
 import React, { FunctionComponent } from 'react';
 import { useRoom } from 'src/contexts/RoomContext';
 
@@ -19,7 +19,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
     <Box direction="row" wrap justify="center" align="center">
       {chain.links.map((link, i) => (
         <>
-          {i !== 0 && <Next />}
+          {i !== 0 && <LinkNext />}
           <RenderLink key={link.id} link={link} playersMap={playersMap} />
         </>
       ))}

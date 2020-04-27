@@ -39,3 +39,9 @@ export enum StickyNoteColour {
   PURPLE = '#b79aff',
   PINK = '#ffc8fb',
 }
+
+export enum VoteType {
+  NONE,
+  LIKE,
+  DISLIKE,
+}
