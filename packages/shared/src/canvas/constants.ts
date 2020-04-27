@@ -10,6 +10,7 @@ export enum Colour {
   GREEN = '#219653',
   BLUE = '#2F80ED',
   PURPLE = '#9B51E0',
+  BROWN = '#7f4411',
 }
 
 export enum PenThickness {

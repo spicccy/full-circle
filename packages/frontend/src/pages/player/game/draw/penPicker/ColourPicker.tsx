@@ -62,7 +62,7 @@ const ColourRow = styled(Box)<{ top: boolean }>`
 
 const row1 = [
   { colour: Colour.WHITE, title: 'white (q)', key: 'q' },
-  { colour: Colour.LIGHT_GRAY, title: 'light gray (w)', key: 'w' },
+  { colour: Colour.BROWN, title: 'brown (w)', key: 'w' },
   { colour: Colour.RED, title: 'red (e)', key: 'e' },
   { colour: Colour.YELLOW, title: 'yellow (r)', key: 'r' },
   { colour: Colour.GREEN, title: 'green (t)', key: 't' },
