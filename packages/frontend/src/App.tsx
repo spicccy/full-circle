@@ -6,7 +6,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { ToastProvider } from 'react-toast-notifications';
 
 import { PageContainer } from './components/PageContainer';
-import { RenderChain } from './components/RenderChain';
 import { RoomProvider } from './contexts/RoomContext';
 import {
   CreatePage,
@@ -53,7 +52,6 @@ export const App: FunctionComponent = () => {
                 <Route exact path="/canvastest">
                   <DrawPage />
                 </Route>
-                <Route exact path="/renderchain" component={RenderChain} />
                 <Route path="/" component={Error404} />
               </Switch>
             </PageContainer>
