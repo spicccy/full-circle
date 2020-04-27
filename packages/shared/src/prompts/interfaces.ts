@@ -30,7 +30,7 @@ export const PromptCategories: Category[] = [
   Category.ACTORS,
   Category.CSGO,
   Category.POKEMON,
-  Category.FLORIDA,
+  // Category.FLORIDA, eh will rethink this later
 ];
 
 export const getPrompts = (category: Category): PromptList => {
