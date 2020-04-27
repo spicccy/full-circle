@@ -8,7 +8,7 @@ export const CuratorTimer: FunctionComponent = () => {
   if (phaseTimer === undefined) {
     return null;
   }
-  if (phaseTimer < -1) {
+  if (phaseTimer < 0) {
     return null;
   }
   return <Text data-testid="curatorTimer"> Timer: {phaseTimer}</Text>;
