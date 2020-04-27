@@ -43,6 +43,8 @@ const JoinGameCard: FunctionComponent<IJoinGameCardProps> = ({
         <FormField label="Username">
           <TextInput
             disabled={isLoading}
+            maxLength={12}
+            required
             value={username}
             onChange={handleChange}
           />
