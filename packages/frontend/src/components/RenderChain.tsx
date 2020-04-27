@@ -56,29 +56,39 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
 
   const renderLinks = (links: ILink[]) => {
     if (votable) {
-      return links.map((link) => (
-        <Box align="center">
-          <RenderLink link={link}></RenderLink>
-          <Box direction="row" flex>
-            <DislikeButton
-              onClick={() => {
-                const { playerId, id } = link;
-                sendAction(vote({ playerId, linkId: id, vote: 'dislike' }));
-              }}
-            >
-              <ThumbDown></ThumbDown>
-            </DislikeButton>
-            <LikeButton
-              onClick={() => {
-                const { playerId, id } = link;
-                sendAction(vote({ playerId, linkId: id, vote: 'like' }));
-              }}
-            >
-              <ThumbUp></ThumbUp>
-            </LikeButton>
+      return links.map((link, index) => {
+        if (index === 0) {
+          return (
+            <Box align="center">
+              <RenderLink link={link}></RenderLink>
+            </Box>
+          );
+        }
+
+        return (
+          <Box align="center">
+            <RenderLink link={link}></RenderLink>
+            <Box direction="row" flex>
+              <DislikeButton
+                onClick={() => {
+                  const { playerId, id } = link;
+                  sendAction(vote({ playerId, linkId: id, vote: 'dislike' }));
+                }}
+              >
+                <ThumbDown></ThumbDown>
+              </DislikeButton>
+              <LikeButton
+                onClick={() => {
+                  const { playerId, id } = link;
+                  sendAction(vote({ playerId, linkId: id, vote: 'like' }));
+                }}
+              >
+                <ThumbUp></ThumbUp>
+              </LikeButton>
+            </Box>
           </Box>
-        </Box>
-      ));
+        );
+      });
     } else {
       return links.map((link) => <RenderLink link={link}></RenderLink>);
     }
