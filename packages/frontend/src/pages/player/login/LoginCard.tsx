@@ -1,13 +1,16 @@
 import 'styled-components/macro';
 
-import { Box, Heading, Image } from 'grommet';
-import React, { FormEvent, FunctionComponent, useState } from 'react';
+import { Box, FormField, Heading, Image, TextInput } from 'grommet';
+import React, {
+  ChangeEventHandler,
+  FormEvent,
+  FunctionComponent,
+  useState,
+} from 'react';
 import { LoadingButton } from 'src/components/Button/LoadingButton';
 import { Card } from 'src/components/Card/Card';
 import { useLoader } from 'src/hooks/useLoader';
 import logo from 'src/images/fullcircle.png';
-
-import { RoomInput } from './RoomInput';
 
 const Header: FunctionComponent = () => (
   <Box direction="row" align="center" justify="center">
@@ -34,16 +37,34 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
   const [roomCode, setRoomCode] = useState('');
   const { isLoading, load } = useLoader();
 
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const stripped = e.target.value.replace(/[^0-9]/gi, '').substring(0, 4);
+    setRoomCode(stripped);
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await load(() => attemptToJoinRoom(roomCode));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Card pad="large">
-        <Header />
-        <RoomInput value={roomCode} onChange={setRoomCode} />
+    <Card pad="large">
+      <Header />
+      <form onSubmit={handleSubmit}>
+        <FormField label="Room Code">
+          <TextInput
+            size="large"
+            disabled={isLoading}
+            value={roomCode}
+            data-testid="roomCodeInput"
+            type="tel"
+            pattern="[0-9]*"
+            required
+            maxLength={4}
+            autoComplete="off"
+            onChange={handleChange}
+          />
+        </FormField>
         <LoadingButton
           data-testid="joinRoom"
           loading={isLoading}
@@ -52,8 +73,8 @@ const LoginCard: FunctionComponent<ILoginCardProps> = ({
           alignSelf="center"
           label="JOIN"
         />
-      </Card>
-    </form>
+      </form>
+    </Card>
   );
 };
 
