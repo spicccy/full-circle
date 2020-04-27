@@ -1,6 +1,7 @@
 import { createAction } from 'typesafe-actions';
 
 import { CanvasAction } from '../canvas';
+import { VoteType } from '../roomState';
 
 export const submitDrawing = createAction('@client/submitDrawing')<
   CanvasAction[]
@@ -18,10 +19,9 @@ export const joinGame = createAction('@client/joinGame')<{
   username: string;
 }>();
 
-export type Vote = {
-  playerId: string;
+export interface IVoteData {
   linkId: string;
-  vote: 'like' | 'dislike';
-};
+  voteType: VoteType;
+}
 
-export const vote = createAction('@client/vote')<Vote>();
+export const vote = createAction('@client/vote')<IVoteData>();

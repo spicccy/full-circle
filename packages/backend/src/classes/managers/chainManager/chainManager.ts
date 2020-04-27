@@ -4,6 +4,7 @@ import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
   IChain,
   IChainManagerData,
+  ILink,
   IPlayer,
   LinkType,
 } from '@full-circle/shared/lib/roomState';
@@ -25,6 +26,7 @@ export interface IChainManager {
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
   revealNext: () => boolean;
+  findLink: (linkId: string) => ILink | null;
 }
 
 class ChainManager extends Schema implements IChainManager, IChainManagerData {
@@ -67,7 +69,7 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
         type: LinkType.PROMPT,
         id: `${owner}-start`,
         data: initialPrompt,
-        playerId: 'Initial Prompt',
+        playerId: '',
       });
 
       return new Chain(owner, [initialLink, ...links]);
@@ -114,6 +116,18 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
   get chains() {
     return this._chains;
   }
+
+  findLink = (linkId: string) => {
+    for (const chain of this.chains) {
+      for (const link of chain.links) {
+        if (link.id === linkId) {
+          return link;
+        }
+      }
+    }
+
+    return null;
+  };
 }
 
 export default ChainManager;

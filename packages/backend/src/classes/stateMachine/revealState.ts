@@ -28,7 +28,7 @@ class RevealState implements IState {
     }
   };
 
-  onReceive = (_client: IClient, message: ClientAction) => {
+  onReceive = (client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(revealChain): {
         const revealed = this.roomState.revealNext();
@@ -38,7 +38,7 @@ class RevealState implements IState {
         return;
       }
       case getType(vote): {
-        this.roomState.addVote(message.payload);
+        this.roomState.addVote(client.id, message.payload);
         return;
       }
     }
@@ -52,6 +52,7 @@ class RevealState implements IState {
   onStateEnd = () => {};
 
   advanceState = () => {
+    this.roomState.calculateVotes();
     this.roomState.setEndState();
   };
 }
