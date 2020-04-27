@@ -23,7 +23,7 @@ import GuessState from './stateMachine/guessState';
 import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
-import Vote from './subSchema/Vote';
+import Vote from './subSchema/vote';
 
 /**
  * These are functions that each specific state will need to implement.
