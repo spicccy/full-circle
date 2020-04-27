@@ -1,5 +1,6 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
@@ -74,13 +75,14 @@ class GuessState implements IState {
   private submitGuess = (clientId: string, guess: string) => {
     this.roomState.storeGuess(clientId, guess);
     this.roomState.addSubmittedPlayer(clientId);
-    if (this.roomState.allPlayersSubmitted) {
+    if (this.roomState.allPlayersSubmitted && !this.roomState.showBuffer) {
       this.startBuffer();
     }
   };
 
   private startBuffer = () => {
     this.roomState.setShowBuffer(true);
+    this.roomState.sendAllAction(forceSubmit());
     this.bufferHandle = this.roomState.clock.setTimeout(
       this.advanceState,
       BUFFER_MS

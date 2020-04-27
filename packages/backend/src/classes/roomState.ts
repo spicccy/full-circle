@@ -53,10 +53,12 @@ export interface IRoomStateBackend {
   readonly settings: RoomSettings;
 
   sendAction: (clientID: string, action: ServerAction) => void;
+  sendAllAction: (action: ServerAction) => void;
   sendAllWarning: (warning: ServerError) => void;
   sendWarning: (clientID: string, warning: ServerError) => void;
   revealNext: () => boolean;
 
+  readonly showBuffer: boolean;
   setShowBuffer: (buffering: boolean) => void;
   setPhase: (phase: Phase) => void;
   incrementRound: () => void;
@@ -203,6 +205,10 @@ class RoomState extends Schema
       this.room.send(client, action);
       console.log('sent action to ', clientId);
     }
+  };
+
+  sendAllAction = (action: ServerAction) => {
+    this.room.broadcast(action);
   };
 
   sendAllWarning = (warning: ServerError) => {

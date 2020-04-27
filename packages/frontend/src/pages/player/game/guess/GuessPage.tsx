@@ -1,10 +1,13 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { Box, Heading } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { Card } from 'src/components/Card/Card';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
+import { getType } from 'typesafe-actions';
 
 import { Background } from '../components/Background';
 import { DrawingCard } from './DrawingCard';
@@ -28,8 +31,18 @@ const GuessPage: FunctionComponent = () => {
   const drawing = parseDrawing(playerData?.roundData?.data ?? undefined);
 
   const handleSubmit = () => {
-    sendAction(submitGuess(guess));
+    if (!hasSubmitted) {
+      sendAction(submitGuess(guess));
+    }
   };
+
+  useRoomMessage((action) => {
+    switch (action.type) {
+      case getType(forceSubmit): {
+        handleSubmit();
+      }
+    }
+  });
 
   const renderBody = () => {
     if (hasSubmitted) {
