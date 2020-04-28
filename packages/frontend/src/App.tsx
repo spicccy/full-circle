@@ -21,11 +21,9 @@ import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { ConnectionManager } from './pages/player/game/ConnectionManager';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { theme } from './styles/theme';
-import { isAutomation } from './utils/envHelper';
 
 export const App: FunctionComponent = () => {
   try {
-    console.log(isAutomation());
     return (
       <RoomProvider>
         <DebugRoomState

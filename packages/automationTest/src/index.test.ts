@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 import { setCurrPage } from '../jest-setup';
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
@@ -13,7 +11,6 @@ const roomCode = '8722';
 describe('Full Circle', () => {
   beforeAll(async () => {
     jest.setTimeout(200000);
-    await fetch('http://localhost:2567/test-reset');
     await page.setViewport({
       width: 1366,
       height: 768,
