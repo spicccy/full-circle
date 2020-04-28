@@ -16,6 +16,7 @@ import { Client } from 'colyseus';
 
 import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
+import { isAutomation } from '../util/envHelper';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
 import DrawState from './stateMachine/drawState';
@@ -25,7 +26,6 @@ import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
-import { isAutomation } from '../util/envHelper';
 
 /**
  * These are functions that each specific state will need to implement.

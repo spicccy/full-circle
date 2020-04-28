@@ -4,7 +4,7 @@ import { setCurrPage } from '../jest-setup';
 import { drawImage } from './drawingAutomation';
 import { makeGuess } from './guessingAutomation';
 import { joinGame } from './lobbyAutomation';
-import { vote, nextChain } from './revealAutomation';
+import { nextChain, vote } from './revealAutomation';
 import { changeDir, compareSnapshot } from './screenshotAutomation';
 
 const pageList = [page];
