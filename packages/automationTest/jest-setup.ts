@@ -28,11 +28,12 @@ global.it = async function (name, func) {
       await currPage.screenshot({
         path: path.resolve('screenshots', dir, screenshotName('.failure.png')),
       });
+      browser.close();
       throw e;
     }
   });
 };
 
-export function setCurrPage(newPage: Page) {
+export const setCurrPage = (newPage: Page) => {
   currPage = newPage;
-}
+};

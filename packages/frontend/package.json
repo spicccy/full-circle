@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "start:ci": "react-scripts start CI= true --watchAll=false",
+    "start:automation": "env-cmd -f ./.env.automation react-scripts start CI= true --watchAll=false",
     "build": "react-scripts build",
+    "build:automation": "env-cmd -f ./.env.automation react-scripts build",
     "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test",
     "eject": "react-scripts eject",

@@ -77,12 +77,14 @@ export const VotableLink: FunctionComponent<IVotableLinkProps> = ({ link }) => {
           <LikeButton
             active={currentPlayerVote === VoteType.LIKE}
             onClick={handleLike}
+            data-testid="likeButton"
           >
             <ThumbUp />
           </LikeButton>
           <DislikeButton
             active={currentPlayerVote === VoteType.DISLIKE}
             onClick={handleDislike}
+            data-testid="dislikeButton"
           >
             <ThumbDown />
           </DislikeButton>

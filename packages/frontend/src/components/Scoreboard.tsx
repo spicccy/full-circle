@@ -35,6 +35,7 @@ const Scoreboard: FunctionComponent<IScoreboardProps> = ({ players }) => {
         gridTemplateColumns: '2fr 1fr 1fr',
         paddingBottom: 24,
       }}
+      data-testid="scoreBoard"
     >
       <Text size="large">Player</Text>
       <Text size="large" textAlign="end">

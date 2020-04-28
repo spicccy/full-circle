@@ -1,6 +1,8 @@
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { shuffle } from 'lodash';
+import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
+import { isAutomation } from '../../util/envHelper';
 
 class StickyNoteColourManager {
   private usedColours = new Set<StickyNoteColour>();
@@ -16,7 +18,9 @@ class StickyNoteColourManager {
       return StickyNoteColour.GRAY;
     }
 
-    const chosenColour = shuffle(remainingColors)[0];
+    const chosenColour = isAutomation()
+      ? remainingColors[0]
+      : shuffle(remainingColors)[0];
     this.usedColours.add(chosenColour);
 
     return chosenColour;

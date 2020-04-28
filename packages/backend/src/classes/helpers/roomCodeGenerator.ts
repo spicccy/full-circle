@@ -1,7 +1,12 @@
+import { isAutomation } from '../../util/envHelper';
+
 class RoomCodeGenerator {
   private usedCodes: Set<string> = new Set();
 
   generateRandomCode = (): string => {
+    if (isAutomation()) {
+      return '8722';
+    }
     return Math.random().toString(10).substr(2, 4);
   };
 

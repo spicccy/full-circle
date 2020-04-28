@@ -47,6 +47,7 @@ const JoinGameCard: FunctionComponent<IJoinGameCardProps> = ({
             required
             value={username}
             onChange={handleChange}
+            data-testid="playerNameInput"
           />
         </FormField>
         <LoadingButton
@@ -54,6 +55,7 @@ const JoinGameCard: FunctionComponent<IJoinGameCardProps> = ({
           label="Join"
           disabled={isLoading}
           loading={isLoading}
+          data-testid="joinWithName"
         />
       </form>
     </Card>

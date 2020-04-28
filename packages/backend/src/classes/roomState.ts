@@ -15,6 +15,7 @@ import {
 import { Client } from 'colyseus';
 
 import { IClient, IClock, IRoom } from '../interfaces';
+import { isAutomation } from '../util/envHelper';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
 import DrawState from './stateMachine/drawState';
@@ -100,6 +101,10 @@ class RoomState extends Schema
     super();
     this.clock = room.clock;
     this._settings = options ?? {};
+    if (isAutomation()) {
+      this._settings.predictableRandomness = true;
+    }
+
     this.chainManager = new ChainManager();
   }
 

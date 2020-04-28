@@ -9,7 +9,7 @@ export const makeGuess = async (
   guess: string
 ) => {
   await playerPage.bringToFront();
-  setCurrPage(playerPage);
+  await setCurrPage(playerPage);
   await playerPage.waitForSelector("[data-testid='guessBox']");
   await playerPage.click('input[data-testid=guessBox]');
   await playerPage.type('input[data-testid=guessBox]', guess);
