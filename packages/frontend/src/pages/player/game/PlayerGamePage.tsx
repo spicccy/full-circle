@@ -1,60 +1,43 @@
-import { ServerAction } from '@full-circle/shared/lib/actions';
-import { becomeCurator, warn } from '@full-circle/shared/lib/actions/server';
-import {
-  LinkType,
-  PhaseType,
-  RoomErrorType,
-} from '@full-circle/shared/lib/roomState';
+import { serverError } from '@full-circle/shared/lib/actions/server';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import React, { FunctionComponent } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
+import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
 import { getType } from 'typesafe-actions';
 
-import { useRoomMessage } from '../../../hooks/useRoomListeners';
 import { Background } from './components/Background';
 import { DrawPage } from './draw/DrawPage';
+import { EndPage } from './end/EndPage';
 import { GuessPage } from './guess/GuessPage';
+import { JoinGamePage } from './join/JoinGamePage';
 import { Lobby } from './lobby/LobbyPage';
 import { RevealPage } from './reveal/RevealPage';
 
 const PlayerGamePage: FunctionComponent = () => {
-  const { room, syncedState, roomCode } = useRoom();
+  const { syncedState } = useRoom();
   const { playerData } = useRoomHelpers();
-
   const { addToast } = useToasts();
-  const history = useHistory();
 
-  useRoomMessage((msg: ServerAction) => {
+  useConfirmLeave();
+
+  useRoomMessage((msg) => {
     switch (msg.type) {
-      case getType(warn):
-        switch (msg.payload) {
-          case RoomErrorType.CURATOR_DISCONNECTED:
-            addToast(
-              `The curator has disconnected. Please rejoin room ${roomCode} with username 'curator' to establish a new curator`,
-              {
-                appearance: 'error',
-              }
-            );
-            break;
-          case RoomErrorType.CURATOR_DISCONNECTED_NO_REJOIN:
-            addToast(RoomErrorType.CURATOR_DISCONNECTED_NO_REJOIN, {
-              appearance: 'error',
-            });
-            break;
-        }
-        break;
-      case getType(becomeCurator):
-        history.push('/curator');
-        break;
+      case getType(serverError): {
+        addToast(msg.payload, { appearance: 'error' });
+      }
     }
   });
 
-  const roundData = playerData?.roundData;
+  if (!syncedState) {
+    // Loading...
+    return <Background />;
+  }
 
-  if (!room) {
-    return <Redirect to="/" />;
+  if (!playerData) {
+    return <JoinGamePage />;
   }
 
   switch (syncedState?.phase.phaseType) {
@@ -63,25 +46,19 @@ const PlayerGamePage: FunctionComponent = () => {
     }
 
     case PhaseType.DRAW: {
-      const prompt =
-        roundData?.type === LinkType.PROMPT && roundData.data
-          ? roundData.data
-          : undefined;
-
-      return <DrawPage prompt={prompt} />;
+      return <DrawPage />;
     }
 
     case PhaseType.GUESS: {
-      const drawing =
-        roundData?.type === LinkType.IMAGE && roundData.data
-          ? JSON.parse(roundData.data)
-          : undefined;
-
-      return <GuessPage drawing={drawing} />;
+      return <GuessPage />;
     }
 
     case PhaseType.REVEAL: {
       return <RevealPage />;
+    }
+
+    case PhaseType.END: {
+      return <EndPage />;
     }
 
     default: {

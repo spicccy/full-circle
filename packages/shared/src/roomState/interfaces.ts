@@ -1,11 +1,11 @@
-import { LinkType, PhaseType, StickyNoteColour } from './constants';
+import { LinkType, PhaseType, StickyNoteColour, VoteType } from './constants';
 
-export type ILink = {
+export interface ILink {
   type: LinkType;
   id: string;
   data: string | null;
   playerId: string;
-};
+}
 
 export interface IChain {
   owner: string;
@@ -20,7 +20,7 @@ export interface IPlayer {
   score: number;
   votes: number;
   stickyNoteColour: StickyNoteColour;
-  roundData?: ILink;
+  roundData: ILink | null;
 }
 
 export interface IPhase {
@@ -28,7 +28,7 @@ export interface IPhase {
   phaseStart: number;
 
   // When does the phase end?
-  phaseEnd?: number;
+  phaseEnd: number;
   phaseType: PhaseType;
 }
 
@@ -41,13 +41,19 @@ export interface IPlayerManagerData {
   playerMap: Record<string, IPlayer>;
 }
 
+export interface IVote {
+  playerVotes: Record<string, VoteType>;
+}
+
 export interface IRoomStateSynced {
   curator: string;
+  curatorDisconnected: boolean;
   round: number;
   showBuffer: boolean;
   phase: IPhase;
   chainManager: IChainManagerData;
   playerManager: IPlayerManagerData;
+  votes: Record<string, IVote>;
 }
 
 export interface IChainManagerData {

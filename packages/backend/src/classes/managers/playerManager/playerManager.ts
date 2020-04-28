@@ -1,17 +1,14 @@
 import { MapSchema, Schema, type } from '@colyseus/schema';
-import { Vote } from '@full-circle/shared/lib/actions/client';
-import { reconnect } from '@full-circle/shared/lib/actions/server';
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import {
   IChain,
-  IPlayer,
   IPlayerManagerData,
   LinkType,
-  RoomErrorType,
+  ServerError,
 } from '@full-circle/shared/lib/roomState';
 
-import { CURATOR_USERNAME, MAX_PLAYERS } from '../../../constants';
-import { closeEnough, throwJoinRoomError } from '../../../util/util';
+import { MAX_PLAYERS } from '../../../constants';
+import { closeEnough } from '../../../util/util';
 import Link from '../../subSchema/link';
 import Player from '../../subSchema/player';
 import { StickyNoteColourManager } from '../stickyNoteColourManager';
@@ -21,21 +18,20 @@ interface IPlayerManager {
   readonly playerArray: Player[];
   readonly numPlayers: number;
   readonly allPlayersSubmitted: boolean;
-  addPlayer: (player: IPlayer) => RoomErrorType | null;
-  removePlayer: (playerId: string) => void;
-  getPlayer: (id: string) => void;
+  addPlayer: (clientId: string, username: string) => ServerError | null;
+  removePlayer: (clientId: string) => void;
+  getPlayer: (clientId: string) => void;
   addSubmittedPlayer: (id: string) => void;
   clearSubmittedPlayers: () => void;
   setPlayerDisconnected: (id: string) => void;
   setPlayerReconnected: (id: string) => void;
-  attemptReconnection: (username: string) => void;
   updatePlayerScores: (chain: IChain[]) => void;
-  addVote: (vote: Vote) => void;
+  updatePlayerVotes: (votes: Record<string, number>) => void;
 }
 
 class PlayerManager extends Schema
   implements IPlayerManager, IPlayerManagerData {
-  stickyNoteColourManager = new StickyNoteColourManager();
+  private stickyNoteColourManager = new StickyNoteColourManager();
 
   @type({ map: Player })
   playerMap = new MapSchema<Player>();
@@ -56,36 +52,32 @@ class PlayerManager extends Schema
     return this.playerArray.every((player) => player.submitted);
   }
 
-  addPlayer = (player: IPlayer): RoomErrorType | null => {
-    if (player.username === CURATOR_USERNAME) {
-      return RoomErrorType.RESERVED_USERNAME;
-    }
-
+  addPlayer = (clientId: string, username: string): ServerError | null => {
     if (this.numPlayers >= MAX_PLAYERS) {
-      return RoomErrorType.TOO_MANY_PLAYERS;
+      return ServerError.TOO_MANY_PLAYERS;
     }
 
-    if (this.playerArray.some((p) => p.username === player.username)) {
-      return RoomErrorType.CONFLICTING_USERNAMES;
+    if (this.playerArray.some((p) => p.username === username)) {
+      return ServerError.CONFLICTING_USERNAMES;
     }
 
-    const { id } = player;
-    this.playerMap[id] = player;
+    const player = new Player(clientId, username);
     player.stickyNoteColour = this.stickyNoteColourManager.getColour();
+
+    this.playerMap[player.id] = player;
     return null;
   };
 
-  removePlayer = (playerId: string) => {
-    const player = this.getPlayer(playerId);
+  removePlayer = (clientId: string) => {
+    const player = this.getPlayer(clientId);
     if (player) {
       this.stickyNoteColourManager.releaseColour(player.stickyNoteColour);
+      delete this.playerMap[player.id];
     }
-
-    delete this.playerMap[playerId];
   };
 
-  getPlayer = (id: string): Player | undefined => {
-    return this.playerMap[id];
+  getPlayer = (clientId: string): Player | undefined => {
+    return this.playerMap[clientId];
   };
 
   addSubmittedPlayer = (id: string): void => {
@@ -112,13 +104,6 @@ class PlayerManager extends Schema
     const player = this.getPlayer(id);
     if (player) {
       player.disconnected = false;
-    }
-  };
-
-  attemptReconnection = (username: string) => {
-    const player = this.playerArray.find((p) => p.username === username);
-    if (player && player.disconnected) {
-      throwJoinRoomError(reconnect(player.id));
     }
   };
 
@@ -155,7 +140,7 @@ class PlayerManager extends Schema
 
   updateRoundData = (chains: IChain[], round: number) => {
     this.playerArray.forEach((player) => {
-      player.roundData = undefined;
+      player.roundData = null;
     });
 
     for (const chain of chains) {
@@ -168,11 +153,10 @@ class PlayerManager extends Schema
     }
   };
 
-  addVote = (vote: Vote) => {
-    const player = this.getPlayer(vote.playerId);
-    if (player) {
-      player.votes += vote.vote === 'dislike' ? -1 : 1;
-    }
+  updatePlayerVotes = (votes: Record<string, number>) => {
+    this.playerArray.forEach((player) => {
+      player.votes = votes[player.id] ?? 0;
+    });
   };
 }
 

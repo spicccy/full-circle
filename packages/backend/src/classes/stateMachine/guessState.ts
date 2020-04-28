@@ -1,15 +1,12 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
-import { warn } from '@full-circle/shared/lib/actions/server';
-import { formatUsername } from '@full-circle/shared/lib/helpers';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Delayed } from 'colyseus';
 import { getType } from 'typesafe-actions';
 
 import { BUFFER_MS } from '../../constants';
 import { IClient } from '../../interfaces';
-import { throwJoinRoomError } from '../../util/util';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase, { DEFAULT_GUESS_PHASE_LENGTH } from '../subSchema/phase';
 
@@ -19,32 +16,29 @@ class GuessState implements IState {
 
   constructor(private roomState: IRoomStateBackend) {}
 
-  onJoin = (_client: IClient, options: IJoinOptions) => {
-    this.roomState.attemptReconnection(formatUsername(options.username));
-    throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
-  };
+  onJoin = (_client: IClient) => {};
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.roomState.setPlayerDisconnected(client.id);
-    return true;
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorDisconnected();
+    } else {
+      this.roomState.setPlayerDisconnected(client.id);
+    }
+  };
+
+  onReconnect = (client: IClient) => {
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorReconnected();
+    } else {
+      this.roomState.setPlayerReconnected(client.id);
+    }
   };
 
   onReceive = (client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(submitGuess): {
-        const guess = message.payload;
-        const id = client.id;
-        this.roomState.storeGuess(id, guess);
-        this.onClientReady(id);
-        return;
+        return this.submitGuess(client.id, message.payload);
       }
-    }
-  };
-
-  onClientReady = (clientId: string) => {
-    this.roomState.addSubmittedPlayer(clientId);
-    if (this.roomState.allPlayersSubmitted) {
-      this.startBuffer();
     }
   };
 
@@ -64,25 +58,35 @@ class GuessState implements IState {
     this.timerHandle?.clear();
     this.bufferHandle?.clear();
     this.roomState.clearSubmittedPlayers();
-    this.roomState.updatePlayerScores();
-  };
-
-  private startBuffer = () => {
-    this.roomState.setShowBuffer(true);
-    this.bufferHandle = this.roomState.clock.setTimeout(
-      this.advanceState,
-      BUFFER_MS
-    );
   };
 
   advanceState = () => {
     this.roomState.setShowBuffer(false);
+    this.roomState.updatePlayerScores();
+
     if (this.roomState.gameIsOver) {
       this.roomState.setRevealState();
-      return;
+    } else {
+      this.roomState.incrementRound();
+      this.roomState.setDrawState();
     }
-    this.roomState.incrementRound();
-    this.roomState.setDrawState();
+  };
+
+  private submitGuess = (clientId: string, guess: string) => {
+    this.roomState.storeGuess(clientId, guess);
+    this.roomState.addSubmittedPlayer(clientId);
+    if (this.roomState.allPlayersSubmitted && !this.roomState.showBuffer) {
+      this.startBuffer();
+    }
+  };
+
+  private startBuffer = () => {
+    this.roomState.setShowBuffer(true);
+    this.roomState.sendAllAction(forceSubmit());
+    this.bufferHandle = this.roomState.clock.setTimeout(
+      this.advanceState,
+      BUFFER_MS
+    );
   };
 }
 

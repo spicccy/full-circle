@@ -1,30 +1,34 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { revealChain, vote } from '@full-circle/shared/lib/actions/client';
-import { warn } from '@full-circle/shared/lib/actions/server';
-import { formatUsername } from '@full-circle/shared/lib/helpers';
-import { IJoinOptions } from '@full-circle/shared/lib/join/interfaces';
-import { PhaseType, RoomErrorType } from '@full-circle/shared/lib/roomState';
+import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import { throwJoinRoomError } from '../../util/util';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 
 class RevealState implements IState {
   constructor(private roomState: IRoomStateBackend) {}
 
-  onJoin = (_client: IClient, options: IJoinOptions) => {
-    this.roomState.attemptReconnection(formatUsername(options.username));
-    throwJoinRoomError(warn(RoomErrorType.GAME_ALREADY_STARTED));
-  };
+  onJoin = (_client: IClient) => {};
 
   onLeave = (client: IClient, _consented: boolean) => {
-    this.roomState.setPlayerDisconnected(client.id);
-    return true;
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorDisconnected();
+    } else {
+      this.roomState.setPlayerDisconnected(client.id);
+    }
   };
 
-  onReceive = (_client: IClient, message: ClientAction) => {
+  onReconnect = (client: IClient) => {
+    if (client.id === this.roomState.getCurator()) {
+      this.roomState.setCuratorReconnected();
+    } else {
+      this.roomState.setPlayerReconnected(client.id);
+    }
+  };
+
+  onReceive = (client: IClient, message: ClientAction) => {
     switch (message.type) {
       case getType(revealChain): {
         const revealed = this.roomState.revealNext();
@@ -34,15 +38,9 @@ class RevealState implements IState {
         return;
       }
       case getType(vote): {
-        this.roomState.addVote(message.payload);
+        this.roomState.addVote(client.id, message.payload);
         return;
       }
-    }
-  };
-
-  onClientReady = (clientId: string) => {
-    if (clientId === this.roomState.getCurator()) {
-      this.advanceState();
     }
   };
 
@@ -51,11 +49,10 @@ class RevealState implements IState {
     this.roomState.revealNext();
   };
 
-  onStateEnd = () => {
-    return;
-  };
+  onStateEnd = () => {};
 
   advanceState = () => {
+    this.roomState.calculateVotes();
     this.roomState.setEndState();
   };
 }

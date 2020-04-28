@@ -1,5 +1,4 @@
-import { ServerAction } from '@full-circle/shared/lib/actions';
-import { notifyPlayerReady } from '@full-circle/shared/lib/actions/client';
+import { serverError } from '@full-circle/shared/lib/actions/server';
 import { PhaseType } from '@full-circle/shared/lib/roomState';
 import { Box } from 'grommet';
 import { FunctionComponent } from 'react';
@@ -9,6 +8,7 @@ import { useToasts } from 'react-toast-notifications';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useConfirmLeave } from 'src/hooks/useConfirmLeave';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
+import { getType } from 'typesafe-actions';
 
 import { PlayerBackground } from './components/PlayerBackground';
 import { EndPage } from './EndPage';
@@ -16,30 +16,20 @@ import { IngameDraw } from './IngameDraw';
 import { IngameGuess } from './IngameGuess';
 import { IngameReveal } from './IngameReveal';
 import { Lobby } from './Lobby';
-/* 
-TODO:
-The page constantly renders as the phasetimer
-ticks down - use useMemo to fix this 
-Lobby should only re-render when a new player has joined
-*/
 
 const CuratorGamePage: FunctionComponent = () => {
   const { room, syncedState } = useRoom();
 
   const { addToast } = useToasts();
 
-  const curatorMessageHandler = (msg: ServerAction) => {
+  useRoomMessage((msg) => {
     switch (msg.type) {
-      case '@server/warn':
+      case getType(serverError): {
         addToast(msg.payload, { appearance: 'warning' });
         break;
-      default:
+      }
     }
-  };
-
-  const chain = syncedState?.chainManager?.revealedChain ?? null;
-
-  useRoomMessage(curatorMessageHandler);
+  });
 
   useConfirmLeave();
 
@@ -47,15 +37,13 @@ const CuratorGamePage: FunctionComponent = () => {
     return <Redirect to="/create" />;
   }
 
-  const startGame = () => room.send(notifyPlayerReady());
-
   const renderBody = () => {
     switch (syncedState?.phase.phaseType) {
       case PhaseType.LOBBY:
         return (
           <Box flex>
             <PlayerBackground />
-            <Lobby startGame={startGame} />
+            <Lobby />
           </Box>
         );
       case PhaseType.DRAW:
@@ -73,7 +61,7 @@ const CuratorGamePage: FunctionComponent = () => {
           </Box>
         );
       case PhaseType.REVEAL:
-        return <IngameReveal chain={chain} />;
+        return <IngameReveal />;
       case PhaseType.END:
         return (
           <Box flex background="light-2">

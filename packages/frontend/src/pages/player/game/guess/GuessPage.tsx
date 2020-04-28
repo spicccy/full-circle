@@ -1,29 +1,48 @@
 import { submitGuess } from '@full-circle/shared/lib/actions/client';
+import { forceSubmit } from '@full-circle/shared/lib/actions/server';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { Box, Heading } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
 import { Card } from 'src/components/Card/Card';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
+import { useRoomMessage } from 'src/hooks/useRoomListeners';
+import { getType } from 'typesafe-actions';
 
 import { Background } from '../components/Background';
 import { DrawingCard } from './DrawingCard';
 import { GuessCard } from './GuessCard';
 import { GuessSubmittedCard } from './GuessSubmittedCard';
 
-interface IGuessPage {
-  drawing?: CanvasAction[];
-}
+const parseDrawing = (data?: string): CanvasAction[] => {
+  try {
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+};
 
-const GuessPage: FunctionComponent<IGuessPage> = ({ drawing = [] }) => {
-  const { room, syncedState } = useRoom();
-  const { hasSubmitted } = useRoomHelpers();
+const GuessPage: FunctionComponent = () => {
+  const { sendAction, syncedState } = useRoom();
+  const { hasSubmitted, playerData } = useRoomHelpers();
 
   const [guess, setGuess] = useState('');
 
+  const drawing = parseDrawing(playerData?.roundData?.data ?? undefined);
+
   const handleSubmit = () => {
-    room?.send(submitGuess(guess));
+    if (!hasSubmitted) {
+      sendAction(submitGuess(guess));
+    }
   };
+
+  useRoomMessage((action) => {
+    switch (action.type) {
+      case getType(forceSubmit): {
+        handleSubmit();
+      }
+    }
+  });
 
   const renderBody = () => {
     if (hasSubmitted) {
