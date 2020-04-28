@@ -7,7 +7,7 @@ We hope you enjoy your stay
 
 ## Prerequisites
 
-- Node Version Manager [windows](https://github.com/coreybutler/nvm-windows) [linux](https://github.com/nvm-sh/nvm)
+- [Node](nodejs.org) or Node Version Manager [windows](https://github.com/coreybutler/nvm-windows) [linux](https://github.com/nvm-sh/nvm)
 - [Yarn](https://yarnpkg.com/)
 - (Recommended) VSCode
 
@@ -16,7 +16,7 @@ We hope you enjoy your stay
 ### First time?
 
 ```
-# install node
+# install node. either directly or through node version manger
 nvm install 13.7.0
 nvm use 13.7.0
 
@@ -26,7 +26,6 @@ cd capstone-project-spicccy
 
 # install and build dependencies
 yarn
-yarn build:shared
 ```
 
 ## Opening in VSCode
