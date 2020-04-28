@@ -18,7 +18,6 @@ import { CURATOR_USERNAME } from '../constants';
 import { IClient, IClock, IRoom } from '../interfaces';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
-import { StickyNoteColourManager } from './managers/stickyNoteColourManager';
 import DrawState from './stateMachine/drawState';
 import EndState from './stateMachine/endState';
 import GuessState from './stateMachine/guessState';
@@ -26,6 +25,7 @@ import LobbyState from './stateMachine/lobbyState';
 import RevealState from './stateMachine/revealState';
 import Phase from './subSchema/phase';
 import Player from './subSchema/player';
+import { isAutomation } from '../util/envHelper';
 
 /**
  * These are functions that each specific state will need to implement.
@@ -95,12 +95,15 @@ class RoomState extends Schema
   clock: IClock;
   private _settings: RoomSettings;
   private waitingCuratorRejoin = false;
-  stickyNoteColourManager = new StickyNoteColourManager();
 
   constructor(private room: IRoom, options?: RoomSettings) {
     super();
     this.clock = room.clock;
     this._settings = options ?? {};
+    if (isAutomation()) {
+      this._settings.predictableRandomness = true;
+    }
+
     this.chainManager = new ChainManager();
   }
 

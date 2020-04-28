@@ -1,16 +1,26 @@
 import { Page } from 'puppeteer';
 
 import { setCurrPage } from '../jest-setup';
-import { screenshotName } from './screenshotAutomation';
+import { compareSnapshot } from './screenshotAutomation';
 
-export const revealChain = async (playerPage: Page, snapshot: string) => {
+export const vote = async (
+  playerPage: Page,
+  vote: boolean,
+  snapshot: string
+) => {
+  await playerPage.bringToFront();
+  setCurrPage(playerPage);
+  let selector = "[data-testid='likeButton']";
+  if (!vote) selector = "[data-testid='dislikeButton']";
+  await playerPage.waitForSelector(selector);
+  await playerPage.click(selector);
+  await playerPage.waitFor(1000);
+  await compareSnapshot(playerPage, snapshot);
+};
+
+export const nextChain = async (playerPage: Page) => {
   await playerPage.bringToFront();
   setCurrPage(playerPage);
   await playerPage.waitForSelector("[data-testid='nextChain']");
-  await playerPage.click("[data-testid='nextChain']");
-  setCurrPage(page);
-  await page.waitForSelector("[data-testid='revealChain']");
-  await page.screenshot({
-    path: screenshotName(snapshot),
-  });
+  await playerPage.click("[data-testid='nextChain");
 };

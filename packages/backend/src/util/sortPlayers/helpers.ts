@@ -52,11 +52,3 @@ export const checkFinished = (result: string[][]): boolean => {
 
   return checkChains(result);
 };
-
-export const randomSplice = (ids: string[]): string[] => {
-  const numIds = ids.length;
-  const index = Math.floor(Math.random() * numIds);
-  const begin = ids.slice(0, index);
-  const end = ids.slice(index, ids.length);
-  return [...end, ...begin];
-};

@@ -22,9 +22,11 @@ import { DebugRoomState } from './pages/debug/timer/DebugRoomState';
 import { DrawPage } from './pages/player/game/draw/DrawPage';
 import { ReconnectManager } from './pages/player/game/ReconnectManager';
 import { theme } from './styles/theme';
+import { isAutomation } from './utils/envHelper';
 
 export const App: FunctionComponent = () => {
   try {
+    console.log(isAutomation());
     return (
       <RoomProvider>
         <DebugRoomState

@@ -65,6 +65,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
                 const { playerId, id } = link;
                 room?.send(vote({ playerId, linkId: id, vote: 'dislike' }));
               }}
+              data-testid="dislikeButton"
             >
               <ThumbDown></ThumbDown>
             </DislikeButton>
@@ -73,6 +74,7 @@ export const RenderChain: FunctionComponent<IRenderChainProps> = ({
                 const { playerId, id } = link;
                 room?.send(vote({ playerId, linkId: id, vote: 'like' }));
               }}
+              data-testid="likeButton"
             >
               <ThumbUp></ThumbUp>
             </LikeButton>

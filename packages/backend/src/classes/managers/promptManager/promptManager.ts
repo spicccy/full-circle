@@ -1,5 +1,6 @@
 import { Category, getPrompts } from '@full-circle/shared/lib/prompts';
 import { shuffle } from 'lodash';
+import { isAutomation } from '../../../util/envHelper';
 
 export type PromptManagerOptions = {
   category?: Category;

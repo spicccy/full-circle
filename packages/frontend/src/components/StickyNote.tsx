@@ -1,6 +1,7 @@
 import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { Box } from 'grommet';
 import styled, { css } from 'styled-components';
+import { isAutomation } from 'src/utils/envHelper';
 
 export interface IRandomStickyNoteData {
   angle: number;
@@ -8,8 +9,10 @@ export interface IRandomStickyNoteData {
   bendAmountRight: number;
 }
 
-export const getRandomRotation = () => Math.random() * 20 - 10;
-export const getRandomCornerBend = () => Math.random() * 3;
+export const getRandomRotation = () =>
+  isAutomation() ? 5 : Math.random() * 20 - 10;
+export const getRandomCornerBend = () =>
+  isAutomation() ? 1 : Math.random() * 3;
 
 interface IStickyNoteProps {
   colour: StickyNoteColour;

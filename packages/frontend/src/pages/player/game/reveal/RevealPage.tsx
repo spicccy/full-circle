@@ -37,7 +37,12 @@ const RevealPage: FunctionComponent = () => {
               <Paragraph>
                 Make sure you give everyone enough time to vote.
               </Paragraph>
-              <Button onClick={onSubmit} size="large" label="Next Chain" />
+              <Button
+                onClick={onSubmit}
+                size="large"
+                label="Next Chain"
+                data-testid="nextChain"
+              />
             </>
           ) : (
             <Paragraph>
