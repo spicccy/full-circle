@@ -3,7 +3,7 @@ import { Page } from 'puppeteer';
 
 let imgCounter = 0;
 export let dir = 'create_and_join_game';
-const threshold = 0;
+const threshold = 1;
 
 export function changeDir(newDir: string) {
   imgCounter = 0;
