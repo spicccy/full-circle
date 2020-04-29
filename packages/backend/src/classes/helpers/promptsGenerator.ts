@@ -3,11 +3,6 @@ import { shuffle } from 'lodash';
 
 import { loadPrompts } from '../../prompts';
 
-export type PromptManagerOptions = {
-  category?: PromptCategory;
-  predictableRandomness?: boolean;
-};
-
 class PromptsGenerator {
   getPrompts = (
     category: PromptCategory,
