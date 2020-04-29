@@ -1,4 +1,4 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState';
+import { PhaseType, PromptCategory } from '@full-circle/shared/lib/roomState';
 
 import { IRoom } from '../../../interfaces';
 import { addPlayers, mockRoom } from '../../helpers/testHelper';
@@ -10,7 +10,7 @@ describe('Draw State', () => {
 
   beforeEach(() => {
     room = mockRoom;
-    roomState = new RoomState(room);
+    roomState = new RoomState(room, { promptPack: PromptCategory.GENERIC });
     addPlayers(roomState, 8);
     roomState.advanceState();
   });

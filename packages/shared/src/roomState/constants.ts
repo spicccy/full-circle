@@ -45,3 +45,23 @@ export enum VoteType {
   LIKE,
   DISLIKE,
 }
+
+export enum PromptCategory {
+  LEAGUE = 'League of Legends',
+  CSGO = 'CS:GO',
+  GENERIC = 'Items',
+  ACTORS = 'Actors',
+  FASTFOOD = 'Fast Food',
+  POKEMON = 'Pokemon',
+  FLORIDA = 'Florida man',
+}
+
+export const PromptCategories: PromptCategory[] = [
+  PromptCategory.GENERIC,
+  PromptCategory.FASTFOOD,
+  PromptCategory.LEAGUE,
+  PromptCategory.ACTORS,
+  PromptCategory.CSGO,
+  PromptCategory.POKEMON,
+  // Category.FLORIDA, eh will rethink this later
+];

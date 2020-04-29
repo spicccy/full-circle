@@ -1,18 +1,18 @@
+import { PromptCategory } from '@full-circle/shared/lib/roomState';
+
 import { addPlayers, mockRoom } from '../helpers/testHelper';
-import { PromptManager } from '../managers/promptManager/promptManager';
 import RoomState from '../roomState';
 
 describe('Room state', () => {
   describe('chain allocation ordered', () => {
     it('can generate chains correctly', () => {
       const roomState = new RoomState(mockRoom, {
+        promptPack: PromptCategory.GENERIC,
         predictableRandomness: true,
       });
       addPlayers(roomState, 3);
 
-      roomState.generateChains(
-        new PromptManager({ testing: true }).getInitialPrompts(3)
-      );
+      roomState.generateChains();
       const chains = roomState.chains;
 
       const chain1 = chains[0];

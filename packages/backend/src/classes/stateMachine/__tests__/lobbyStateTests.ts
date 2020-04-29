@@ -1,19 +1,14 @@
 import { joinGame, startGame } from '@full-circle/shared/lib/actions/client';
 import { joinGameError } from '@full-circle/shared/lib/actions/server';
-import { Category } from '@full-circle/shared/lib/prompts';
 import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
 import { Mutable } from '@full-circle/shared/lib/testHelpers';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
-import { mocked } from 'ts-jest/utils';
 
 import { IClient } from '../../../interfaces';
 import { mockClient } from '../../helpers/testHelper';
-import { PromptManager } from '../../managers/promptManager/promptManager';
 import { IRoomStateBackend } from '../../roomState';
 import Phase from '../../subSchema/phase';
 import LobbyState from '../lobbyState';
-
-jest.mock('../../managers/promptManager/promptManager');
 
 jest.useFakeTimers();
 
@@ -39,17 +34,8 @@ const mockRoomState = partialMock<IRoomStateBackend>({
   sendWarning: jest.fn(),
   setDrawState: jest.fn(),
   setPhase: jest.fn(),
-  settings: {
-    promptPack: Category.GENERIC,
-    predictableRandomness: true,
-  },
   generateChains: jest.fn(),
   incrementRound: jest.fn(),
-});
-
-const mockGetPrompts = jest.fn().mockReturnValue(['abc']);
-mocked(PromptManager).mockImplementation(() => {
-  return partialMock({ getInitialPrompts: mockGetPrompts });
 });
 
 describe('Lobby State', () => {
@@ -148,15 +134,8 @@ describe('Lobby State', () => {
 
   describe('advanceState', () => {
     it('should generate chains', () => {
-      roomState.numPlayers = 3;
-
       lobbyState.advanceState();
-      expect(PromptManager).toBeCalledWith({
-        category: Category.GENERIC,
-        testing: true,
-      });
-      expect(mockGetPrompts).toBeCalledWith(3);
-      expect(roomState.generateChains).toBeCalledWith(['abc']);
+      expect(roomState.generateChains).toBeCalled();
     });
 
     it('should increment and move to draw phase', () => {

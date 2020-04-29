@@ -1,18 +1,18 @@
-import { PhaseType } from '@full-circle/shared/lib/roomState';
+import { PhaseType, PromptCategory } from '@full-circle/shared/lib/roomState';
 import { mocked } from 'ts-jest/utils';
 
+import { getAllocation } from '../../util/sortPlayers/sortPlayers';
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
-import { getAllocation } from './../../util/sortPlayers/sortPlayers';
 
-jest.mock('./../../util/sortPlayers/sortPlayers');
+jest.mock('../../util/sortPlayers/sortPlayers');
 
 describe('Room state', () => {
   describe('transitions', () => {
     let state: RoomState;
 
     beforeEach(() => {
-      state = new RoomState(mockRoom);
+      state = new RoomState(mockRoom, { promptPack: PromptCategory.GENERIC });
       addPlayers(state, 10);
 
       const mockedVal = [
@@ -91,7 +91,9 @@ describe('Room state', () => {
     let roomState: RoomState;
 
     beforeEach(() => {
-      roomState = new RoomState(mockRoom);
+      roomState = new RoomState(mockRoom, {
+        promptPack: PromptCategory.GENERIC,
+      });
       jest
         .spyOn(roomState, 'updatePlayerScores')
         .mockImplementation(() => null);
@@ -126,7 +128,9 @@ describe('Room state', () => {
     let roomState: RoomState;
 
     beforeEach(() => {
-      roomState = new RoomState(mockRoom);
+      roomState = new RoomState(mockRoom, {
+        promptPack: PromptCategory.GENERIC,
+      });
       const mockedVal = [
         ['a', 'b', 'c', 'd', 'e'],
         ['e', 'd', 'b', 'a', 'c'],
@@ -158,7 +162,9 @@ describe('Room state', () => {
     let roomState: RoomState;
 
     beforeEach(() => {
-      roomState = new RoomState(mockRoom);
+      roomState = new RoomState(mockRoom, {
+        promptPack: PromptCategory.GENERIC,
+      });
       addPlayers(roomState, 3);
       const mockedVal = [
         ['0_id', '1_id', '2_id'],
