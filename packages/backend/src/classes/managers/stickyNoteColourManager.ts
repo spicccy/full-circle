@@ -1,7 +1,7 @@
 import { objectValues } from '@full-circle/shared/lib/helpers';
 import { StickyNoteColour } from '@full-circle/shared/lib/roomState';
 import { shuffle } from 'lodash';
-import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
+
 import { isAutomation } from '../../util/envHelper';
 
 class StickyNoteColourManager {

@@ -1,8 +1,8 @@
-import { Category } from '../prompts';
+import { PromptCategory } from '../roomState';
 
 export type RoomSettings = {
   maxRounds?: number;
-  promptPack?: Category;
+  promptPack: PromptCategory;
   gameMode?: 'startDraw' | 'startGuess';
   predictableRandomness?: boolean;
 };

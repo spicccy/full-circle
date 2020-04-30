@@ -5,7 +5,6 @@ import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
-import { PromptManager } from '../managers/promptManager/promptManager';
 import { IRoomStateBackend, IState } from '../roomState';
 import Phase from '../subSchema/phase';
 
@@ -51,14 +50,7 @@ class LobbyState implements IState {
   onStateEnd = () => {};
 
   advanceState = () => {
-    // assume settings have been configured
-    const prompts = new PromptManager({
-      category: this.roomState.settings.promptPack,
-      testing: this.roomState.settings.predictableRandomness,
-    }).getInitialPrompts(this.roomState.numPlayers);
-
-    this.roomState.generateChains(prompts);
-
+    this.roomState.generateChains();
     this.roomState.incrementRound();
     this.roomState.setDrawState();
   };

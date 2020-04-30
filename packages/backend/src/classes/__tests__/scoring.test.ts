@@ -1,3 +1,5 @@
+import { PromptCategory } from '@full-circle/shared/lib/roomState';
+
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
 import Player from '../subSchema/player';
@@ -7,7 +9,10 @@ describe('room scoring', () => {
   let playerIds: string[];
 
   beforeEach(() => {
-    roomState = new RoomState(mockRoom, { predictableRandomness: true });
+    roomState = new RoomState(mockRoom, {
+      promptPack: PromptCategory.GENERIC,
+      predictableRandomness: true,
+    });
     addPlayers(roomState, 3);
     playerIds = [];
     for (const id in roomState.players) {

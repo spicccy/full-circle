@@ -16,6 +16,7 @@ import { Client } from 'colyseus';
 
 import { IClient, IClock, IRoom } from '../interfaces';
 import { isAutomation } from '../util/envHelper';
+import PromptsGenerator from './helpers/promptsGenerator';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
 import DrawState from './stateMachine/drawState';
@@ -67,7 +68,7 @@ export interface IRoomStateBackend {
   incrementRound: () => void;
   getRound: () => number;
 
-  generateChains: (prompts: string[]) => void;
+  generateChains: () => void;
   storeGuess: (id: string, guess: string) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[]) => boolean;
   updateRoundData: () => void;
@@ -97,10 +98,11 @@ class RoomState extends Schema
   clock: IClock;
   private _settings: RoomSettings;
 
-  constructor(private room: IRoom, options?: RoomSettings) {
+  constructor(private room: IRoom, options: RoomSettings) {
     super();
     this.clock = room.clock;
-    this._settings = options ?? {};
+    this._settings = options;
+
     if (isAutomation()) {
       this._settings.predictableRandomness = true;
     }
@@ -257,7 +259,13 @@ class RoomState extends Schema
   // ===========================================================================
   // Chain management
   // ===========================================================================
-  generateChains = (initialPrompts: string[]) => {
+  generateChains = () => {
+    const initialPrompts = PromptsGenerator.getPrompts(
+      this._settings.promptPack,
+      this.numPlayers,
+      this._settings.predictableRandomness
+    );
+
     this.chainManager.generateChains(
       objectValues(this.players),
       initialPrompts,
