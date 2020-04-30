@@ -1,4 +1,8 @@
-import { PhaseType, PromptCategory } from '@full-circle/shared/lib/roomState';
+import {
+  GameType,
+  PhaseType,
+  PromptCategory,
+} from '@full-circle/shared/lib/roomState';
 import { mocked } from 'ts-jest/utils';
 
 import { getAllocation } from '../../util/sortPlayers/sortPlayers';
@@ -12,7 +16,10 @@ describe('Room state', () => {
     let state: RoomState;
 
     beforeEach(() => {
-      state = new RoomState(mockRoom, { promptPack: PromptCategory.GENERIC });
+      state = new RoomState(mockRoom, {
+        gameType: GameType.PROMPT_PACK,
+        promptPack: PromptCategory.GENERIC,
+      });
       addPlayers(state, 10);
 
       const mockedVal = [
@@ -92,6 +99,7 @@ describe('Room state', () => {
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom, {
+        gameType: GameType.PROMPT_PACK,
         promptPack: PromptCategory.GENERIC,
       });
       jest
@@ -129,6 +137,7 @@ describe('Room state', () => {
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom, {
+        gameType: GameType.PROMPT_PACK,
         promptPack: PromptCategory.GENERIC,
       });
       const mockedVal = [
@@ -163,6 +172,7 @@ describe('Room state', () => {
 
     beforeEach(() => {
       roomState = new RoomState(mockRoom, {
+        gameType: GameType.PROMPT_PACK,
         promptPack: PromptCategory.GENERIC,
       });
       addPlayers(roomState, 3);

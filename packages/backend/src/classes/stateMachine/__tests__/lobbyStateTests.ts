@@ -1,6 +1,11 @@
 import { joinGame, startGame } from '@full-circle/shared/lib/actions/client';
 import { joinGameError } from '@full-circle/shared/lib/actions/server';
-import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
+import {
+  GameType,
+  PhaseType,
+  PromptCategory,
+  ServerError,
+} from '@full-circle/shared/lib/roomState';
 import { Mutable } from '@full-circle/shared/lib/testHelpers';
 import { partialMock } from '@full-circle/shared/lib/testHelpers';
 
@@ -36,6 +41,11 @@ const mockRoomState = partialMock<IRoomStateBackend>({
   setPhase: jest.fn(),
   generateChains: jest.fn(),
   incrementRound: jest.fn(),
+  settings: {
+    gameType: GameType.PROMPT_PACK,
+    promptPack: PromptCategory.GENERIC,
+    predictableRandomness: true,
+  },
 });
 
 describe('Lobby State', () => {

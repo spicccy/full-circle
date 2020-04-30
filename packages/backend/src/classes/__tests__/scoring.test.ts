@@ -1,4 +1,4 @@
-import { PromptCategory } from '@full-circle/shared/lib/roomState';
+import { GameType, PromptCategory } from '@full-circle/shared/lib/roomState';
 
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
@@ -10,6 +10,7 @@ describe('room scoring', () => {
 
   beforeEach(() => {
     roomState = new RoomState(mockRoom, {
+      gameType: GameType.PROMPT_PACK,
       promptPack: PromptCategory.GENERIC,
       predictableRandomness: true,
     });

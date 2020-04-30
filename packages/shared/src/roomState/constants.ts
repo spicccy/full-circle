@@ -7,6 +7,7 @@ export enum PhaseType {
 }
 
 export enum LinkType {
+  NONE = 'none',
   IMAGE = 'image',
   PROMPT = 'prompt',
 }
@@ -65,3 +66,8 @@ export const PromptCategories: PromptCategory[] = [
   PromptCategory.POKEMON,
   // Category.FLORIDA, eh will rethink this later
 ];
+
+export enum GameType {
+  PROMPT_PACK = 'Prompt Pack',
+  CUSTOM = 'Custom Prompts',
+}

@@ -32,7 +32,7 @@ describe('The App renders routes correctly', () => {
 
     await waitForDomChange();
 
-    const titleElement = getByText('Choose Room Settings');
+    const titleElement = getByText('Room Settings');
     expect(titleElement).toBeInTheDocument();
   });
 });

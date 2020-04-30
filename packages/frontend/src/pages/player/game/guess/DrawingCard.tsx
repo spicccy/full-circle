@@ -15,10 +15,12 @@ const DrawingCard: FunctionComponent<IDrawingCardProps> = ({
 }) => (
   <Card>
     <Box align="center">
-      <Heading margin={{ bottom: 'none' }}>Guess!</Heading>
+      <Heading level="3">
+        {drawing.length > 0 ? 'Guess the drawing!' : 'Make a prompt!'}
+      </Heading>
     </Box>
     <PhaseTimer />
-    <ViewCanvas canvasActions={drawing} />
+    {drawing.length > 0 && <ViewCanvas canvasActions={drawing} />}
   </Card>
 );
 
