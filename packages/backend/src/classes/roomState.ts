@@ -16,7 +16,6 @@ import { Client } from 'colyseus';
 
 import { IClient, IClock, IRoom } from '../interfaces';
 import { isAutomation } from '../util/envHelper';
-import PromptsGenerator from './helpers/promptsGenerator';
 import ChainManager from './managers/chainManager/chainManager';
 import PlayerManager from './managers/playerManager/playerManager';
 import DrawState from './stateMachine/drawState';
@@ -260,15 +259,8 @@ class RoomState extends Schema
   // Chain management
   // ===========================================================================
   generateChains = () => {
-    const initialPrompts = PromptsGenerator.getPrompts(
-      this._settings.promptPack,
-      this.numPlayers,
-      this._settings.predictableRandomness
-    );
-
     this.chainManager.generateChains(
       objectValues(this.players),
-      initialPrompts,
       this._settings
     );
   };

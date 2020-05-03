@@ -11,10 +11,14 @@ interface IPromptCardProps {
 const PromptCard: FunctionComponent<IPromptCardProps> = ({ prompt }) => (
   <Card>
     <Box align="center">
-      <Heading data-testhidden="true">Draw!</Heading>
-      <Heading level="2" margin={{ top: 'none', bottom: 'large' }}>
-        {prompt}
+      <Heading level="3">
+        {prompt ? 'Draw the prompt!' : 'Draw anything!'}
       </Heading>
+      {prompt && (
+        <Heading level="2" margin={{ top: 'none', bottom: 'large' }}>
+          {prompt}
+        </Heading>
+      )}
     </Box>
     <PhaseTimer />
   </Card>

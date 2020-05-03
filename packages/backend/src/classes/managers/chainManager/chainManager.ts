@@ -2,6 +2,7 @@ import { Schema, type } from '@colyseus/schema';
 import { CanvasAction } from '@full-circle/shared/lib/canvas';
 import { RoomSettings } from '@full-circle/shared/lib/roomSettings';
 import {
+  GameType,
   IChain,
   IChainManagerData,
   ILink,
@@ -13,16 +14,13 @@ import {
   Allocation,
   getAllocation,
 } from '../../../util/sortPlayers/sortPlayers';
+import promptsGenerator from '../../helpers/promptsGenerator';
 import { Chain } from '../../subSchema/chain';
 import Link from '../../subSchema/link';
 
 export interface IChainManager {
   readonly chains: IChain[];
-  generateChains: (
-    players: IPlayer[],
-    initialPrompts: string[],
-    options?: RoomSettings
-  ) => void;
+  generateChains: (players: IPlayer[], options: RoomSettings) => void;
   storeGuess: (id: string, guess: string, round: number) => boolean;
   storeDrawing: (id: string, drawing: CanvasAction[], round: number) => boolean;
   revealNext: () => boolean;
@@ -38,42 +36,85 @@ class ChainManager extends Schema implements IChainManager, IChainManagerData {
   @type(Chain)
   revealedChain: Chain = new Chain('placeholder', []);
 
-  generateChains = (
-    players: IPlayer[],
-    initialPrompts: string[],
-    options?: RoomSettings
-  ) => {
+  private generateCustomChain = (chainIds: string[]): Chain => {
+    const owner = chainIds[0];
+    const links = chainIds.map(
+      (playerId, j) =>
+        new Link({
+          type: j % 2 ? LinkType.IMAGE : LinkType.PROMPT,
+          id: `${owner}-${j}`,
+          playerId,
+          data: null,
+        })
+    );
+
+    const initialLink = new Link({
+      type: LinkType.NONE,
+      id: `${owner}-start`,
+      data: null,
+      playerId: '',
+    });
+
+    return new Chain(owner, [initialLink, ...links]);
+  };
+
+  private generatePromptPackChain = (
+    chainIds: string[],
+    options: RoomSettings
+  ): Chain => {
+    const owner = chainIds[0];
+    const links = chainIds.map(
+      (playerId, j) =>
+        new Link({
+          type: j % 2 ? LinkType.PROMPT : LinkType.IMAGE,
+          id: `${owner}-${j}`,
+          playerId,
+          data: null,
+        })
+    );
+
+    const initialPrompts = promptsGenerator.getPrompts(
+      options.promptPack,
+      chainIds.length,
+      options.predictableRandomness
+    );
+
+    const initialPrompt = initialPrompts.pop() ?? '';
+    const initialLink = new Link({
+      type: LinkType.PROMPT,
+      id: `${owner}-start`,
+      data: initialPrompt,
+      playerId: '',
+    });
+
+    return new Chain(owner, [initialLink, ...links]);
+  };
+
+  generateChains = (players: IPlayer[], options: RoomSettings) => {
     const ids = players.map((val) => val.id);
     const chainOrder = getAllocation(
-      options?.predictableRandomness ? Allocation.ORDERED : Allocation.RAND
+      options.predictableRandomness ? Allocation.ORDERED : Allocation.RAND
     )(ids);
 
-    if (!chainOrder) {
-      throw new Error('Chain allocation failed!');
+    switch (options.gameType) {
+      case GameType.PROMPT_PACK: {
+        this._chains = chainOrder.map((chainIds) =>
+          this.generatePromptPackChain(chainIds, options)
+        );
+        return;
+      }
+
+      case GameType.CUSTOM: {
+        this._chains = chainOrder.map((chainIds) =>
+          this.generateCustomChain(chainIds)
+        );
+        return;
+      }
+
+      default: {
+        throw new Error(`${options.gameType} not recognised`);
+      }
     }
-
-    this._chains = chainOrder.map((chainIds) => {
-      const owner = chainIds[0];
-      const links = chainIds.map(
-        (playerId, j) =>
-          new Link({
-            type: j % 2 ? LinkType.PROMPT : LinkType.IMAGE,
-            id: `${owner}-${j}`,
-            playerId,
-            data: null,
-          })
-      );
-
-      const initialPrompt = initialPrompts.pop() ?? '';
-      const initialLink = new Link({
-        type: LinkType.PROMPT,
-        id: `${owner}-start`,
-        data: initialPrompt,
-        playerId: '',
-      });
-
-      return new Chain(owner, [initialLink, ...links]);
-    });
   };
 
   revealNext = () => {

@@ -31,7 +31,7 @@ describe('Full Circle', () => {
       page.click("[data-testid='newGame']"),
       page.waitForNavigation(),
     ]);
-    await expect(page).toMatch('Choose Room Settings');
+    await expect(page).toMatch('Room Settings');
     await page.waitFor(1500);
     await compareSnapshot(page, 'home_page');
   });

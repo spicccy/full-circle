@@ -30,7 +30,7 @@ const GuessCard: FunctionComponent<IGuessCardProps> = ({
           <TextInput
             plain
             maxLength={20}
-            placeholder="Guess here"
+            placeholder="Type here"
             size="large"
             value={guess}
             onChange={(e) => setGuess(e.target.value)}

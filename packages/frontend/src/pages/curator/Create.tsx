@@ -1,10 +1,18 @@
 import 'styled-components/macro';
 
 import {
+  GameType,
   PromptCategories,
   PromptCategory,
 } from '@full-circle/shared/lib/roomState';
-import { Box, FormField, Heading, Paragraph, Select } from 'grommet';
+import {
+  Box,
+  FormField,
+  Heading,
+  Paragraph,
+  RadioButtonGroup,
+  Select,
+} from 'grommet';
 import { Add } from 'grommet-icons';
 import React, { FunctionComponent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -17,13 +25,14 @@ const CreatePage: FunctionComponent = () => {
   const { createAndJoinRoom } = useRoom();
   const { isLoading, load } = useLoader();
   const history = useHistory();
-  const [promptSet, setPromptSet] = useState<PromptCategory>(
+  const [gameType, setGameType] = useState<GameType>(GameType.PROMPT_PACK);
+  const [promptPack, setPromptPack] = useState<PromptCategory>(
     PromptCategories[0]
   );
 
   const createLobby = async () => {
     const createdRoom = await load(() =>
-      createAndJoinRoom({ promptPack: promptSet })
+      createAndJoinRoom({ promptPack, gameType })
     );
 
     if (createdRoom.room) {
@@ -42,19 +51,29 @@ const CreatePage: FunctionComponent = () => {
           round="small"
           elevation="small"
         >
-          <Heading level={2}>Choose Room Settings</Heading>
+          <Heading level={2}>Room Settings</Heading>
           <Box css={{ marginTop: 10, marginBottom: 10 }} flex>
-            <FormField label="Prompt Pack" htmlFor="select-prompts">
-              <Select
-                data-testid="select-prompts"
-                id="select-prompts"
-                value={promptSet}
-                options={PromptCategories}
-                onChange={({ option }) => {
-                  setPromptSet(option);
-                }}
-              ></Select>
+            <FormField label="Game Type">
+              <RadioButtonGroup
+                name="game-type"
+                options={[GameType.PROMPT_PACK, GameType.CUSTOM]}
+                value={gameType}
+                onChange={(e) => setGameType(e.target.value as GameType)}
+              />
             </FormField>
+            {gameType === GameType.PROMPT_PACK && (
+              <FormField label="Prompt Pack" htmlFor="select-prompts">
+                <Select
+                  data-testid="select-prompts"
+                  id="select-prompts"
+                  value={promptPack}
+                  options={PromptCategories}
+                  onChange={({ option }) => {
+                    setPromptPack(option);
+                  }}
+                />
+              </FormField>
+            )}
             <Paragraph size="small" fill>
               There are more features coming here to let you customise the game
               the way you find it fun. Custom game modes, user-submitted prompt

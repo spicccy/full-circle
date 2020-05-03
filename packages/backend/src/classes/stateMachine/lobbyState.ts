@@ -1,7 +1,11 @@
 import { ClientAction } from '@full-circle/shared/lib/actions';
 import { joinGame, startGame } from '@full-circle/shared/lib/actions/client';
 import { joinGameError } from '@full-circle/shared/lib/actions/server';
-import { PhaseType, ServerError } from '@full-circle/shared/lib/roomState';
+import {
+  GameType,
+  PhaseType,
+  ServerError,
+} from '@full-circle/shared/lib/roomState';
 import { getType } from 'typesafe-actions';
 
 import { IClient } from '../../interfaces';
@@ -52,7 +56,13 @@ class LobbyState implements IState {
   advanceState = () => {
     this.roomState.generateChains();
     this.roomState.incrementRound();
-    this.roomState.setDrawState();
+    if (this.roomState.settings.gameType === GameType.PROMPT_PACK) {
+      this.roomState.setDrawState();
+    }
+
+    if (this.roomState.settings.gameType === GameType.CUSTOM) {
+      this.roomState.setGuessState();
+    }
   };
 
   private addPlayer = (clientId: string, username: string) => {

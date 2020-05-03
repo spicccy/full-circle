@@ -1,4 +1,4 @@
-import { PromptCategory } from '@full-circle/shared/lib/roomState';
+import { GameType, PromptCategory } from '@full-circle/shared/lib/roomState';
 
 import { addPlayers, mockRoom } from '../helpers/testHelper';
 import RoomState from '../roomState';
@@ -7,6 +7,7 @@ describe('Room state', () => {
   describe('chain allocation ordered', () => {
     it('can generate chains correctly', () => {
       const roomState = new RoomState(mockRoom, {
+        gameType: GameType.PROMPT_PACK,
         promptPack: PromptCategory.GENERIC,
         predictableRandomness: true,
       });

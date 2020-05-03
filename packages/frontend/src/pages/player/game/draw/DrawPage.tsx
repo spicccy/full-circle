@@ -7,9 +7,8 @@ import {
   PenThickness,
   PenType,
 } from '@full-circle/shared/lib/canvas';
-import { Box, Heading } from 'grommet';
+import { Box } from 'grommet';
 import React, { FunctionComponent, useState } from 'react';
-import { Card } from 'src/components/Card/Card';
 import { useRoom } from 'src/contexts/RoomContext';
 import { useRoomHelpers } from 'src/hooks/useRoomHelpers';
 import { useRoomMessage } from 'src/hooks/useRoomListeners';
@@ -31,8 +30,6 @@ const DrawPage: FunctionComponent = () => {
     penThickness: PenThickness.MEDIUM,
   });
 
-  const prompt = playerData?.roundData?.data ?? undefined;
-
   const handleSubmitDrawing = () => {
     if (!hasSubmitted) {
       sendAction(submitDrawing(canvasActions));
@@ -48,7 +45,7 @@ const DrawPage: FunctionComponent = () => {
   });
 
   const renderBody = () => {
-    if (hasSubmitted) {
+    if (hasSubmitted || syncedState?.showBuffer) {
       return (
         <Box width="medium">
           <DrawingSubmittedCard canvasActions={canvasActions} />
@@ -56,15 +53,7 @@ const DrawPage: FunctionComponent = () => {
       );
     }
 
-    if (syncedState?.showBuffer) {
-      return (
-        <Box width="medium">
-          <Card align="center" justify="center">
-            <Heading>Moving on... Too bad</Heading>
-          </Card>
-        </Box>
-      );
-    }
+    const prompt = playerData?.roundData?.data ?? undefined;
 
     return (
       <>
